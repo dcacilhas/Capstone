@@ -78,7 +78,7 @@ return [
     |
     */
 
-    'key' => env('APP_KEY', 'SomeRandomString'),
+    'key' => env('APP_KEY', '7m0UOMznsbMq7fYpFHidMAXlq97K9xAQ'),
 
     'cipher' => 'AES-256-CBC',
 
@@ -149,6 +149,11 @@ return [
          */
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
+        /*
+         * LaravelCollective
+         */
+        Collective\Html\HtmlServiceProvider::class,
+
     ],
 
     /*
@@ -196,6 +201,8 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
+        'Form'      => Collective\Html\FormFacade::class,
+        'Html'      => Collective\Html\HtmlFacade::class,
 
     ],
 
