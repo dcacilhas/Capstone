@@ -14,7 +14,7 @@
             @endforeach
         </ul>
 
-        {!! $shows->render() !!}
+        {!! $shows->appends(['filter' => $selectedFilter])->render() !!}
     @else
         <p>Click to filter shows starting with that letter.</p>
     @endif
