@@ -28,10 +28,12 @@
             position: relative;
             min-height: 100%;
         }
+
         body {
             /* Margin bottom by footer height */
             margin-bottom: 60px;
         }
+
         .footer {
             position: absolute;
             bottom: 0;
@@ -72,8 +74,12 @@
                 <li class="{{ (Request::route()->getName() == 'home') ? 'active' : '' }}">{!! link_to_route('home', 'Home') !!}</li>
                 <li class="{{ (Request::route()->getName() == 'profile') ? 'active' : '' }}">{!! link_to_route('profile', 'Profile') !!}</li>
                 <li class="{{ (Request::route()->getName() == 'shows') ? 'active' : '' }}">{!! link_to_route('shows', 'TV Shows') !!}</li>
-                <li class="{{ (Request::route()->getName() == 'login') ? 'active' : '' }}">{!! link_to_route('login', 'Log In') !!}</li>
-                <li class="{{ (Request::route()->getName() == 'register') ? 'active' : '' }}">{!! link_to_route('register', 'Register') !!}</li>
+                @if (Auth::check())
+                    <li>{!! link_to_route('logout', 'Log Out') !!}</li>
+                @else
+                    <li class="{{ (Request::route()->getName() == 'login') ? 'active' : '' }}">{!! link_to_route('login', 'Log In') !!}</li>
+                    <li class="{{ (Request::route()->getName() == 'register') ? 'active' : '' }}">{!! link_to_route('register', 'Register') !!}</li>
+                @endif
             </ul>
         </div>
         <!--/.nav-collapse -->
