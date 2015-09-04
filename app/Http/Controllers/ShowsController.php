@@ -17,7 +17,7 @@ class ShowsController extends Controller
             $shows = ($filter === '#') ? Show::whereRaw("SeriesName regexp '^[0-9]+'") : $shows = Show::where('SeriesName', 'LIKE', $filter . '%');
             $shows = $shows->orderBy('SeriesName', 'asc')->paginate(50);
 
-            return view('shows', ['filters' => $filters, 'shows' => $shows, 'selectedFilter' => $filter]);
+            return view('shows', ['filters' => $filters, 'shows' => $shows, 'selectedFilter' => urlencode($filter)]);
         }
 
         return view('shows', ['filters' => $filters]);
