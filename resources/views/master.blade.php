@@ -72,9 +72,9 @@
                 {{--<li><a href="login">Log In</a></li>--}}
                 {{--<li><a href="register">Register</a></li>--}}
                 <li class="{{ (Request::route()->getName() == 'home') ? 'active' : '' }}">{!! link_to_route('home', 'Home') !!}</li>
-                <li class="{{ (Request::route()->getName() == 'profile') ? 'active' : '' }}">{!! link_to_route('profile', 'Profile') !!}</li>
                 <li class="{{ (Request::route()->getName() == 'shows') ? 'active' : '' }}">{!! link_to_route('shows', 'TV Shows') !!}</li>
                 @if (Auth::check())
+                    <li class="{{ (Request::route()->getName() == 'profile') ? 'active' : '' }}">{!! link_to_route('profile', 'Profile') !!}</li>
                     <li>{!! link_to_route('logout', 'Log Out') !!}</li>
                 @else
                     <li class="{{ (Request::route()->getName() == 'login') ? 'active' : '' }}">{!! link_to_route('login', 'Log In') !!}</li>
