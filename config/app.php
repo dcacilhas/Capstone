@@ -214,4 +214,6 @@ return [
 
     ],
 
+    'app_name' => 'MyMediaList',
+
 ];
