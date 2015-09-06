@@ -10,9 +10,9 @@
             <h2 class="panel-title">Log In</h2>
         </div>
 
-        @include('errors.errors')
-
         <div class="panel-body">
+            @include('errors.errors')
+
             {!! Form::open() !!}
             <div class="form-group">
                 <div style="margin-bottom: 25px" class="input-group">
@@ -29,16 +29,15 @@
             <div class="form-group">
                 {!! Form::submit('Login', ['class' => 'btn btn-primary btn-lg btn-block']) !!}
             </div>
+            {!! Form::close() !!}
             <div class="form-group">
                 <div class="col-md-12 control">
                     <div style="border-top: 1px solid#888; padding-top:15px; font-size:85%" class="text-center">
-                        {!! link_to_route('register', 'Forgot your password?') !!} <br>
+                        {!! link_to_route('password/email', 'Forgot your password?') !!} <br>
                         Don't have an account? {!! link_to_route('register', 'Register') !!}
                     </div>
                 </div>
             </div>
-            {!! Form::close() !!}
         </div>
     </div>
-
 @stop
