@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => ['address' => 'dcacilhas@gmail.com', 'name' => 'Capstone'],
 
     /*
     |--------------------------------------------------------------------------
@@ -120,5 +120,10 @@ return [
     */
 
     'pretend' => false,
+
+    'to' => [
+        'address' => 'dcacilhas@gmail.com',
+        'name' => 'Dev Example'
+    ],
 
 ];
