@@ -26,6 +26,13 @@
                     </div>
                 </div>
             </div>
+            <div class="input-group">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="remember" > Remember Me
+                    </label>
+                </div>
+            </div>
             <div class="form-group">
                 {!! Form::submit('Login', ['class' => 'btn btn-primary btn-lg btn-block']) !!}
             </div>
