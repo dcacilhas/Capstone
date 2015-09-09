@@ -11,10 +11,12 @@ class ShowsController extends Controller
     public function index()
     {
         $filter = Input::get('filter');
-        $filters = ['#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+        $filters = range('A', 'Z');
+        array_unshift($filters, '#');
 
         if (in_array(strtoupper($filter), $filters)) {
-            $shows = ($filter === '#') ? Show::whereRaw("SeriesName regexp '^[0-9]+'") : $shows = Show::where('SeriesName', 'LIKE', $filter . '%');
+            $shows = ($filter === '#') ? Show::whereRaw("SeriesName REGEXP '^[0-9]+'") : Show::where('SeriesName',
+                'LIKE', $filter . '%');
             $shows = $shows->orderBy('SeriesName', 'asc')->paginate(50);
 
             return view('shows', ['filters' => $filters, 'shows' => $shows, 'selectedFilter' => urlencode($filter)]);

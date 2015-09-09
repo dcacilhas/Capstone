@@ -13,7 +13,7 @@ class AddProfileInfoToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('last_login')->nullable();
+            $table->timestamp('last_online')->nullable();
             $table->timestamp('notifications_last_checked')->nullable();
             $table->text('about')->nullable();
             $table->date('birthday')->nullable();
@@ -41,7 +41,7 @@ class AddProfileInfoToUsersTable extends Migration
             $table->dropForeign('users_profile_visibility_foreign');
             $table->dropForeign('users_list_visibility_foreign');
             $table->dropColumn([
-                'last_login',
+                'last_online',
                 'notifications_last_checked',
                 'about',
                 'birthday',
