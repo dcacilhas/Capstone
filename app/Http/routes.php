@@ -13,10 +13,28 @@
 
 // Static Pages
 Route::get('/', ['as' => 'home', 'uses' => 'PagesController@home']);
-Route::get('home', function() { return redirect('/'); });
-Route::get('profile', ['as' => 'profile', 'uses' => 'PagesController@profile']);
+Route::get('home', function () {
+    return redirect('/');
+});
 Route::get('about', ['as' => 'about', 'uses' => 'PagesController@about']);
 Route::get('shows', ['as' => 'shows', 'uses' => 'ShowsController@index']);
+
+// Profile
+Route::get('profile', function () {
+    if (Auth::check()) {
+        return redirect()->route('profile', [Auth::user()->username]);
+    }
+
+    return back();
+});
+Route::get('profile/{username}', ['as' => 'profile', 'uses' => 'ProfileController@index']);
+Route::get('profile/{username}/edit', ['as' => 'profile/edit', 'uses' => 'ProfileController@showEditProfile']);
+Route::get('profile/{username}/account', ['as' => 'profile/account', 'uses' => 'ProfileController@showEditAccount']);
+Route::post('profile/{username}/postProfile',
+    ['as' => 'profile/postProfile', 'uses' => 'ProfileController@postProfile']);
+Route::post('profile/{username}/postEmail', ['as' => 'profile/postEmail', 'uses' => 'ProfileController@postEmail']);
+Route::post('profile/{username}/postPassword',
+    ['as' => 'profile/postPassword', 'uses' => 'ProfileController@postPassword']);
 
 // Authentication
 Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
