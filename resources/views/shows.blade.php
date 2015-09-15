@@ -4,6 +4,7 @@
 
 @section('content')
     <h1>TV Shows</h1>
+    <!-- TODO: Add filters (All Shows, Genres, Top Rated) -->
     @foreach ($filters as $filter)
         {!! link_to_route('shows', $filter, array('filter' => $filter)) !!}
     @endforeach

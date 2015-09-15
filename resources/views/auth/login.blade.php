@@ -17,6 +17,7 @@
             <div class="form-group">
                 <div style="margin-bottom: 25px" class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                    <!-- TODO: Add username OR email login: https://gist.github.com/AlexanderPoellmann/61feafa59963854009b7 -->
                     {!! Form::text('email', null, ['class' => 'form-control', 'placeholder' => 'Email Address']) !!}
                 </div>
                 <div class="form-group">

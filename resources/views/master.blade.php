@@ -91,6 +91,7 @@
         <p class="text-muted text-center">
             {!! link_to_route('about', 'About') !!}
             &nbsp;&nbsp;&nbsp;
+            <!-- TODO: Change mailto to config value -->
             {!! Html::mailto('david.cacilhas@mohawkcollege.ca', 'Contact Us') !!}</p>
     </div>
 </footer>
