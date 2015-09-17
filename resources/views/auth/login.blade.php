@@ -3,6 +3,7 @@
 @section('title', 'Log In')
 
 @section('content')
+    <div class="container">
     <h1>Log In</h1>
 
     <div class="panel panel-info">
@@ -47,5 +48,6 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 @stop
