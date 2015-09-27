@@ -17,6 +17,7 @@
 
         body {
             text-align: center;
+            margin-bottom: auto;
         }
 
         /* Extra markup and styles for table-esque vertical and horizontal centering */
@@ -72,7 +73,7 @@
             }
         }
     </style>
-    
+
     <div class="site-wrapper">
         <div class="site-wrapper-inner">
             <div class="cover-container">

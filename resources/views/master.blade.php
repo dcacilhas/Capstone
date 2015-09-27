@@ -32,6 +32,7 @@
         body {
             /* Margin bottom by footer height */
             margin-bottom: 60px;
+            overflow-y: scroll;
         }
 
         .footer {
@@ -40,6 +41,7 @@
             width: 100%;
             /* Set the fixed height of the footer here */
             height: 60px;
+            padding-top: 15px;
             background-color: #f5f5f5;
         }
     </style>
@@ -69,7 +71,7 @@
                 <li class="{{ (Request::route()->getName() == 'home') ? 'active' : '' }}">{!! link_to_route('home', 'Home') !!}</li>
                 <li class="{{ (Request::route()->getName() == 'shows') ? 'active' : '' }}">{!! link_to_route('shows', 'TV Shows') !!}</li>
                 @if (Auth::check())
-                    <li class="{{ (Request::route()->getName() == 'profile') ? 'active' : '' }}">{!! link_to_route('profile', 'Profile', ['username' => Auth::user()->username]) !!}</li>
+                    <li class="{{ starts_with(Request::route()->getName(), 'profile') ? 'active' : '' }}">{!! link_to_route('profile', 'Profile', ['username' => Auth::user()->username]) !!}</li>
                     <li>{!! link_to_route('logout', 'Log Out') !!}</li>
                 @else
                     <li class="{{ (Request::route()->getName() == 'login') ? 'active' : '' }}">{!! link_to_route('login', 'Log In') !!}</li>

@@ -24,7 +24,6 @@ Route::get('profile', function () {
     if (Auth::check()) {
         return redirect()->route('profile', [Auth::user()->username]);
     }
-
     return back();
 });
 Route::get('profile/{username}', ['as' => 'profile', 'uses' => 'ProfileController@index']);
