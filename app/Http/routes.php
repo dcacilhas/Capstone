@@ -35,6 +35,9 @@ Route::post('profile/{username}/postEmail', ['as' => 'profile/postEmail', 'uses'
 Route::post('profile/{username}/postPassword',
     ['as' => 'profile/postPassword', 'uses' => 'ProfileController@postPassword']);
 
+// List
+Route::get('profile/{username}/list', ['as' => 'profile/list', 'uses' => 'ListController@index']);
+
 // Authentication
 Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
 Route::post('login', ['as' => 'login', 'uses' => 'Auth\AuthController@postLogin']);
