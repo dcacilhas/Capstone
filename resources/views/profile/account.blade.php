@@ -4,16 +4,16 @@
 
 @section('content')
     <div class="container">
-        <h1>Edit Profile</h1>
-
-        <pre>{{ json_encode($user, JSON_PRETTY_PRINT) }}</pre>
-
-        {!! link_to_route('profile', 'Profile', ['username' => Auth::user()->username]) !!}
-        {!! link_to_route('profile/edit', 'Edit Profile', ['username' => Auth::user()->username]) !!}
-        {!! link_to_route('profile/account', 'Edit Account', ['username' => Auth::user()->username]) !!}
+        @include('includes.profile_submenu')
 
         {!! Form::model($user, ['route' => ['profile/postEmail', $user->username], 'class' => 'form-horizontal']) !!}
         @include('errors.errors')
+
+        @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+        @endif
 
         <h2>Change Email</h2>
 

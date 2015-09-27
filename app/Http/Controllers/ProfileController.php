@@ -67,7 +67,7 @@ class ProfileController extends Controller
         $user->fill($input);
         $user->save();
 
-        return redirect()->route('profile/edit', ['username' => $user->username]);
+        return redirect()->route('profile/edit', ['username' => $user->username])->with('status', 'Profile successfully updated!');
     }
 
     public function postEmail(Request $request)
@@ -92,7 +92,7 @@ class ProfileController extends Controller
                 ->withInput();
         }
 
-        return redirect()->route('profile/account', ['username' => $user->username]);
+        return redirect()->route('profile/account', ['username' => $user->username])->with('status', 'Email successfully updated!');
     }
 
     public function postPassword(Request $request)
@@ -123,6 +123,6 @@ class ProfileController extends Controller
                 ->withInput();
         }
 
-        return redirect()->route('profile/account', ['username' => $user->username]);
+        return redirect()->route('profile/account', ['username' => $user->username])->with('status', 'Password successfully updated!');
     }
 }
