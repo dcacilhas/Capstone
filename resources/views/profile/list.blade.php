@@ -6,6 +6,7 @@
     <div class="container">
         @include('includes.profile_submenu')
 
+        @if($user['list_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user['username']))
             <ul class="nav nav-pills nav-justified">
                 <li role="presentation"
                     @if($status === null) class="active" @endif>{!! link_to_route('profile/list', 'All', ['username' => $user['username']]) !!}</li>
@@ -142,5 +143,9 @@
                     </tbody>
                 </table>
             @endif
+        @else
+            <div class="alert alert-danger">The user has chosen to make their list private. Only they may view it.
+            </div>
+        @endif
     </div>
 @stop
