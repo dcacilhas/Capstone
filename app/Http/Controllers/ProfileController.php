@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\User;
 use Auth;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,6 +19,7 @@ class ProfileController extends Controller
     public function index($username)
     {
         $user = User::where('username', $username)->first();
+        $user->gender = DB::table('genders')->where('gender', '=', $user['gender'])->value('description');
 
         return view('profile/home', ['user' => $user]);
     }
