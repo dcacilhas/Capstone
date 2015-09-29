@@ -23,19 +23,10 @@ class ProfileMiddleware
             return abort(404);
         }
 
-        // User is a guest or is requesting the profile of a different user
+        // User is a guest or is logged in but requesting the profile of a different user
+        // Protects against users trying to access another user's edit profile/edit account pages
         if (Auth::guest() || strcasecmp($request->username, Auth::user()->username) !== 0) {
             $user = User::where('username', $request->username)->first();
-
-            if ($request->route()->getName() === 'profile') {
-                return view('profile/home', ['user' => $user]);
-            }
-
-            // TODO: May need to refactor. 'series' will definitely need Model info from database.
-            if ($request->route()->getName() === 'profile/list') {
-                $status = $status = Input::get('status');
-                return view('profile/list', ['user' => $user, 'series' => [], 'status' => $status]);
-            }
 
             return view('profile/home', ['user' => $user]);
         }
