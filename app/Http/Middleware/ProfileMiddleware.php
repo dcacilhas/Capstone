@@ -28,6 +28,15 @@ class ProfileMiddleware
         if (Auth::guest() || strcasecmp($request->username, Auth::user()->username) !== 0) {
             $user = User::where('username', $request->username)->first();
 
+            if ($request->route()->getName() === 'profile') {
+                return view('profile/home', ['user' => $user]);
+            }
+
+            // TODO: May need refactoring.
+            if ($request->route()->getName() === 'profile/list') {
+                return $next($request);
+            }
+
             return view('profile/home', ['user' => $user]);
         }
 
