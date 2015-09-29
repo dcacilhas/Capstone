@@ -46,4 +46,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = ['password', 'password_confirmation', 'remember_token'];
+
+    public function getList() {
+        return $this->hasMany('App\Lists');
+    }
 }
