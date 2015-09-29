@@ -22,6 +22,7 @@ class CreateListTable extends Migration
             $table->foreign('list_status')->references('list_status')->on('list_statuses');
             $table->tinyInteger('rating')->nullable();
             $table->timestamps();
+            $table->unique(['series_id', 'user_id']);
         });
     }
 
