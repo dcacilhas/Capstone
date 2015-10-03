@@ -19,18 +19,12 @@ class ListController extends Controller
         $user = User::where('username', $username)->first();
         $status = Input::get('status');
         $listStatuses = DB::table('list_statuses')->get();
-        $series = User::find($user->id)->getList()
-            ->join('tvseries', 'list.series_id', '=', 'tvseries.id')
-            ->where('user_id', $user->id)
-            ->get();
 
-        // Only get series that match by filtered status, otherwise return all
-        if ($status != null && $series->contains('list_status', (int)$status)) {
-            $series = User::find($user->id)->getList()
-                ->join('tvseries', 'list.series_id', '=', 'tvseries.id')
-                ->where('user_id', $user->id)
-                ->where('list_status', $status)
-                ->get();
+        // Get all series if status is not set, otherwise get matching series by status
+        if ($status === null) {
+            $series = User::find($user->id)->getListWithSeries()->get();
+        } else {
+            $series = User::find($user->id)->getListWithSeries()->where('list_status', $status)->get();
         }
 
         return view('profile/list',
