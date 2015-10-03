@@ -22,7 +22,7 @@
 
             @foreach($listStatuses as $listStatus)
                 @if($series->contains('list_status', $listStatus->list_status))
-                    <table class="table table-striped">
+                    <table class="table table-striped table-bordered">
                         <caption>{{ $listStatus->description }}</caption>
                         <thead>
                         <tr>
@@ -31,7 +31,6 @@
                             <th>Rating</th>
                             <th>Last Episode Watched</th>
                             <th>Progress</th>
-                            <th>Edit</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -40,15 +39,18 @@
                             @if($s['list_status'] === $listStatus->list_status)
                                 <tr>
                                     <th scope="row">{{ $i++ }}</th>
-                                    <td>{{ $s['SeriesName'] }}</td>
+                                    <td>
+                                        {{ $s['SeriesName'] }}
+                                        @if ((Auth::check() && Auth::user()->username === $user['username']))
+                                            <div class="pull-right">
+                                                <a href="#" class="edit" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                                                <a href="#" class="remove" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                                            </div>
+                                        @endif
+                                    </td>
                                     <td>{{ $s['rating'] }}</td>
                                     <td>{{ $s['last_episode_watched'] }}</td>
                                     <td>{{ $s['progress'] }}</td>
-                                    <td>
-                                        @if((Auth::check() && Auth::user()->username === $user['username']))
-                                            E
-                                        @endif
-                                    </td>
                                 </tr>
                             @endif
                         @endforeach
@@ -60,5 +62,30 @@
             <div class="alert alert-danger">The user has chosen to make their list private. Only they may view it.
             </div>
         @endif
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+@stop
+
+@section('javascript')
+    <script>
+    </script>
 @stop
