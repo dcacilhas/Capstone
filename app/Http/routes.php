@@ -37,6 +37,8 @@ Route::post('profile/{username}/postPassword',
 
 // List
 Route::get('profile/{username}/list', ['as' => 'profile/list', 'uses' => 'ListController@index']);
+Route::post('profile/{username}/updateList', ['as' => 'profile/updateList', 'uses' => 'ListController@updateList']);
+Route::post('profile/{username}/removeFromList', ['as' => 'profile/removeFromList', 'uses' => 'ListController@removeFromList']);
 
 // Authentication
 Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
