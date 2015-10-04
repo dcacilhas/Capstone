@@ -25,6 +25,13 @@
         @foreach ($filters as $filter)
             {!! link_to_route('shows', $filter, array('filter' => $filter)) !!}
         @endforeach
+
+        @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+        @endif
+
         @if (isset($shows))
             <table class="table table-striped table-bordered">
                 <caption>Shows</caption>
@@ -92,6 +99,7 @@
                             {!! Form::open(['route' => ['profile/addToList', $user->username], 'class' => 'form-horizontal']) !!}
 
                             {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
+                            {!! Form::hidden('series_name', null, ['id' => 'series_name']) !!}
 
                             <div class="form-group">
                                 {!! Form::label('status', 'Status: ', ['class' => 'col-sm-2 control-label']) !!}
@@ -128,6 +136,7 @@
                     id = button.data('series-id'),
                     modal = $(this);
             modal.find('#series_id').val(id);
+            modal.find('#series_name').val(title);
             modal.find('.modal-title').text(title);
             modal.find('#status_0').prop('checked', true);
         });

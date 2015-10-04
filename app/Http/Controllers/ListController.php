@@ -109,9 +109,9 @@ class ListController extends Controller
 
         $input = $request->all();
         $user = User::where('username', $request->username)->first();
-        $list = Lists::create(['series_id' => $input['series_id'], 'user_id' => $user->id, 'list_status' => (int)$input['status']]);
+        Lists::create(['series_id' => $input['series_id'], 'user_id' => $user->id, 'list_status' => (int)$input['status']]);
 
-        return back();
+        return back()->with('status', $input['series_name'] . ' was successfully added to your list!');
     }
 
     public function showWatchHistory($username) {
