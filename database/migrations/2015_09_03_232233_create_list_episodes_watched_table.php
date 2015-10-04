@@ -19,6 +19,7 @@ class CreateListEpisodesWatchedTable extends Migration
             $table->integer('list_id')->unsigned();
             $table->foreign('list_id')->references('id')->on('list');
             $table->timestamps();
+            $table->unique(['list_id', 'episode_id']);
         });
     }
 
