@@ -8,23 +8,27 @@
 
         <!-- TODO: Add filters (All Shows, Genres, Top Rated) -->
         <ul class="nav nav-pills nav-justified">
-            {{--<li role="presentation" class="{{ (Request::route()->getName() == 'profile/list') ? 'active' : '' }}">{!! link_to_route('profile/list', 'List', ['username' => $user['username']]) !!}</li>--}}
-            <li role="presentation"><a href="#">All Shows</a></li>
-            <li role="presentation" class="dropdown">
+            <li role="presentation" class="dropdown @if (isset($selectedFilter)) {{ 'active' }} @endif">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    Shows Starting With <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    @foreach($filters as $filter)
+                        <li class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">{!! link_to_route('shows', $filter, array('filter' => $filter)) !!}</li>
+                    @endforeach
+                </ul>
+            </li>
+            <li role="presentation" class="dropdown @if (isset($selectedGenre)) {{ 'active' }} @endif">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                     Genres <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
                     @foreach($genres as $genre)
-                        <li>{!! link_to_route('shows', $genre->genre, array('genre' => $genre->genre)) !!}</li>
+                        <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">{!! link_to_route('shows', $genre->genre, array('genre' => $genre->genre)) !!}</li>
                     @endforeach
                 </ul>
             </li>
         </ul>
-
-        @foreach ($filters as $filter)
-            {!! link_to_route('shows', $filter, array('filter' => $filter)) !!}
-        @endforeach
 
         @if (session('status'))
             <div class="alert alert-success">
@@ -34,7 +38,7 @@
 
         @if (isset($shows))
             <table class="table table-striped table-bordered">
-                <caption>Shows</caption>
+                <caption>{{ $selectedGenre or urldecode($selectedFilter) }}</caption>
                 <thead>
                 <tr>
                     <th class="text-center">#</th>
@@ -84,7 +88,7 @@
                 {!! $shows->appends(['genre' => $selectedGenre])->render() !!}
             @endif
         @else
-            <p>Click to filter shows starting with that letter.</p>
+            <p>Select a filter above to display a list of TV Shows.</p>
         @endif
 
             <!-- AddModal -->
