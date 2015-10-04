@@ -14,7 +14,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     @foreach($filters as $filter)
-                        <li class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">{!! link_to_route('shows', $filter, array('filter' => $filter)) !!}</li>
+                        <li class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">{!! link_to_route('shows', $filter, ['filter' => $filter]) !!}</li>
                     @endforeach
                 </ul>
             </li>
@@ -24,7 +24,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     @foreach($genres as $genre)
-                        <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">{!! link_to_route('shows', $genre->genre, array('genre' => $genre->genre)) !!}</li>
+                        <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">{!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}</li>
                     @endforeach
                 </ul>
             </li>

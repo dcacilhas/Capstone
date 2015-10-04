@@ -6,18 +6,18 @@
     <div class="container">
         @include('includes.profile_submenu')
 
-        @if($user['list_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user['username']))
+        @if($user['list_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user->username))
             <ul class="nav nav-pills nav-justified">
                 <li role="presentation"
-                    @if($status === null) class="active" @endif>{!! link_to_route('profile/list', 'All', ['username' => $user['username']]) !!}</li>
+                    @if($status === null) class="active" @endif>{!! link_to_route('profile/list', 'All', ['username' => $user->username]) !!}</li>
                 <li role="presentation"
-                    @if($status === '0') class="active" @endif>{!! link_to_route('profile/list', 'Watching', ['username' => $user['username'], 'status' => '0']) !!}</li>
+                    @if($status === '0') class="active" @endif>{!! link_to_route('profile/list', 'Watching', ['username' => $user->username, 'status' => '0']) !!}</li>
                 <li role="presentation"
-                    @if($status === '1') class="active" @endif>{!! link_to_route('profile/list', 'Plan To Watch', ['username' => $user['username'], 'status' => '1']) !!}</li>
+                    @if($status === '1') class="active" @endif>{!! link_to_route('profile/list', 'Plan To Watch', ['username' => $user->username, 'status' => '1']) !!}</li>
                 <li role="presentation"
-                    @if($status === '2') class="active" @endif>{!! link_to_route('profile/list', 'Completed', ['username' => $user['username'], 'status' => '2']) !!}</li>
+                    @if($status === '2') class="active" @endif>{!! link_to_route('profile/list', 'Completed', ['username' => $user->username, 'status' => '2']) !!}</li>
                 <li role="presentation"
-                    @if($status === '3') class="active" @endif>{!! link_to_route('profile/list', 'On Hold', ['username' => $user['username'], 'status' => '3']) !!}</li>
+                    @if($status === '3') class="active" @endif>{!! link_to_route('profile/list', 'On Hold', ['username' => $user->username, 'status' => '3']) !!}</li>
             </ul>
 
             @foreach($listStatuses as $listStatus)
@@ -64,8 +64,8 @@
                                             </div>
                                         @endif
                                     </td>
-                                    <td class="text-center">{{ $s->rating or '-' }}</td>
-                                    <td class="text-center">{{ $s->last_episode_watched or '-' }}</td>
+                                    <td class="text-center">{{ $s->rating }}</td>
+                                    <td class="text-center">{{ $s->last_episode_watched }}</td>
                                     <td>
                                         <div class="progress">
                                             <div class="progress-bar" style="width: {{ $s->progress }}%;"></div>
