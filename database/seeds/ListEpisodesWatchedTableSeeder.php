@@ -34,19 +34,19 @@ class ListEpisodesWatchedTableSeeder extends Seeder
         // Seed Buffy (70327) episodes up to S02E01
         foreach ($buffyIds as $id) {
             DB::table('list_episodes_watched')->insert([
-                ['episode_id' => 2, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 3, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 4, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 5, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 6, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 7, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 8, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 9, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 10, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 11, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 12, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 13, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 14, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+                ['episode_id' => 2, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
+                ['episode_id' => 3, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
+                ['episode_id' => 4, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
+                ['episode_id' => 5, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
+                ['episode_id' => 6, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
+                ['episode_id' => 7, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
+                ['episode_id' => 8, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
+                ['episode_id' => 9, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
+                ['episode_id' => 10, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
+                ['episode_id' => 11, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
+                ['episode_id' => 12, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
+                ['episode_id' => 13, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
+                ['episode_id' => 14, 'list_id' => $id, 'created_at' => Carbon::now()->subMinute(), 'updated_at' => Carbon::now()->subMinute()],
             ]);
         }
 
@@ -65,13 +65,13 @@ class ListEpisodesWatchedTableSeeder extends Seeder
         // Seed Breaking Bad (81189) episodes up to S01E07
         foreach ($breakingBadIds as $id) {
             DB::table('list_episodes_watched')->insert([
-                ['episode_id' => 349232, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 349233, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 349235, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 349236, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 349238, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 355100, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['episode_id' => 352534, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+                ['episode_id' => 349232, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()->addMinute()],
+                ['episode_id' => 349233, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()->addMinute()],
+                ['episode_id' => 349235, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()->addMinute()],
+                ['episode_id' => 349236, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()->addMinute()],
+                ['episode_id' => 349238, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()->addMinute()],
+                ['episode_id' => 355100, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()->addMinute()],
+                ['episode_id' => 352534, 'list_id' => $id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()->addMinute()],
             ]);
         }
     }
