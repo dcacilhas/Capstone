@@ -53,6 +53,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getListWithSeries() {
         return $this->hasMany('App\Lists')
+            ->select('list.*', 'tvseries.SeriesName')
             ->join('tvseries', 'list.series_id', '=', 'tvseries.id')
             ->where('user_id', $this->id);
     }

@@ -29,6 +29,43 @@ class ListController extends Controller
             $series = User::find($user->id)->getListWithSeries()->where('list_status', $status)->get();
         }
 
+        foreach($series as $s) {
+            // TODO: Extract out to model
+            $eps_total = DB::table('tvepisodes')
+                ->where('seriesid', $s->series_id)
+                ->whereNull('airsbefore_episode')
+                ->whereNull('airsbefore_season')
+                ->whereNull('airsafter_season')
+                ->count();
+
+            // TODO: Extract out to model
+            $eps_watched = DB::table('list_episodes_watched')
+                ->where('list_id', $s->id)
+                ->count();
+
+            if ($s->list_status === 2) {
+                $s->progress = 100;
+            } else {
+                $s->progress = number_format($eps_watched / $eps_total * 100, 0);
+            }
+
+            // TODO: Extract out to model
+            $last_ep_watched = DB::table('list_episodes_watched')
+                ->where('list_id', $s->id)
+                ->select('tvepisodes.EpisodeNumber', 'tvseasons.season')
+                ->join('tvepisodes', 'list_episodes_watched.episode_id', '=', 'tvepisodes.id')
+                ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            $last_ep_watched_formatted = '';
+            if (!empty($last_ep_watched)) {
+                $last_ep_watched_formatted = sprintf('S%02dE%02d', $last_ep_watched->season, $last_ep_watched->EpisodeNumber);
+            }
+
+            $s->last_episode_watched = $last_ep_watched_formatted;
+        }
+
         return view('profile/list',
             ['user' => $user, 'series' => $series, 'status' => $status, 'listStatuses' => $listStatuses]);
     }

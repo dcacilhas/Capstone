@@ -27,10 +27,10 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Series Title</th>
+                            <th class="col-md-6">Series Title</th>
                             <th>Rating</th>
-                            <th>Last Episode Watched</th>
-                            <th>Progress</th>
+                            <th class="col-md-2">Last Episode Watched</th>
+                            <th class="col-md-2">Progress</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -46,21 +46,32 @@
                                                 <a href="#" class="edit"
                                                    data-toggle="modal"
                                                    data-target="#updateModal"
-                                                   data-series-id="{{ $s->id }}"
+                                                   data-series-id="{{ $s->series_id }}"
                                                    data-series-title="{{ $s->SeriesName }}"
                                                    data-series-rating="{{ $s->rating }}"
-                                                   data-series-status="{{ $s->list_status }}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                                                   data-series-status="{{ $s->list_status }}"
+                                                   title="Edit">
+                                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                                </a>
                                                 <a href="#" class="remove"
                                                    data-toggle="modal"
                                                    data-target="#removeModal"
-                                                   data-series-id="{{ $s->id }}"
-                                                   data-series-title="{{ $s->SeriesName }}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                                                   data-series-id="{{ $s->series_id }}"
+                                                   data-series-title="{{ $s->SeriesName }}"
+                                                   title="Remove">
+                                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                                </a>
                                             </div>
                                         @endif
                                     </td>
-                                    <td>{{ $s['rating'] }}</td>
-                                    <td>{{ $s['last_episode_watched'] }}</td>
-                                    <td>{{ $s['progress'] }}</td>
+                                    <td>{{ $s->rating }}</td>
+                                    <td>{{ $s->last_episode_watched }}</td>
+                                    <td>
+                                        <div class="progress">
+                                            <div class="progress-bar" style="width: {{ $s->progress }}%;"></div>
+                                            <span>@if ($s->progress > 0) {{ $s->progress }}% @endif</span>
+                                        </div>
+                                    </td>
                                 </tr>
                             @endif
                         @endforeach
@@ -170,7 +181,24 @@
                 modal = $(this);
             modal.find('#series_id').val(id);
             modal.find('.modal-title').text(title);
-            modal.find('p').text('Are you sure you want to remove ' + title + ' from your list?');
+            modal.find('p').html("Are you sure you want to remove <strong>" + title + "</strong> from your list?");
         })
     </script>
+@stop
+
+@section('css')
+    <style>
+        .progress {
+            position:relative;
+            margin-bottom:0px;
+        }
+        .progress span {
+            position:absolute;
+            left:0;
+            width:100%;
+            text-align:center;
+            z-index:2;
+            color:black;
+        }
+    </style>
 @stop
