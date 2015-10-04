@@ -26,11 +26,11 @@
                         <caption>{{ $listStatus->description }}</caption>
                         <thead>
                         <tr>
-                            <th>#</th>
+                            <th class="col-md-1 text-center">#</th>
                             <th class="col-md-6">Series Title</th>
-                            <th>Rating</th>
-                            <th class="col-md-2">Last Episode Watched</th>
-                            <th class="col-md-2">Progress</th>
+                            <th class="col-md-1 text-center">Rating</th>
+                            <th class="col-md-2 text-center">Last Episode Watched</th>
+                            <th class="col-md-2 text-center">Progress</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -38,7 +38,7 @@
                         @foreach($series as $s)
                             @if($s->list_status === $listStatus->list_status)
                                 <tr>
-                                    <th scope="row">{{ $i++ }}</th>
+                                    <th scope="row" class="text-center">{{ $i++ }}</th>
                                     <td>
                                         {{ $s->SeriesName }}
                                         @if ((Auth::check() && Auth::user()->username === $user->username))
@@ -64,8 +64,8 @@
                                             </div>
                                         @endif
                                     </td>
-                                    <td>{{ $s->rating }}</td>
-                                    <td>{{ $s->last_episode_watched }}</td>
+                                    <td class="text-center">{{ $s->rating or '-' }}</td>
+                                    <td class="text-center">{{ $s->last_episode_watched or '-' }}</td>
                                     <td>
                                         <div class="progress">
                                             <div class="progress-bar" style="width: {{ $s->progress }}%;"></div>
@@ -172,7 +172,7 @@
             modal.find('.modal-title').text(title);
             modal.find('#rating').val(rating);
             modal.find('#status_' + status).prop('checked', true);
-        })
+        });
 
         $('#removeModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget),
@@ -182,7 +182,7 @@
             modal.find('#series_id').val(id);
             modal.find('.modal-title').text(title);
             modal.find('p').html("Are you sure you want to remove <strong>" + title + "</strong> from your list?");
-        })
+        });
     </script>
 @stop
 

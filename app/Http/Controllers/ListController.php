@@ -58,7 +58,7 @@ class ListController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->first();
 
-            $last_ep_watched_formatted = '';
+            $last_ep_watched_formatted = null;
             if (!empty($last_ep_watched)) {
                 $last_ep_watched_formatted = sprintf('S%02dE%02d', $last_ep_watched->season, $last_ep_watched->EpisodeNumber);
             }
