@@ -55,7 +55,10 @@ class ListController extends Controller
                 ->select('tvepisodes.EpisodeNumber', 'tvseasons.season')
                 ->join('tvepisodes', 'list_episodes_watched.episode_id', '=', 'tvepisodes.id')
                 ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
+                ->orderBy('updated_at', 'desc')
                 ->orderBy('created_at', 'desc')
+                ->orderBy('tvseasons.season', 'desc')
+                ->orderBy('tvepisodes.EpisodeNumber', 'desc')
                 ->first();
 
             $last_ep_watched_formatted = null;
