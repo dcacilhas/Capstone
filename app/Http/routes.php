@@ -40,6 +40,7 @@ Route::get('profile/{username}/list', ['as' => 'profile/list', 'uses' => 'ListCo
 Route::get('profile/{username}/list/watchHistory', ['as' => 'profile/list/watchHistory', 'uses' => 'ListController@showWatchHistory']);
 Route::post('profile/{username}/updateList', ['as' => 'profile/updateList', 'uses' => 'ListController@updateList']);
 Route::post('profile/{username}/removeFromList', ['as' => 'profile/removeFromList', 'uses' => 'ListController@removeFromList']);
+Route::post('profile/{username}/addToList', ['as' => 'profile/addToList', 'uses' => 'ListController@addToList']);
 
 // Authentication
 Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);

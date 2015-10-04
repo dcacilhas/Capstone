@@ -90,10 +90,7 @@ class ListController extends Controller
         }
         $list->save();
 
-        if ($input['page_status'] != "") {
-            return redirect()->route('profile/list', ['username' => $request->username, 'status' => $input['page_status']]);
-        }
-        return redirect()->route('profile/list', ['username' => $request->username]);
+        return back();
     }
 
     public function removeFromList(Request $request) {
@@ -101,10 +98,20 @@ class ListController extends Controller
         $user = User::where('username', $request->username)->first();
         Lists::where('user_id', $user->id)->where('series_id', $input['series_id'])->delete();
 
-        if ($input['page_status'] != "") {
-            return redirect()->route('profile/list', ['username' => $request->username, 'status' => $input['page_status']]);
-        }
-        return redirect()->route('profile/list', ['username' => $request->username]);
+        return back();
+    }
+
+    public function addToList(Request $request) {
+        // TODO: Abstract this out: http://laravel.com/docs/5.1/validation#form-request-validation
+        $this->validate($request, [
+            'status' => 'required|numeric|between:0,3'
+        ]);
+
+        $input = $request->all();
+        $user = User::where('username', $request->username)->first();
+        $list = Lists::create(['series_id' => $input['series_id'], 'user_id' => $user->id, 'list_status' => (int)$input['status']]);
+
+        return back();
     }
 
     public function showWatchHistory($username) {
