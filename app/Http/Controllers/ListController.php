@@ -106,4 +106,23 @@ class ListController extends Controller
         }
         return redirect()->route('profile/list', ['username' => $request->username]);
     }
+
+    public function showWatchHistory($username) {
+        $user = User::where('username', $username)->first();
+        $eps_watched = DB::table('list_episodes_watched')
+            ->where('user_id', $user->id)
+            ->select('users.id', 'tvseries.SeriesName', 'tvepisodes.seriesid', 'tvepisodes.EpisodeName', 'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at')
+            ->join('tvepisodes', 'list_episodes_watched.episode_id', '=', 'tvepisodes.id')
+            ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
+            ->join('tvseries', 'tvepisodes.seriesid', '=', 'tvseries.id')
+            ->join('list', 'list_episodes_watched.list_id', '=', 'list.id')
+            ->join('users', 'list.user_id', '=', 'users.id')
+            ->orderBy('list_episodes_watched.updated_at', 'desc')
+            ->orderBy('list_episodes_watched.created_at', 'desc')
+            ->orderBy('tvseasons.season', 'desc')
+            ->orderBy('tvepisodes.EpisodeNumber', 'desc')
+            ->paginate(10);
+
+        return view('profile/watch_history', ['user' => $user, 'eps_watched' => $eps_watched]);
+    }
 }
