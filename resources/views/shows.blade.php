@@ -91,6 +91,7 @@
             <p>Select a filter above to display a list of TV Shows.</p>
         @endif
 
+        @if (Auth::check())
             <!-- AddModal -->
             <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
                 <div class="modal-dialog" role="document">
@@ -129,6 +130,7 @@
                     </div>
                 </div>
             </div>
+        @endif
     </div>
 @stop
 

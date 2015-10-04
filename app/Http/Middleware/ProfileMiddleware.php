@@ -37,6 +37,11 @@ class ProfileMiddleware
                 return $next($request);
             }
 
+            // TODO: May need refactoring.
+            if ($request->route()->getName() === 'profile/list/watchHistory') {
+                return $next($request);
+            }
+
             return view('profile/home', ['user' => $user]);
         }
 

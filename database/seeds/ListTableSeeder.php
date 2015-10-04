@@ -36,7 +36,7 @@ class ListTableSeeder extends Seeder
                     'series_id' => $seriesId,
                     'user_id' => $i,
                     'list_status' => rand(0, 3),
-                    'rating' => $faker->optional()->numberBetween(0, 10),
+                    'rating' => $faker->optional()->numberBetween(1, 10),
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                 ]);

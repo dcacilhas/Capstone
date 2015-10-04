@@ -38,9 +38,11 @@ class ShowsController extends Controller
                 ->where('SeriesName', '<>', '')
                 ->paginate(50);
 
-            // Check if show exists in user's list so we can display the Add Show button or not
-            foreach ($shows as $show) {
-                $show->is_in_list = $is_in_list = Lists::where('user_id', $user->id)->where('series_id', $show->id)->exists();
+            if (Auth::check()) {
+                // Check if show exists in user's list so we can display the Add Show button or not
+                foreach ($shows as $show) {
+                    $show->is_in_list = $is_in_list = Lists::where('user_id', $user->id)->where('series_id', $show->id)->exists();
+                }
             }
 
             return view('shows', ['user' => $user, 'genres' => $genres, 'selectedGenre' => $genre, 'filters' => $filters, 'shows' => $shows, 'listStatuses' => $listStatuses]);
