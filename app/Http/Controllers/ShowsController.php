@@ -49,7 +49,7 @@ class ShowsController extends Controller
                 ->orderBy('SeriesName', 'asc')
                 ->whereNotNull('SeriesID')
                 ->whereNotNull('SeriesName')
-                ->where('SeriesName', 'NOT LIKE', '%*')
+                ->where('SeriesName', 'NOT LIKE', '*%')
                 ->where('SeriesName', '<>', '')
                 ->paginate(50);
 
