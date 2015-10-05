@@ -9,7 +9,8 @@
         <!-- TODO: Add filters (All Shows, Genres, Top Rated) -->
         <ul class="nav nav-pills nav-justified">
             <li role="presentation" class="dropdown @if (isset($selectedFilter)) {{ 'active' }} @endif">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                   aria-expanded="false">
                     Shows Starting With <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
@@ -19,7 +20,8 @@
                 </ul>
             </li>
             <li role="presentation" class="dropdown @if (isset($selectedGenre)) {{ 'active' }} @endif">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                   aria-expanded="false">
                     Genres <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
@@ -41,13 +43,14 @@
                 <caption>{{ $selectedGenre or urldecode($selectedFilter) }}</caption>
                 <thead>
                 <tr>
-                    <th class="text-center">#</th>
-                    <th class="col-md-6">Series Title</th>
+                    <th class="col-md-1 text-center">#</th>
+                    <th class="col-md-4">Series Title</th>
                     <th class="col-md-1 text-center">Status</th>
-                    <th class="col-md-1 text-center">FirstAired</th>
+                    <th class="col-md-1 text-center">First Aired</th>
                     <th class="col-md-1 text-center">Network</th>
                     <th class="col-md-1 text-center">Runtime (mins)</th>
                     <th class="col-md-1 text-center">Rating</th>
+                    <th class="col-md-1 text-center">Site Rating</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -59,16 +62,16 @@
                             {{ $show->SeriesName }}
                             @if ((Auth::check() && Auth::user()->username === $user->username))
                                 @if (!$show->is_in_list)
-                                <div class="pull-right">
-                                    <a href="#" class="edit"
-                                       data-toggle="modal"
-                                       data-target="#addModal"
-                                       data-series-id="{{ $show->id }}"
-                                       data-series-title="{{ $show->SeriesName }}"
-                                       title="Add to List">
-                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                    </a>
-                                </div>
+                                    <div class="pull-right">
+                                        <a href="#" class="edit"
+                                           data-toggle="modal"
+                                           data-target="#addModal"
+                                           data-series-id="{{ $show->id }}"
+                                           data-series-title="{{ $show->SeriesName }}"
+                                           title="Add to List">
+                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                        </a>
+                                    </div>
                                 @endif
                             @endif
                         </td>
@@ -77,6 +80,7 @@
                         <td class="text-center">{{ $show->Network }}</td>
                         <td class="text-center">{{ $show->Runtime }}</td>
                         <td class="text-center">{{ $show->Rating }}</td>
+                        <td class="text-center">{{ $show->SiteRating }}</td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -97,7 +101,8 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
                             <h4 class="modal-title" id="addModalLabel"></h4>
                         </div>
                         <div class="modal-body">
