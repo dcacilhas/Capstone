@@ -3,6 +3,28 @@
 @section('title', 'Home')
 
 @section('content')
+    <div class="site-wrapper">
+        <div class="site-wrapper-inner">
+            <div class="cover-container">
+                <div class="inner cover">
+                    <h1 class="cover-heading">MyMediaList</h1>
+                    <br>
+                    <p class="lead">Track the TV shows you're watching. Invite your friends and share your progress.</p>
+
+                    @if (!Auth::check())
+                        <p class="lead">
+                            {!! link_to_route('register', 'Register', [], ['class' => 'btn btn-lg btn-default']) !!}
+                            or
+                            {!! link_to_route('login', 'Log In', [], ['class' => 'btn btn-lg btn-default']) !!}
+                        </p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+@stop
+
+@section('css')
     <style>
         /* TODO: Clean up and include in CSS file */
 
@@ -73,24 +95,4 @@
             }
         }
     </style>
-
-    <div class="site-wrapper">
-        <div class="site-wrapper-inner">
-            <div class="cover-container">
-                <div class="inner cover">
-                    <h1 class="cover-heading">MyMediaList</h1>
-                    <br>
-                    <p class="lead">Track the TV shows you're watching. Invite your friends and share your progress.</p>
-
-                    @if (!Auth::check())
-                        <p class="lead">
-                            {!! link_to_route('register', 'Register', [], ['class' => 'btn btn-lg btn-default']) !!}
-                            or
-                            {!! link_to_route('login', 'Log In', [], ['class' => 'btn btn-lg btn-default']) !!}
-                        </p>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
 @stop

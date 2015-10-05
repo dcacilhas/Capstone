@@ -3,6 +3,27 @@
 @section('title', 'About')
 
 @section('content')
+    <div class="site-wrapper">
+        <div class="site-wrapper-inner">
+            <div class="cover-container">
+                <div class="inner cover">
+                    <h1 class="cover-heading">What is MyMediaList?</h1>
+
+                    <p class="lead">MyMediaList is a website that helps users track the TV shows they are watching.
+                        Users create a profile and can invite their friends to share their progress.</p>
+
+                    <h1 class="cover-heading">Who made MyMediaList?</h1>
+
+                    <p class="lead">Created by David Cacilhas. Find him
+                        on {!! link_to('https://github.com/dcacilhas', 'GitHub') !!}
+                        , {!! link_to('https://ca.linkedin.com/in/dcacilhas', 'LinkedIn') !!}.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+@stop
+
+@section('css')
     <style>
         /* TODO: Clean up and include in CSS file */
 
@@ -72,23 +93,4 @@
             }
         }
     </style>
-
-    <div class="site-wrapper">
-        <div class="site-wrapper-inner">
-            <div class="cover-container">
-                <div class="inner cover">
-                    <h1 class="cover-heading">What is MyMediaList?</h1>
-
-                    <p class="lead">MyMediaList is a website that helps users track the TV shows they are watching.
-                        Users create a profile and can invite their friends to share their progress.</p>
-
-                    <h1 class="cover-heading">Who made MyMediaList?</h1>
-
-                    <p class="lead">Created by David Cacilhas. Find him
-                        on {!! link_to('https://github.com/dcacilhas', 'GitHub') !!}
-                        , {!! link_to('https://ca.linkedin.com/in/dcacilhas', 'LinkedIn') !!}.</p>
-                </div>
-            </div>
-        </div>
-    </div>
 @stop
