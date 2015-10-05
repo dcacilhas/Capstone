@@ -40,7 +40,8 @@
                                 <tr>
                                     <th scope="row" class="text-center">{{ $i++ }}</th>
                                     <td>
-                                        {{ $s->SeriesName }}
+                                        {!! link_to_route('shows/episode', $s->SeriesName, ['id' => $s->series_id]) !!}
+
                                         @if ((Auth::check() && Auth::user()->username === $user->username))
                                             <div class="pull-right">
                                                 <a href="#" class="edit"

@@ -17,7 +17,10 @@ Route::get('home', function () {
     return redirect('/');
 });
 Route::get('about', ['as' => 'about', 'uses' => 'PagesController@about']);
+
+// Shows
 Route::get('shows', ['as' => 'shows', 'uses' => 'ShowsController@index']);
+Route::get('shows/{id}', ['as' => 'shows/episode', 'uses' => 'ShowsDetailsController@index']);
 
 // Profile
 Route::get('profile', function () {

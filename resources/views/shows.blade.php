@@ -59,7 +59,7 @@
                     <tr>
                         <th scope="row" class="text-center">{{ $i++ }}</th>
                         <td>
-                            {{ $show->SeriesName }}
+                            {!! link_to_route('shows/episode', $show->SeriesName, ['id' => $show->id]) !!}
                             @if ((Auth::check() && Auth::user()->username === $user->username))
                                 @if (!$show->is_in_list)
                                     <div class="pull-right">
