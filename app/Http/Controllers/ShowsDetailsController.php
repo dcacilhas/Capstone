@@ -9,28 +9,65 @@ use Illuminate\Support\Facades\DB;
 
 class ShowsDetailsController extends Controller
 {
-    public function index($id)
+    public function index($seriesId)
     {
-        $show = Show::findOrFail($id);
+        $show = Show::findOrFail($seriesId);
         $show->Genre = implode(", ", array_filter(explode("|", $show->Genre)));
-        $show->SiteRating = number_format(Lists::where('series_id', $id)->whereNotNull('rating')->avg('rating'), 1);
+        $show->SiteRating = Lists::where('series_id', $seriesId)->whereNotNull('rating')->avg('rating');
+        if ($show->SiteRating) {
+            $show->SiteRating = number_format($show->SiteRating, 1);
+        }
 
         $seasons = DB::table('tvseasons')
             ->select('season')
-            ->where('seriesid', $id)
+            ->where('seriesid', $seriesId)
             ->where('season', '<>', 0)
             ->orderBy('season')
             ->get();
 
-        $episodes = DB::table('tvseasons')
-            ->join('tvepisodes', 'tvseasons.id', '=', 'tvepisodes.seasonid')
+        $episodes = DB::table('tvepisodes')
+            ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
             ->select('tvepisodes.seriesid', 'season', 'episodenumber', 'episodename')
-            ->where('tvepisodes.seriesid', $id)
+            ->where('tvepisodes.seriesid', $seriesId)
             ->where('season', '<>', 0)
+            ->whereNotNull('episodename')
             ->orderBy('season')
             ->orderBy('episodenumber')
             ->get();
 
-        return view('shows_details', compact('show', 'seasons', 'episodes'));
+        return view('shows/details', compact('show', 'seasons', 'episodes'));
+    }
+
+    public function showSeason($seriesId, $seasonNum)
+    {
+        $episodes = DB::table('tvepisodes')
+            ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
+            ->select('tvepisodes.seriesid', 'season', 'episodenumber', 'episodename', 'overview')
+            ->where('tvepisodes.seriesid', $seriesId)
+            ->where('season', $seasonNum)
+            ->where('season', '<>', 0)
+            ->whereNotNull('episodename')
+            ->orderBy('season')
+            ->orderBy('episodenumber')
+            ->get();
+
+        return $episodes;
+    }
+
+    public function showEpisode($seriesId, $seasonNum, $episodeNum)
+    {
+        $episode = DB::table('tvepisodes')
+            ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
+            ->select('tvepisodes.seriesid', 'season', 'episodenumber', 'episodename', 'overview')
+            ->where('tvepisodes.seriesid', $seriesId)
+            ->where('season', $seasonNum)
+            ->where('episodenumber', $episodeNum)
+            ->where('season', '<>', 0)
+            ->whereNotNull('episodename')
+            ->orderBy('season')
+            ->orderBy('episodenumber')
+            ->get();
+
+        return $episode;
     }
 }

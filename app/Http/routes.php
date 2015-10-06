@@ -21,6 +21,8 @@ Route::get('about', ['as' => 'about', 'uses' => 'PagesController@about']);
 // Shows
 Route::get('shows', ['as' => 'shows', 'uses' => 'ShowsController@index']);
 Route::get('shows/{seriesId}', ['as' => 'shows/details', 'uses' => 'ShowsDetailsController@index']);
+Route::get('shows/{seriesId}/season/{seasonNum}', ['as' => 'shows/season', 'uses' => 'ShowsDetailsController@showSeason']);
+Route::get('shows/{seriesId}/season/{seasonNum}/episode/{episodeNum}', ['as' => 'shows/episode', 'uses' => 'ShowsDetailsController@showEpisode']);
 
 // Profile
 Route::get('profile', function () {
