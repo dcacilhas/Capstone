@@ -32,7 +32,7 @@ class ShowsController extends Controller
 
             $this->addAdditionalShowInfo($shows, $user);
 
-            return view('shows', [
+            return view('shows/shows', [
                 'user' => $user,
                 'genres' => $genres,
                 'filters' => $filters,
@@ -55,7 +55,7 @@ class ShowsController extends Controller
 
             $this->addAdditionalShowInfo($shows, $user);
 
-            return view('shows', [
+            return view('shows/shows', [
                 'user' => $user,
                 'genres' => $genres,
                 'selectedGenre' => $genre,
@@ -65,7 +65,7 @@ class ShowsController extends Controller
             ]);
         }
 
-        return view('shows',
+        return view('shows/shows',
             ['user' => $user, 'genres' => $genres, 'filters' => $filters, 'listStatuses' => $listStatuses]);
     }
 

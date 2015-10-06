@@ -21,7 +21,11 @@
 
         <h2>Episodes</h2>
         @foreach($seasons as $season)
-            <h3>Season {{ $season->season }}</h3>
+            @if($season->season === 0)
+                <h3>Specials</h3>
+            @else
+                <h3>Season {{ $season->season }}</h3>
+            @endif
             <ol>
                 @foreach($episodes as $episode)
                     @if($episode->season === $season->season)
