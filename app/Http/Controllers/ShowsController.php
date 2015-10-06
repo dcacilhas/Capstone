@@ -15,14 +15,15 @@ class ShowsController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $filter = Input::get('filter');
-        $genre = Input::get('genre');
         $filters = range('A', 'Z');
         array_unshift($filters, '#');
         $listStatuses = DB::table('list_statuses')->get();
         $genres = DB::table('genres')->get();
 
+        // TODO: Do filtering better. Maybe use separate routes (/filter/letter/A, /filter/genre/Action)?
+
         // Shows Starting With filter
+        $filter = Input::get('filter');
         if (in_array(strtoupper($filter), $filters)) {
             $shows = ($filter === '#') ? Show::whereRaw("SeriesName REGEXP '^[0-9]+'") : Show::where('SeriesName',
                 'LIKE', $filter . '%');
@@ -31,18 +32,13 @@ class ShowsController extends Controller
                 ->paginate(50);
 
             $this->addAdditionalShowInfo($shows, $user);
+            $selectedFilter = urlencode($filter);
 
-            return view('shows/shows', [
-                'user' => $user,
-                'genres' => $genres,
-                'filters' => $filters,
-                'shows' => $shows,
-                'selectedFilter' => urlencode($filter),
-                'listStatuses' => $listStatuses
-            ]);
+            return view('shows.shows', compact('user', 'genres', 'filters', 'shows', 'listStatuses', 'selectedFilter'));
         }
 
         // Genres filter
+        $genre = Input::get('genre');
         if (!empty($genre)) {
             $shows = Show::where('Genre', 'LIKE', '%' . $genre . '%')
                 ->select('id', 'SeriesName', 'Status', 'FirstAired', 'Network', 'Runtime', 'Rating')
@@ -54,19 +50,12 @@ class ShowsController extends Controller
                 ->paginate(50);
 
             $this->addAdditionalShowInfo($shows, $user);
+            $selectedGenre = $genre;
 
-            return view('shows/shows', [
-                'user' => $user,
-                'genres' => $genres,
-                'selectedGenre' => $genre,
-                'filters' => $filters,
-                'shows' => $shows,
-                'listStatuses' => $listStatuses
-            ]);
+            return view('shows.shows', compact('user', 'genres', 'filters', 'shows', 'listStatuses', 'selectedGenre'));
         }
 
-        return view('shows/shows',
-            ['user' => $user, 'genres' => $genres, 'filters' => $filters, 'listStatuses' => $listStatuses]);
+        return view('shows/shows', compact('user', 'genres', 'filters', 'listStatuses'));
     }
 
     /**

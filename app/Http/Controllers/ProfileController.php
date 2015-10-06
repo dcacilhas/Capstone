@@ -21,7 +21,7 @@ class ProfileController extends Controller
         $user = User::where('username', $username)->first();
         $user->gender = DB::table('genders')->where('gender', '=', $user['gender'])->value('description');
 
-        return view('profile/home', ['user' => $user]);
+        return view('profile/home', compact('user'));
     }
 
     public function showEditProfile()
@@ -69,7 +69,7 @@ class ProfileController extends Controller
         $user->fill($input);
         $user->save();
 
-        return redirect()->route('profile/edit', ['username' => $user->username])->with('status', 'Profile successfully updated!');
+        return back()->with('status', 'Profile successfully updated!');
     }
 
     public function postEmail(Request $request)
@@ -94,7 +94,7 @@ class ProfileController extends Controller
                 ->withInput();
         }
 
-        return redirect()->route('profile/account', ['username' => $user->username])->with('status', 'Email successfully updated!');
+        return back()->with('status', 'Email successfully updated!');
     }
 
     public function postPassword(Request $request)
@@ -125,6 +125,6 @@ class ProfileController extends Controller
                 ->withInput();
         }
 
-        return redirect()->route('profile/account', ['username' => $user->username])->with('status', 'Password successfully updated!');
+        return back()->with('status', 'Password successfully updated!');
     }
 }

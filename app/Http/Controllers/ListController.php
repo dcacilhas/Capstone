@@ -29,7 +29,7 @@ class ListController extends Controller
             $series = User::find($user->id)->getListWithSeries()->where('list_status', $status)->get();
         }
 
-        foreach($series as $s) {
+        foreach ($series as $s) {
             // TODO: Extract out to model
             $eps_total = DB::table('tvepisodes')
                 ->where('seriesid', $s->series_id)
@@ -63,17 +63,19 @@ class ListController extends Controller
 
             $last_ep_watched_formatted = null;
             if (!empty($last_ep_watched)) {
-                $last_ep_watched_formatted = sprintf('S%02dE%02d', $last_ep_watched->season, $last_ep_watched->EpisodeNumber);
+                $last_ep_watched_formatted = sprintf('S%02dE%02d', $last_ep_watched->season,
+                    $last_ep_watched->EpisodeNumber);
             }
 
             $s->last_episode_watched = $last_ep_watched_formatted;
         }
 
-        return view('profile/list',
-            ['user' => $user, 'series' => $series, 'status' => $status, 'listStatuses' => $listStatuses]);
+
+        return view('profile/list', compact('user', 'series', 'status', 'listStatuses'));
     }
 
-    public function updateList(Request $request) {
+    public function updateList(Request $request)
+    {
         // TODO: Abstract this out: http://laravel.com/docs/5.1/validation#form-request-validation
         $this->validate($request, [
             'rating' => 'numeric|between:1,10',
@@ -93,7 +95,8 @@ class ListController extends Controller
         return back();
     }
 
-    public function removeFromList(Request $request) {
+    public function removeFromList(Request $request)
+    {
         $input = $request->all();
         $user = User::where('username', $request->username)->first();
         Lists::where('user_id', $user->id)->where('series_id', $input['series_id'])->delete();
@@ -101,7 +104,8 @@ class ListController extends Controller
         return back();
     }
 
-    public function addToList(Request $request) {
+    public function addToList(Request $request)
+    {
         // TODO: Abstract this out: http://laravel.com/docs/5.1/validation#form-request-validation
         $this->validate($request, [
             'status' => 'required|numeric|between:0,3'
@@ -109,16 +113,22 @@ class ListController extends Controller
 
         $input = $request->all();
         $user = User::where('username', $request->username)->first();
-        Lists::create(['series_id' => $input['series_id'], 'user_id' => $user->id, 'list_status' => (int)$input['status']]);
+        Lists::create([
+            'series_id' => $input['series_id'],
+            'user_id' => $user->id,
+            'list_status' => (int)$input['status']
+        ]);
 
         return back()->with('status', $input['series_name'] . ' was successfully added to your list!');
     }
 
-    public function showWatchHistory($username) {
+    public function showWatchHistory($username)
+    {
         $user = User::where('username', $username)->first();
         $eps_watched = DB::table('list_episodes_watched')
             ->where('user_id', $user->id)
-            ->select('users.id', 'tvseries.SeriesName', 'tvepisodes.seriesid', 'tvepisodes.EpisodeName', 'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at')
+            ->select('users.id', 'tvseries.SeriesName', 'tvepisodes.seriesid', 'tvepisodes.EpisodeName',
+                'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at')
             ->join('tvepisodes', 'list_episodes_watched.episode_id', '=', 'tvepisodes.id')
             ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
             ->join('tvseries', 'tvepisodes.seriesid', '=', 'tvseries.id')
@@ -130,6 +140,6 @@ class ListController extends Controller
             ->orderBy('tvepisodes.EpisodeNumber', 'desc')
             ->paginate(10);
 
-        return view('profile/watch_history', ['user' => $user, 'eps_watched' => $eps_watched]);
+        return view('profile/watch_history', compact('user', 'eps_watched'));
     }
 }
