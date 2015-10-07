@@ -3,17 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\ListEpisodesWatched;
 use App\Lists;
 use App\User;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Input;
 
 class ListController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth.profile');
+        $this->middleware('auth.profile', ['except' => ['updateListEpisodesWatched']]);
     }
 
     public function index($username)
@@ -141,5 +143,25 @@ class ListController extends Controller
             ->paginate(10);
 
         return view('profile/watch_history', compact('user', 'eps_watched'));
+    }
+
+    public function updateListEpisodesWatched($seriesId)
+    {
+        $episodeId = (int)Input::get('episodeId');
+        $userId = Auth::user()->id;
+        $listId = Lists::where('series_id', $seriesId)
+            ->where('user_id', $userId)
+            ->value('id');
+        $ep = ListEpisodesWatched::where('episode_id', $episodeId)
+            ->where('list_id', $listId)
+            ->first();
+
+        if ($ep) {
+            $ep->delete();
+        } else {
+            ListEpisodesWatched::create(['episode_id' => $episodeId, 'list_id'=> $listId]);
+        }
+
+        echo true;
     }
 }

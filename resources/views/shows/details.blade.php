@@ -8,7 +8,7 @@
             <div class="col-md-6">
                 <h1>
                     {{ $show->SeriesName }}
-                    @if ($showAddButton)
+                    @if ($isOnList)
                         <small>
                             <a href="#" class="edit"
                                data-toggle="modal"
@@ -39,7 +39,7 @@
 
             <div class="col-md-6">
                 <h3>Episodes</h3>
-                <a href="#" id="toggleEpisodes">Show All Episodes</a>
+                <a href="#" id="showAllEpisodes">Show All</a> | <a href="#" id="hideAllEpisodes">Hide All</a>
                 @foreach($seasons as $season)
                     <h4 class="seasons"><a href="#" class="seasons">Season {{ $season->season }}</a></h4>
                     <div class="episodes">
@@ -47,7 +47,9 @@
                             @foreach($episodes as $episode)
                                 @if($episode->season === $season->season)
                                     <li>
-                                        <input type="checkbox" id="{{ $episode->id }}" class="episode" {{ $episode->checked or '' }} />
+                                        @if(!$isOnList)
+                                            <input type="checkbox" id="{{ $episode->id }}" class="episode" {{ $episode->checked or '' }} />
+                                        @endif
                                         {!! link_to_route('shows/episode', $episode->episodename, ['seriesId' => $episode->seriesid, 'seasonNum' => $season->season, 'episodeNum' => $episode->episodenumber]) !!}
                                     </li>
                                 @endif
@@ -105,19 +107,16 @@
 @section('javascript')
     <script>
         $(document).ready(function() {
-            $('.seasons').next().hide();
             $('.seasons').click(function () {
                 $(this).next().toggle();
             });
 
-            $('#toggleEpisodes').click(function () {
-                if ($(this).text() === 'Show All Episodes') {
-                    $(this).text('Hide All Episodes');
-                    $('.episodes').show();
-                } else {
-                    $(this).text('Show All Episodes');
-                    $('.episodes').hide();
-                }
+            $('#showAllEpisodes').click(function() {
+                $('.episodes').show();
+            });
+
+            $('#hideAllEpisodes').click(function() {
+                $('.episodes').hide();
             });
 
             $('#addModal').on('show.bs.modal', function (event) {
@@ -130,5 +129,30 @@
                 modal.find('.modal-title').text(title);
                 modal.find('#status_0').prop('checked', true);
             });
+
+            // TODO: Add Check/Uncheck All buttons for All Episodes and Seasons only.
+
+            // TODO: Cleanup. Maybe add success/error messages for user.
+            $('.episode').change(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('list/updateListEpisodesWatched', ['seriesId' => $show->id]) }}",
+                    beforeSend: function (xhr) {
+                        var token = $("meta[name='csrf_token']").attr('content');
+
+                        if (token) {
+                            return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+                        }
+                    },
+                    data: { episodeId: $(this).attr('id') },
+//                    success: function (data) {
+//                        alert(data);
+//                    },
+                    error: function () {
+                        alert("error!!!!");
+                    }
+                });
+            });
+        });
     </script>
 @stop

@@ -47,6 +47,7 @@ Route::get('profile/{username}/list/watchHistory', ['as' => 'profile/list/watchH
 Route::post('profile/{username}/updateList', ['as' => 'profile/updateList', 'uses' => 'ListController@updateList']);
 Route::post('profile/{username}/removeFromList', ['as' => 'profile/removeFromList', 'uses' => 'ListController@removeFromList']);
 Route::post('profile/{username}/addToList', ['as' => 'profile/addToList', 'uses' => 'ListController@addToList']);
+Route::post('list/{seriesId}/updateListEpisodesWatched', ['as' => 'list/updateListEpisodesWatched', 'uses' => 'ListController@updateListEpisodesWatched']);
 
 // Authentication
 Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);

@@ -41,7 +41,7 @@ class ShowsDetailsController extends Controller
 
         if (Auth::check()) {
             $user = Auth::user();
-            $showAddButton = !Lists::where('user_id', $user->id)->where('series_id', $show->id)->exists();
+            $isOnList = !Lists::where('user_id', $user->id)->where('series_id', $show->id)->exists();
             $epsWatched = ListEpisodesWatched::where('user_id', $user->id)
                 ->where('list.series_id', $seriesId)
                 ->select('list_episodes_watched.episode_id')
@@ -58,10 +58,10 @@ class ShowsDetailsController extends Controller
                 }
             }
         } else {
-            $showAddButton = false;
+            $isOnList = false;
         }
 
-        return view('shows/details', compact('show', 'seasons', 'episodes', 'listStatuses', 'user', 'showAddButton', 'epsWatched'));
+        return view('shows/details', compact('show', 'seasons', 'episodes', 'listStatuses', 'user', 'isOnList', 'epsWatched'));
     }
 
     // TODO: Maybe don't need this?

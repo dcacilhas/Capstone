@@ -12,4 +12,11 @@ class ListEpisodesWatched extends Model
      * @var string
      */
     protected $table = 'list_episodes_watched';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['episode_id', 'list_id'];
 }
