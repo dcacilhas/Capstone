@@ -49,6 +49,9 @@
                     <li>Status: {{ $show->Status }}</li>
                     <li>Network: {{ $show->Network }}</li>
                     <li>Airs: {{ $show->Airs_DayOfWeek }} at {{ $show->Airs_Time }}</li>
+                    @if(Auth::check() && $list)
+                        <li>Your Rating: {{ $list->rating }}</li>
+                    @endif
                     <li>Site Rating: {{ $show->SiteRating }}</li>
                     <li>Links: <a href="http://www.imdb.com/title/{{ $show->IMDB_ID }}">IMDB</a></li>
                 </ul>
