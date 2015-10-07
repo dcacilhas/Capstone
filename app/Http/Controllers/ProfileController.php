@@ -19,9 +19,27 @@ class ProfileController extends Controller
     public function index($username)
     {
         $user = User::where('username', $username)->first();
-        $user->gender = DB::table('genders')->where('gender', '=', $user['gender'])->value('description');
+        $user->gender = DB::table('genders')->where('gender', '=', $user->gender)->value('description');
+        $recentEpsWatched = DB::table('list_episodes_watched')
+            ->where('user_id', $user->id)
+            ->select('list.series_id', 'tvseries.SeriesName','tvepisodes.EpisodeName', 'tvepisodes.EpisodeNumber', 'tvseasons.season')
+            ->join('tvepisodes', 'list_episodes_watched.episode_id', '=', 'tvepisodes.id')
+            ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
+            ->join('tvseries', 'tvepisodes.seriesid', '=', 'tvseries.id')
+            ->join('list', 'list_episodes_watched.list_id', '=', 'list.id')
+            ->join('users', 'list.user_id', '=', 'users.id')
+            ->orderBy('list_episodes_watched.updated_at', 'desc')
+            ->orderBy('list_episodes_watched.created_at', 'desc')
+            ->orderBy('tvseasons.season', 'desc')
+            ->orderBy('tvepisodes.EpisodeNumber', 'desc')
+            ->take(5)
+            ->get();
 
-        return view('profile/home', compact('user'));
+        foreach ($recentEpsWatched as $ep) {
+            $ep->formatted = sprintf('S%02dE%02d', $ep->season, $ep->EpisodeNumber);
+        }
+
+        return view('profile/home', compact('user', 'recentEpsWatched'));
     }
 
     public function showEditProfile()
