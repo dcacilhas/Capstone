@@ -34,7 +34,9 @@ class ListController extends Controller
         foreach ($series as $s) {
             // TODO: Extract out to model
             $eps_total = DB::table('tvepisodes')
-                ->where('seriesid', $s->series_id)
+                ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
+                ->where('tvepisodes.seriesid', $s->series_id)
+                ->where('tvseasons.season', '<>', 0)
                 ->whereNull('airsbefore_episode')
                 ->whereNull('airsbefore_season')
                 ->whereNull('airsafter_season')
