@@ -41,15 +41,11 @@ class ShowsDetailsController extends Controller
 
         if (Auth::check()) {
             $user = Auth::user();
-            $isOnList = !Lists::where('user_id', $user->id)->where('series_id', $show->id)->exists();
+            $list = Lists::where('user_id', $user->id)->where('series_id', $show->id)->first();
             $epsWatched = ListEpisodesWatched::where('user_id', $user->id)
                 ->where('list.series_id', $seriesId)
                 ->select('list_episodes_watched.episode_id')
-                ->join('tvepisodes', 'list_episodes_watched.episode_id', '=', 'tvepisodes.id')
-                ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
-                ->join('tvseries', 'tvepisodes.seriesid', '=', 'tvseries.id')
                 ->join('list', 'list_episodes_watched.list_id', '=', 'list.id')
-                ->join('users', 'list.user_id', '=', 'users.id')
                 ->get();
 
             foreach ($episodes as $episode) {
@@ -58,10 +54,10 @@ class ShowsDetailsController extends Controller
                 }
             }
         } else {
-            $isOnList = false;
+            $list = false;
         }
 
-        return view('shows/details', compact('show', 'seasons', 'episodes', 'listStatuses', 'user', 'isOnList', 'epsWatched'));
+        return view('shows/details', compact('show', 'seasons', 'episodes', 'listStatuses', 'user', 'list', 'epsWatched'));
     }
 
     // TODO: Maybe don't need this?

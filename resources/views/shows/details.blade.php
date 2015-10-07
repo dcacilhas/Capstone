@@ -8,16 +8,37 @@
             <div class="col-md-6">
                 <h1>
                     {{ $show->SeriesName }}
-                    @if ($isOnList)
+                    @if (Auth::check())
                         <small>
-                            <a href="#" class="edit"
-                               data-toggle="modal"
-                               data-target="#addModal"
-                               data-series-id="{{ $show->id }}"
-                               data-series-title="{{ $show->SeriesName }}"
-                               title="Add to List">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                            </a>
+                            @if (!$list)
+                                <a href="#" class="edit"
+                                   data-toggle="modal"
+                                   data-target="#addModal"
+                                   data-series-id="{{ $show->id }}"
+                                   data-series-title="{{ $show->SeriesName }}"
+                                   title="Add to List">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                </a>
+                            @else
+                                <a href="#" class="edit"
+                                   data-toggle="modal"
+                                   data-target="#updateModal"
+                                   data-series-id="{{ $list->series_id }}"
+                                   data-series-title="{{ $show->SeriesName }}"
+                                   data-series-rating="{{ $list->rating }}"
+                                   data-series-status="{{ $list->list_status }}"
+                                   title="Edit">
+                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                </a>
+                                <a href="#" class="remove"
+                                   data-toggle="modal"
+                                   data-target="#removeModal"
+                                   data-series-id="{{ $list->series_id }}"
+                                   data-series-title="{{ $show->SeriesName }}"
+                                   title="Remove">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </a>
+                            @endif
                         </small>
                     @endif
                 </h1>
@@ -47,7 +68,7 @@
                             @foreach($episodes as $episode)
                                 @if($episode->season === $season->season)
                                     <li>
-                                        @if(!$isOnList)
+                                        @if($list)
                                             <input type="checkbox" id="{{ $episode->id }}" class="episode" {{ $episode->checked or '' }} />
                                         @endif
                                         {!! link_to_route('shows/episode', $episode->episodename, ['seriesId' => $episode->seriesid, 'seasonNum' => $season->season, 'episodeNum' => $episode->episodenumber]) !!}
@@ -61,46 +82,119 @@
         </div>
 
         @if (Auth::check())
-            <!-- AddModal -->
-            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="addModalLabel"></h4>
-                        </div>
-                        <div class="modal-body">
-                            {!! Form::open(['route' => ['profile/addToList', $user->username], 'class' => 'form-horizontal']) !!}
+            @if (!$list)
+                <!-- AddModal -->
+                <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                            aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="addModalLabel"></h4>
+                            </div>
+                            <div class="modal-body">
+                                {!! Form::open(['route' => ['profile/addToList', $user->username], 'class' => 'form-horizontal']) !!}
 
-                            {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
-                            {!! Form::hidden('series_name', null, ['id' => 'series_name']) !!}
+                                {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
+                                {!! Form::hidden('series_name', null, ['id' => 'series_name']) !!}
 
-                            <div class="form-group">
-                                {!! Form::label('status', 'Status: ', ['class' => 'col-sm-2 control-label']) !!}
+                                <div class="form-group">
+                                    {!! Form::label('status', 'Status: ', ['class' => 'col-sm-2 control-label']) !!}
 
-                                <div class="col-sm-10">
-                                    @foreach($listStatuses as $listStatus)
-                                        <div class="radio">
-                                            <label>
-                                                {!! Form::radio('status', $listStatus->list_status, null, ['id' => 'status_' . $listStatus->list_status]) !!}
-                                                {{ $listStatus->description }}
-                                            </label>
-                                        </div>
-                                    @endforeach
+                                    <div class="col-sm-10">
+                                        @foreach($listStatuses as $listStatus)
+                                            <div class="radio">
+                                                <label>
+                                                    {!! Form::radio('status', $listStatus->list_status, null, ['id' => 'status_' . $listStatus->list_status]) !!}
+                                                    {{ $listStatus->description }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            {!! Form::submit('Add Show To List', ['class' => 'btn btn-primary']) !!}
-                        </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                {!! Form::submit('Add Show To List', ['class' => 'btn btn-primary']) !!}
+                            </div>
 
-                        {!! Form::close() !!}
+                            {!! Form::close() !!}
+                        </div>
                     </div>
                 </div>
-            </div>
+            @else
+                <!-- UpdateModal -->
+                <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="updateModalLabel"></h4>
+                            </div>
+                            <div class="modal-body">
+                                {!! Form::model($show, ['route' => ['profile/updateList', $user->username], 'class' => 'form-horizontal']) !!}
+
+                                {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
+
+                                <div class="form-group">
+                                    {!! Form::label('rating', 'Rating: ', ['class' => 'col-sm-2 control-label']) !!}
+                                    <div class="col-sm-2">
+                                        {!! Form::selectRange('rating', 1, 10, null, ['class' => 'form-control']) !!}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    {!! Form::label('status', 'Status: ', ['class' => 'col-sm-2 control-label']) !!}
+
+                                    <div class="col-sm-10">
+                                        @foreach($listStatuses as $listStatus)
+                                            <div class="radio">
+                                                <label>
+                                                    {!! Form::radio('status', $listStatus->list_status, null, ['id' => 'status_' . $listStatus->list_status]) !!}
+                                                    {{ $listStatus->description }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                {!! Form::submit('Update Show', ['class' => 'btn btn-primary']) !!}
+                            </div>
+
+                            {!! Form::close() !!}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RemoveModal -->
+                <div class="modal fade" id="removeModal" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="removeModalLabel"></h4>
+                            </div>
+                            <div class="modal-body">
+                                {!! Form::model($show, ['route' => ['profile/removeFromList', $user->username], 'class' => 'form-horizontal']) !!}
+
+                                {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
+
+                                <p></p>
+                            </div>
+                            <div class="modal-footer">
+                                {!! Form::submit('Yes', ['class' => 'btn btn-primary']) !!}
+                                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                            </div>
+
+                            {!! Form::close() !!}
+                        </div>
+                    </div>
+                </div>
+            @endif
         @endif
+        </div>
     </div>
 @stop
 
@@ -119,40 +213,67 @@
                 $('.episodes').hide();
             });
 
-            $('#addModal').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget),
-                        title = button.data('series-title'),
-                        id = button.data('series-id'),
-                        modal = $(this);
-                modal.find('#series_id').val(id);
-                modal.find('#series_name').val(title);
-                modal.find('.modal-title').text(title);
-                modal.find('#status_0').prop('checked', true);
-            });
+            @if (Auth::check())
+                @if(!$list)
+                    $('#addModal').on('show.bs.modal', function (event) {
+                        var button = $(event.relatedTarget),
+                                title = button.data('series-title'),
+                                id = button.data('series-id'),
+                                modal = $(this);
+                        modal.find('#series_id').val(id);
+                        modal.find('#series_name').val(title);
+                        modal.find('.modal-title').text(title);
+                        modal.find('#status_0').prop('checked', true);
+                    });
+                @else
+                    $('#updateModal').on('show.bs.modal', function (event) {
+                        var button = $(event.relatedTarget),
+                                title = button.data('series-title'),
+                                rating = button.data('series-rating'),
+                                status = button.data('series-status'),
+                                id = button.data('series-id'),
+                                modal = $(this);
+                        modal.find('#series_id').val(id);
+                        modal.find('.modal-title').text(title);
+                        modal.find('#rating').val(rating);
+                        modal.find('#status_' + status).prop('checked', true);
+                    });
 
-            // TODO: Add Check/Uncheck All buttons for All Episodes and Seasons only.
+                    $('#removeModal').on('show.bs.modal', function (event) {
+                        var button = $(event.relatedTarget),
+                                title = button.data('series-title'),
+                                id = button.data('series-id'),
+                                modal = $(this);
+                        modal.find('#series_id').val(id);
+                        modal.find('.modal-title').text(title);
+                        modal.find('p').html("Are you sure you want to remove <strong>" + title + "</strong> from your list?");
+                    });
 
-            // TODO: Cleanup. Maybe add success/error messages for user.
-            $('.episode').change(function () {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('list/updateListEpisodesWatched', ['seriesId' => $show->id]) }}",
-                    beforeSend: function (xhr) {
-                        var token = $("meta[name='csrf_token']").attr('content');
+                    // TODO: Add Check/Uncheck All buttons for All Episodes and Seasons only.
 
-                        if (token) {
-                            return xhr.setRequestHeader('X-CSRF-TOKEN', token);
-                        }
-                    },
-                    data: { episodeId: $(this).attr('id') },
-//                    success: function (data) {
-//                        alert(data);
-//                    },
-                    error: function () {
-                        alert("error!!!!");
-                    }
-                });
-            });
+                    // TODO: Cleanup. Maybe add success/error messages for user.
+                    $('.episode').change(function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('list/updateListEpisodesWatched', ['seriesId' => $show->id]) }}",
+                            beforeSend: function (xhr) {
+                                var token = $("meta[name='csrf_token']").attr('content');
+
+                                if (token) {
+                                    return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+                                }
+                            },
+                            data: { episodeId: $(this).attr('id') },
+        //                    success: function (data) {
+        //                        alert(data);
+        //                    },
+                            error: function () {
+                                alert("error!!!!");
+                            }
+                        });
+                    });
+                @endif
+            @endif
         });
     </script>
 @stop
