@@ -60,10 +60,16 @@
 
             <div class="col-md-6">
                 <h3>Episodes</h3>
-                <a href="#" id="showAllEpisodes">Show All</a> | <a href="#" id="hideAllEpisodes">Hide All</a>
+                <a href="#" id="showAllEpisodes">Show All</a> | <a href="#" id="hideAllEpisodes">Hide All</a> <br>
+                @if ($list)
+                    <a href="#" id="checkAllEpisodes">Check All</a> | <a href="#" id="uncheckAllEpisodes">Uncheck All</a>
+                @endif
                 @foreach($seasons as $season)
                     <h4 class="seasons"><a href="#" class="seasons">Season {{ $season->season }}</a></h4>
                     <div class="episodes">
+                    @if ($list)
+                        <a href="#" class="checkSeason">Check Season {{ $season->season }}</a> | <a href="#" class="uncheckSeason">Uncheck Season {{ $season->season }}</a>
+                    @endif
                         <ol>
                             @foreach($episodes as $episode)
                                 @if($episode->season === $season->season)
@@ -226,6 +232,22 @@
                         modal.find('#status_0').prop('checked', true);
                     });
                 @else
+                    $('#checkAllEpisodes').click(function() {
+                        $('.episode:not(:checked)').prop('checked', true).trigger('change');
+                    });
+
+                    $('#uncheckAllEpisodes').click(function() {
+                        $('.episode:checked').prop('checked', false).trigger('change');
+                    });
+
+                    $('.checkSeason').click(function() {
+                        $(this).siblings().find('.episode:not(:checked)').prop('checked', true).trigger('change');
+                    });
+
+                    $('.uncheckSeason').click(function() {
+                        $(this).siblings().find('.episode:checked').prop('checked', false).trigger('change');
+                    });
+
                     $('#updateModal').on('show.bs.modal', function (event) {
                         var button = $(event.relatedTarget),
                                 title = button.data('series-title'),
