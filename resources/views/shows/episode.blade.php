@@ -12,6 +12,8 @@
                 <ul>
                     <li>Links: <a href="http://www.imdb.com/title/{{ $episode->IMDB_ID }}">IMDB</a></li>
                     <li>Aired: {{ $episode->firstaired }}</li>
+                    <li>Director: {{ $episode->director }}</li>
+                    <li>Writer: {{ $episode->writer }}</li>
                 </ul>
 
                 {{--<ul>--}}

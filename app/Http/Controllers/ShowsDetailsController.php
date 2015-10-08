@@ -81,7 +81,7 @@ class ShowsDetailsController extends Controller
     {
         $episode = DB::table('tvepisodes')
             ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
-            ->select('tvepisodes.seriesid', 'season', 'episodenumber', 'episodename', 'overview', 'tvepisodes.IMDB_ID', 'firstaired')
+            ->select('tvepisodes.seriesid', 'season', 'episodenumber', 'episodename', 'overview', 'tvepisodes.IMDB_ID', 'firstaired', 'tvepisodes.director', 'tvepisodes.writer')
             ->where('tvepisodes.seriesid', $seriesId)
             ->where('season', $seasonNum)
             ->where('episodenumber', $episodeNum)
