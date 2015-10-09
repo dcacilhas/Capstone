@@ -155,12 +155,6 @@ return [
          */
         Collective\Html\HtmlServiceProvider::class,
 
-        /*
-         * Laravel Migrations Generator
-         */
-        Way\Generators\GeneratorsServiceProvider::class,
-        Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
-
     ],
 
     /*
