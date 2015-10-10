@@ -30,6 +30,57 @@ class ListController extends Controller
         return view('profile/list', compact('user', 'shows', 'status', 'listStatuses'));
     }
 
+    /**
+     * Get shows, either filtered by status or all.
+     *
+     * @param $status
+     * @param $user
+     * @return mixed
+     */
+    private function getShows($status, $user)
+    {
+        if ($status === null) {
+            $shows = User::find($user->id)->getListWithSeries()->get();
+        } else {
+            $shows = User::find($user->id)->getListWithSeries()->where('list_status', $status)->get();
+        }
+        return $shows;
+    }
+
+    /**
+     * Adds calculated progress (total episodes/episodes watched) to each show.
+     * Adds last episode watched to each show.
+     *
+     * @param $shows
+     */
+    private function addProgressAndLastEpisodeWatched($shows)
+    {
+        foreach ($shows as $show) {
+            $epsTotalCount = Show::find($show->series_id)->getEpisodes()->count();
+            $epsWatchedCount = ListEpisodesWatched::getListEpisodesWatched($show->id)->count();
+
+            if ($show->list_status === 2) {
+                $show->progress = 100;
+            } else {
+                $show->progress = number_format($epsWatchedCount / $epsTotalCount * 100, 0);
+            }
+
+            $lastEpWatched = ListEpisodesWatched::getListEpisodesWatched($show->id)
+                ->select('tvepisodes.EpisodeNumber', 'tvseasons.season')
+                ->getMostRecent()
+                ->first();
+
+            $lastEpWatchedFormatted = null;
+            if (!empty($lastEpWatched)) {
+                $lastEpWatchedFormatted = sprintf('S%02dE%02d', $lastEpWatched->season,
+                    $lastEpWatched->EpisodeNumber);
+                $show->season_number = $lastEpWatched->season;
+                $show->episode_number = $lastEpWatched->EpisodeNumber;
+            }
+            $show->last_episode_watched_formatted = $lastEpWatchedFormatted;
+        }
+    }
+
     public function updateList(Request $request)
     {
         $this->validate($request, [
@@ -102,58 +153,9 @@ class ListController extends Controller
         if ($ep) {
             $ep->delete();
         } else {
-            ListEpisodesWatched::create(['episode_id' => $episodeId, 'list_id'=> $listId]);
+            ListEpisodesWatched::create(['episode_id' => $episodeId, 'list_id' => $listId]);
         }
 
         echo true;
-    }
-
-    /**
-     * Get shows, either filtered by status or all.
-     *
-     * @param $status
-     * @param $user
-     * @return mixed
-     */
-    private function getShows($status, $user)
-    {
-        if ($status === null) {
-            $shows = User::find($user->id)->getListWithSeries()->get();
-        } else {
-            $shows = User::find($user->id)->getListWithSeries()->where('list_status', $status)->get();
-        }
-        return $shows;
-    }
-
-    /**
-     * Adds calculated progress (total episodes/episodes watched) to each show.
-     * Adds last episode watched to each show.
-     *
-     * @param $shows
-     */
-    private function addProgressAndLastEpisodeWatched($shows)
-    {
-        foreach ($shows as $show) {
-            $epsTotalCount = Show::find($show->series_id)->getEpisodes()->count();
-            $epsWatchedCount = ListEpisodesWatched::getListEpisodesWatched($show->id)->count();
-
-            if ($show->list_status === 2) {
-                $show->progress = 100;
-            } else {
-                $show->progress = number_format($epsWatchedCount / $epsTotalCount * 100, 0);
-            }
-
-            $lastEpWatched = ListEpisodesWatched::getListEpisodesWatched($show->id)
-                ->select('tvepisodes.EpisodeNumber', 'tvseasons.season')
-                ->getMostRecent()
-                ->first();
-
-            $lastEpWatchedFormatted = null;
-            if (!empty($lastEpWatched)) {
-                $lastEpWatchedFormatted = sprintf('S%02dE%02d', $lastEpWatched->season,
-                    $lastEpWatched->EpisodeNumber);
-            }
-            $show->last_episode_watched_formatted = $lastEpWatchedFormatted;
-        }
     }
 }

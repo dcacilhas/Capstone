@@ -25,7 +25,7 @@
                     <tr>
                         <th scope="row" class="text-center">{{ $i++ }}</th>
                         <td class="text-center">{!! link_to_route('shows/details', $ep->SeriesName, ['id' => $ep->seriesid]) !!}</td>
-                        <td class="text-center">{{ $ep->EpisodeName }}</td>
+                        <td class="text-center">{!! link_to_route('shows/episode', $ep->EpisodeName, ['seriesId' => $ep->seriesid, 'seasonNum' => $ep->season, 'episodeNum' => $ep->EpisodeNumber]) !!}</td>
                         <td class="text-center">{{ $ep->season }}</td>
                         <td class="text-center">{{ $ep->EpisodeNumber }}</td>
                         <!-- TODO: Detect user's timezone. -->

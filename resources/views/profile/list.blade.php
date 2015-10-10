@@ -66,7 +66,11 @@
                                         @endif
                                     </td>
                                     <td class="text-center">{{ $show->rating }}</td>
-                                    <td class="text-center">{{ $show->last_episode_watched_formatted }}</td>
+                                    <td class="text-center">
+                                        @if($show->last_episode_watched_formatted)
+                                            {!! link_to_route('shows/episode', $show->last_episode_watched_formatted, ['seriesId' => $show->series_id, 'seasonNum' => $show->season_number, 'episodeNum' => $show->episode_number]) !!}
+                                        @endif
+                                    </td>
                                     <td>
                                         <div class="progress">
                                             <div class="progress-bar" style="width: {{ $show->progress }}%;"></div>

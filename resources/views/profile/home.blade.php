@@ -15,8 +15,7 @@
             <h2>Details</h2>
             <ul>
                 <li>Gender: {{ $user->gender }}</li>
-                <li>
-                    Birthday: @if (!empty($user->birthday)) {{ \Carbon\Carbon::parse($user->birthday)->format('F j, Y') }} @endif</li>
+                <li>Birthday: @if (!empty($user->birthday)) {{ \Carbon\Carbon::parse($user->birthday)->format('F j, Y') }} @endif</li>
                 <li>Location: {{ $user->location }}</li>
                 <li>Join Date: {{ \Carbon\Carbon::parse($user->created_at)->format('F j, Y') }}</li>
             </ul>
