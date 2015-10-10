@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\ListEpisodesWatched;
-use App\Lists;
-use App\Show;
+use App\Models\ListEpisodesWatched;
+use App\Models\Lists;
+use App\Models\Show;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

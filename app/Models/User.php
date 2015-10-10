@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -48,11 +48,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = ['password', 'password_confirmation', 'remember_token'];
 
     public function getList() {
-        return $this->hasMany('App\Lists');
+        return $this->hasMany('App\Models\Lists');
     }
 
     public function getListWithSeries() {
-        return $this->hasMany('App\Lists')
+        return $this->hasMany('App\Models\Lists')
             ->select('list.*', 'tvseries.SeriesName')
             ->join('tvseries', 'list.series_id', '=', 'tvseries.id')
             ->where('user_id', $this->id);

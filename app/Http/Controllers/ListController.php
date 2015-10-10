@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\ListEpisodesWatched;
-use App\Lists;
-use App\Show;
-use App\User;
+use App\Models\ListEpisodesWatched;
+use App\Models\Lists;
+use App\Models\Show;
+use App\Models\User;
 use Auth;
 use DB;
 use Input;

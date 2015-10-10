@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,7 +19,7 @@ class Show extends Model
      * @return mixed
      */
     public function getEpisodes() {
-        return $this->hasMany('App\Episode', 'seriesid')
+        return $this->hasMany('App\Models\Episode', 'seriesid')
             ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
             ->where('tvepisodes.seriesid', $this->id)
             ->where('tvseasons.season', '<>', 0)
