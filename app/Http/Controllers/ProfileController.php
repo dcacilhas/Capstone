@@ -13,7 +13,7 @@ class ProfileController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth.profile');
+        $this->middleware('auth.profile', ['only' => ['showEditProfile', 'showEditAccount']]);
     }
 
     public function index($username)

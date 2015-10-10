@@ -28,6 +28,7 @@
                         <td class="text-center">{{ $ep->EpisodeName }}</td>
                         <td class="text-center">{{ $ep->season }}</td>
                         <td class="text-center">{{ $ep->EpisodeNumber }}</td>
+                        <!-- TODO: Detect user's timezone. -->
                         <td class="text-center">{{ \Carbon\Carbon::createFromTimeStamp(strtotime($ep->updated_at))->toDayDateTimeString() }}</td>
                     </tr>
                 @endforeach
