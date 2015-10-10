@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
 use App\ListEpisodesWatched;
 use App\Lists;
+use App\Show;
 use App\User;
+use Auth;
 use DB;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Input;
+use Request;
+
 
 class ListController extends Controller
 {
@@ -23,64 +24,14 @@ class ListController extends Controller
         $user = User::where('username', $username)->first();
         $status = Input::get('status');
         $listStatuses = DB::table('list_statuses')->get();
+        $shows = $this->getShows($status, $user);
+        $this->addProgressAndLastEpisodeWatched($shows);
 
-        // Get all series if status is not set, otherwise get matching series by status
-        if ($status === null) {
-            $series = User::find($user->id)->getListWithSeries()->get();
-        } else {
-            $series = User::find($user->id)->getListWithSeries()->where('list_status', $status)->get();
-        }
-
-        foreach ($series as $s) {
-            // TODO: Extract out to model
-            $eps_total = DB::table('tvepisodes')
-                ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
-                ->where('tvepisodes.seriesid', $s->series_id)
-                ->where('tvseasons.season', '<>', 0)
-                ->whereNull('airsbefore_episode')
-                ->whereNull('airsbefore_season')
-                ->whereNull('airsafter_season')
-                ->count();
-
-            // TODO: Extract out to model
-            $eps_watched = DB::table('list_episodes_watched')
-                ->where('list_id', $s->id)
-                ->count();
-
-            if ($s->list_status === 2) {
-                $s->progress = 100;
-            } else {
-                $s->progress = number_format($eps_watched / $eps_total * 100, 0);
-            }
-
-            // TODO: Extract out to model
-            $last_ep_watched = DB::table('list_episodes_watched')
-                ->where('list_id', $s->id)
-                ->select('tvepisodes.EpisodeNumber', 'tvseasons.season')
-                ->join('tvepisodes', 'list_episodes_watched.episode_id', '=', 'tvepisodes.id')
-                ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
-                ->orderBy('updated_at', 'desc')
-                ->orderBy('created_at', 'desc')
-                ->orderBy('tvseasons.season', 'desc')
-                ->orderBy('tvepisodes.EpisodeNumber', 'desc')
-                ->first();
-
-            $last_ep_watched_formatted = null;
-            if (!empty($last_ep_watched)) {
-                $last_ep_watched_formatted = sprintf('S%02dE%02d', $last_ep_watched->season,
-                    $last_ep_watched->EpisodeNumber);
-            }
-
-            $s->last_episode_watched = $last_ep_watched_formatted;
-        }
-
-
-        return view('profile/list', compact('user', 'series', 'status', 'listStatuses'));
+        return view('profile/list', compact('user', 'shows', 'status', 'listStatuses'));
     }
 
     public function updateList(Request $request)
     {
-        // TODO: Abstract this out: http://laravel.com/docs/5.1/validation#form-request-validation
         $this->validate($request, [
             'rating' => 'numeric|between:1,10',
             'status' => 'required|numeric|between:0,3'
@@ -110,7 +61,6 @@ class ListController extends Controller
 
     public function addToList(Request $request)
     {
-        // TODO: Abstract this out: http://laravel.com/docs/5.1/validation#form-request-validation
         $this->validate($request, [
             'status' => 'required|numeric|between:0,3'
         ]);
@@ -129,22 +79,13 @@ class ListController extends Controller
     public function showWatchHistory($username)
     {
         $user = User::where('username', $username)->first();
-        $eps_watched = DB::table('list_episodes_watched')
-            ->where('user_id', $user->id)
+        $epsWatched = ListEpisodesWatched::getUserEpisodesWatched($user->id)
             ->select('users.id', 'tvseries.SeriesName', 'tvepisodes.seriesid', 'tvepisodes.EpisodeName',
                 'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at')
-            ->join('tvepisodes', 'list_episodes_watched.episode_id', '=', 'tvepisodes.id')
-            ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
-            ->join('tvseries', 'tvepisodes.seriesid', '=', 'tvseries.id')
-            ->join('list', 'list_episodes_watched.list_id', '=', 'list.id')
-            ->join('users', 'list.user_id', '=', 'users.id')
-            ->orderBy('list_episodes_watched.updated_at', 'desc')
-            ->orderBy('list_episodes_watched.created_at', 'desc')
-            ->orderBy('tvseasons.season', 'desc')
-            ->orderBy('tvepisodes.EpisodeNumber', 'desc')
+            ->getMostRecent()
             ->paginate(10);
 
-        return view('profile/watch_history', compact('user', 'eps_watched'));
+        return view('profile/watch_history', compact('user', 'epsWatched'));
     }
 
     public function updateListEpisodesWatched($seriesId)
@@ -165,5 +106,54 @@ class ListController extends Controller
         }
 
         echo true;
+    }
+
+    /**
+     * Get shows, either filtered by status or all.
+     *
+     * @param $status
+     * @param $user
+     * @return mixed
+     */
+    private function getShows($status, $user)
+    {
+        if ($status === null) {
+            $shows = User::find($user->id)->getListWithSeries()->get();
+        } else {
+            $shows = User::find($user->id)->getListWithSeries()->where('list_status', $status)->get();
+        }
+        return $shows;
+    }
+
+    /**
+     * Adds calculated progress (total episodes/episodes watched) to each show.
+     * Adds last episode watched to each show.
+     *
+     * @param $shows
+     */
+    private function addProgressAndLastEpisodeWatched($shows)
+    {
+        foreach ($shows as $show) {
+            $epsTotalCount = Show::find($show->series_id)->getEpisodes()->count();
+            $epsWatchedCount = ListEpisodesWatched::getListEpisodesWatched($show->id)->count();
+
+            if ($show->list_status === 2) {
+                $show->progress = 100;
+            } else {
+                $show->progress = number_format($epsWatchedCount / $epsTotalCount * 100, 0);
+            }
+
+            $lastEpWatched = ListEpisodesWatched::getListEpisodesWatched($show->id)
+                ->select('tvepisodes.EpisodeNumber', 'tvseasons.season')
+                ->getMostRecent()
+                ->first();
+
+            $lastEpWatchedFormatted = null;
+            if (!empty($lastEpWatched)) {
+                $lastEpWatchedFormatted = sprintf('S%02dE%02d', $lastEpWatched->season,
+                    $lastEpWatched->EpisodeNumber);
+            }
+            $show->last_episode_watched_formatted = $lastEpWatchedFormatted;
+        }
     }
 }

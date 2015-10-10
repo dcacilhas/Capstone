@@ -20,8 +20,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <?php $i = $eps_watched->firstItem(); ?>
-                @foreach($eps_watched as $ep)
+                <?php $i = $epsWatched->firstItem(); ?>
+                @foreach($epsWatched as $ep)
                     <tr>
                         <th scope="row" class="text-center">{{ $i++ }}</th>
                         <td class="text-center">{!! link_to_route('shows/details', $ep->SeriesName, ['id' => $ep->seriesid]) !!}</td>
@@ -34,7 +34,7 @@
                 </tbody>
             </table>
 
-            {!! $eps_watched->render() !!}
+            {!! $epsWatched->render() !!}
         @else
             <div class="alert alert-danger">The user has chosen to make their list private. Only they may view it.
             </div>

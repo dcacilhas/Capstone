@@ -21,7 +21,7 @@
             </ul>
 
             @foreach($listStatuses as $listStatus)
-                @if($series->contains('list_status', $listStatus->list_status))
+                @if($shows->contains('list_status', $listStatus->list_status))
                     <table class="table table-striped table-bordered">
                         <caption>{{ $listStatus->description }}</caption>
                         <thead>
@@ -35,42 +35,42 @@
                         </thead>
                         <tbody>
                         <?php $i = 1; ?>
-                        @foreach($series as $s)
-                            @if($s->list_status === $listStatus->list_status)
+                        @foreach($shows as $show)
+                            @if($show->list_status === $listStatus->list_status)
                                 <tr>
                                     <th scope="row" class="text-center">{{ $i++ }}</th>
                                     <td>
-                                        {!! link_to_route('shows/details', $s->SeriesName, ['seriesId' => $s->series_id]) !!}
+                                        {!! link_to_route('shows/details', $show->SeriesName, ['seriesId' => $show->series_id]) !!}
 
                                         @if ((Auth::check() && Auth::user()->username === $user->username))
                                             <div class="pull-right">
                                                 <a href="#" class="edit"
                                                    data-toggle="modal"
                                                    data-target="#updateModal"
-                                                   data-series-id="{{ $s->series_id }}"
-                                                   data-series-title="{{ $s->SeriesName }}"
-                                                   data-series-rating="{{ $s->rating }}"
-                                                   data-series-status="{{ $s->list_status }}"
+                                                   data-series-id="{{ $show->series_id }}"
+                                                   data-series-title="{{ $show->SeriesName }}"
+                                                   data-series-rating="{{ $show->rating }}"
+                                                   data-series-status="{{ $show->list_status }}"
                                                    title="Edit">
                                                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                                 </a>
                                                 <a href="#" class="remove"
                                                    data-toggle="modal"
                                                    data-target="#removeModal"
-                                                   data-series-id="{{ $s->series_id }}"
-                                                   data-series-title="{{ $s->SeriesName }}"
+                                                   data-series-id="{{ $show->series_id }}"
+                                                   data-series-title="{{ $show->SeriesName }}"
                                                    title="Remove">
                                                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                                 </a>
                                             </div>
                                         @endif
                                     </td>
-                                    <td class="text-center">{{ $s->rating }}</td>
-                                    <td class="text-center">{{ $s->last_episode_watched }}</td>
+                                    <td class="text-center">{{ $show->rating }}</td>
+                                    <td class="text-center">{{ $show->last_episode_watched_formatted }}</td>
                                     <td>
                                         <div class="progress">
-                                            <div class="progress-bar" style="width: {{ $s->progress }}%;"></div>
-                                            <span>@if ($s->progress > 0) {{ $s->progress }}% @endif</span>
+                                            <div class="progress-bar" style="width: {{ $show->progress }}%;"></div>
+                                            <span>@if ($show->progress > 0) {{ $show->progress }}% @endif</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -94,7 +94,7 @@
                         <h4 class="modal-title" id="updateModalLabel"></h4>
                     </div>
                     <div class="modal-body">
-                        {!! Form::model($series, ['route' => ['profile/updateList', $user->username], 'class' => 'form-horizontal']) !!}
+                        {!! Form::model($show, ['route' => ['profile/updateList', $user->username], 'class' => 'form-horizontal']) !!}
 
                         {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
                         {!! Form::hidden('page_status', $status) !!}
@@ -140,7 +140,7 @@
                         <h4 class="modal-title" id="removeModalLabel"></h4>
                     </div>
                     <div class="modal-body">
-                        {!! Form::model($series, ['route' => ['profile/removeFromList', $user->username], 'class' => 'form-horizontal']) !!}
+                        {!! Form::model($shows, ['route' => ['profile/removeFromList', $user->username], 'class' => 'form-horizontal']) !!}
 
                         {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
                         {!! Form::hidden('page_status', $status) !!}
