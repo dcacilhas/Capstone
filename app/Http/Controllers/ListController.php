@@ -8,8 +8,8 @@ use App\Models\Show;
 use App\Models\User;
 use Auth;
 use DB;
+use Illuminate\Http\Request;
 use Input;
-use Request;
 
 
 class ListController extends Controller

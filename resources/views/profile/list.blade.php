@@ -94,7 +94,7 @@
                         <h4 class="modal-title" id="updateModalLabel"></h4>
                     </div>
                     <div class="modal-body">
-                        {!! Form::model($show, ['route' => ['profile/updateList', $user->username], 'class' => 'form-horizontal']) !!}
+                        {!! Form::model($shows, ['route' => ['profile/updateList', $user->username], 'class' => 'form-horizontal']) !!}
 
                         {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
                         {!! Form::hidden('page_status', $status) !!}
