@@ -81,7 +81,7 @@ class ShowsDetailsController extends Controller
     {
         $episode = DB::table('tvepisodes')
             ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
-            ->select('tvepisodes.seriesid', 'season', 'episodenumber', 'episodename', 'overview', 'tvepisodes.IMDB_ID', 'firstaired', 'tvepisodes.director', 'tvepisodes.writer')
+            ->select('tvepisodes.id', 'tvepisodes.seriesid', 'tvepisodes.seriesid', 'season', 'episodenumber', 'episodename', 'overview', 'tvepisodes.IMDB_ID', 'firstaired', 'tvepisodes.director', 'tvepisodes.writer')
             ->where('tvepisodes.seriesid', $seriesId)
             ->where('season', $seasonNum)
             ->where('episodenumber', $episodeNum)
@@ -91,6 +91,18 @@ class ShowsDetailsController extends Controller
             ->orderBy('episodenumber')
             ->first();
         $episode->firstaired = Carbon::createFromTimeStamp(strtotime($episode->firstaired))->toFormattedDateString();
+
+        if (Auth::check()) {
+            $episode->isOnList = null;
+            $user = Auth::user();
+            $epsWatched = ListEpisodesWatched::join('list', 'list_episodes_watched.list_id', '=', 'list.id')
+                ->where('user_id', $user->id)
+                ->where('list.series_id', $episode->seriesid)
+                ->select('list_episodes_watched.episode_id')
+                ->get();
+            $episode->isOnList = $epsWatched->contains('episode_id', $episode->id);
+            $episode->seriesIsOnList = Lists::where('user_id', $user->id)->where('series_id', $episode->seriesid)->exists();
+        }
 
         return view('shows.episode', compact('episode'));
     }
