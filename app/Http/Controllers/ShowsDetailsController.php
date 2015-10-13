@@ -6,7 +6,6 @@ use App\Http\Requests;
 use App\Models\ListEpisodesWatched;
 use App\Models\Lists;
 use App\Models\Show;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 

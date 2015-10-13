@@ -8,7 +8,7 @@
             <div class="col-md-6">
                 <h1>
                     {{ $episode->episodename }}
-                    @if(Auth::check())
+                    @if(Auth::check() && $episode->seriesIsOnList)
                         <small>
                             @if($episode->isOnList)
                                 <input type="checkbox" id="{{ $episode->id }}" checked />

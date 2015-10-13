@@ -43,12 +43,18 @@ Route::post('profile/{username}/postEmail', ['as' => 'profile/postEmail', 'uses'
 Route::post('profile/{username}/postPassword',
     ['as' => 'profile/postPassword', 'uses' => 'ProfileController@postPassword']);
 
+// Favourites
+Route::get('profile/{username}/favourites', ['as' => 'profile/favourites', 'uses' => 'FavouritesController@index']);
+Route::post('profile/{username}/favourites/add', ['as' => 'profile/favourites/add', 'uses' => 'FavouritesController@addToFavourites']);
+Route::post('profile/{username}/favourites/remove', ['as' => 'profile/favourites/remove', 'uses' => 'FavouritesController@removeFromFavourites']);
+Route::post('profile/{username}/favourites/update', ['as' => 'profile/favourites/update', 'uses' => 'FavouritesController@updateFavourites']);
+
 // List
 Route::get('profile/{username}/list', ['as' => 'profile/list', 'uses' => 'ListController@index']);
 Route::get('profile/{username}/list/watchHistory', ['as' => 'profile/list/watchHistory', 'uses' => 'ListController@showWatchHistory']);
-Route::post('profile/{username}/updateList', ['as' => 'profile/updateList', 'uses' => 'ListController@updateList']);
-Route::post('profile/{username}/removeFromList', ['as' => 'profile/removeFromList', 'uses' => 'ListController@removeFromList']);
-Route::post('profile/{username}/addToList', ['as' => 'profile/addToList', 'uses' => 'ListController@addToList']);
+Route::post('profile/{username}/list/update', ['as' => 'profile/list/update', 'uses' => 'ListController@updateList']);
+Route::post('profile/{username}/list/remove', ['as' => 'profile/list/remove', 'uses' => 'ListController@removeFromList']);
+Route::post('profile/{username}/list/add', ['as' => 'profile/list/add', 'uses' => 'ListController@addToList']);
 Route::post('list/{seriesId}/updateListEpisodesWatched', ['as' => 'list/updateListEpisodesWatched', 'uses' => 'ListController@updateListEpisodesWatched']);
 
 // Authentication

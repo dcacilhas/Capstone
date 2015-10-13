@@ -102,7 +102,7 @@
                                 <h4 class="modal-title" id="addModalLabel"></h4>
                             </div>
                             <div class="modal-body">
-                                {!! Form::open(['route' => ['profile/addToList', $user->username], 'class' => 'form-horizontal']) !!}
+                                {!! Form::open(['route' => ['profile/list/add', $user->username], 'class' => 'form-horizontal']) !!}
 
                                 {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
                                 {!! Form::hidden('series_name', null, ['id' => 'series_name']) !!}
@@ -141,7 +141,7 @@
                                 <h4 class="modal-title" id="updateModalLabel"></h4>
                             </div>
                             <div class="modal-body">
-                                {!! Form::model($show, ['route' => ['profile/updateList', $user->username], 'class' => 'form-horizontal']) !!}
+                                {!! Form::model($show, ['route' => ['profile/list/update', $user->username], 'class' => 'form-horizontal']) !!}
 
                                 {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
 
@@ -186,7 +186,7 @@
                                 <h4 class="modal-title" id="removeModalLabel"></h4>
                             </div>
                             <div class="modal-body">
-                                {!! Form::model($show, ['route' => ['profile/removeFromList', $user->username], 'class' => 'form-horizontal']) !!}
+                                {!! Form::model($show, ['route' => ['profile/list/remove', $user->username], 'class' => 'form-horizontal']) !!}
 
                                 {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
 
