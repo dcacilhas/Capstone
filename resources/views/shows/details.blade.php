@@ -10,6 +10,7 @@
                     {{ $show->SeriesName }}
                     @if (Auth::check())
                         <small>
+                            <!-- TODO: Favourites star (not favourited = empty star) -->
                             @if (!$list)
                                 <a href="#" class="edit"
                                    data-toggle="modal"
