@@ -23,7 +23,9 @@ Route::get('shows', ['as' => 'shows', 'uses' => 'ShowsController@index']);
 Route::get('shows/{seriesId}', ['as' => 'shows/details', 'uses' => 'ShowsDetailsController@index']);
 // TODO: Maybe don't need this?
 Route::get('shows/{seriesId}/season/{seasonNum}', ['as' => 'shows/season', 'uses' => 'ShowsDetailsController@showSeason']);
-Route::get('shows/{seriesId}/season/{seasonNum}/episode/{episodeNum}', ['as' => 'shows/episode', 'uses' => 'ShowsDetailsController@showEpisode']);
+
+// Episodes
+Route::get('shows/{seriesId}/season/{seasonNum}/episode/{episodeNum}', ['as' => 'shows/episode', 'uses' => 'EpisodesController@index']);
 
 // Profile
 Route::get('profile', function () {
