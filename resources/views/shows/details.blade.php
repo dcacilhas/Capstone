@@ -10,9 +10,8 @@
                     {{ $show->SeriesName }}
                     @if (Auth::check())
                         <small>
-                            <!-- TODO: Favourites star (not favourited = empty star) -->
                             @if (!$list)
-                                <a href="#" class="edit"
+                                <a href="#" class="add"
                                    data-toggle="modal"
                                    data-target="#addModal"
                                    data-series-id="{{ $show->id }}"
@@ -21,6 +20,19 @@
                                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 </a>
                             @else
+                                @if ($favourited)
+                                    <a href="#" id="favourite"
+                                       data-series-id="{{ $show->id }}"
+                                       title="Remove from Favourites">
+                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                    </a>
+                                @else
+                                    <a href="#" id="favourite" data-series-id="{{ $show->id }}"
+                                       title="Add to Favourites">
+                                        <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+                                    </a>
+                                @endif
+
                                 <a href="#" class="edit"
                                    data-toggle="modal"
                                    data-target="#updateModal"
@@ -275,8 +287,6 @@
                         modal.find('p').html("Are you sure you want to remove <strong>" + title + "</strong> from your list?");
                     });
 
-                    // TODO: Add Check/Uncheck All buttons for All Episodes and Seasons only.
-
                     // TODO: Cleanup. Maybe add success/error messages for user.
                     $('.episode').change(function () {
                         $.ajax({
@@ -299,6 +309,32 @@
                         });
                     });
                 @endif
+
+                $('#favourite').click(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('profile/favourites/update', ['seriesId' => $show->id]) }}",
+                        beforeSend: function (xhr) {
+                            var token = $("meta[name='csrf_token']").attr('content');
+
+                            if (token) {
+                                return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+                            }
+                        },
+                        data: { seriesId: $(this).data('seriesId') },
+                        success: function () {
+                            var star = $('#favourite').find('span');
+                            if (star.hasClass('glyphicon-star')) {
+                                star.removeClass('glyphicon-star').addClass('glyphicon-star-empty');
+                            } else {
+                                star.removeClass('glyphicon-star-empty').addClass('glyphicon-star');
+                            }
+                        },
+                        error: function () {
+                            alert("error!!!!");
+                        }
+                    });
+                });
             @endif
         });
     </script>

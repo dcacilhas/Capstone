@@ -6,7 +6,6 @@
     <div class="container">
         <h1>TV Shows</h1>
 
-        <!-- TODO: Add filters (All Shows, Genres, Top Rated) -->
         <ul class="nav nav-pills nav-justified">
             <li role="presentation" class="dropdown @if (isset($selectedFilter)) {{ 'active' }} @endif">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
@@ -63,7 +62,7 @@
                             @if ((Auth::check() && Auth::user()->username === $user->username))
                                 @if (!$show->is_in_list)
                                     <div class="pull-right">
-                                        <a href="#" class="edit"
+                                        <a href="#" class="add"
                                            data-toggle="modal"
                                            data-target="#addModal"
                                            data-series-id="{{ $show->id }}"

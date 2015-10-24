@@ -45,9 +45,10 @@ Route::post('profile/{username}/postPassword',
 
 // Favourites
 Route::get('profile/{username}/favourites', ['as' => 'profile/favourites', 'uses' => 'FavouritesController@index']);
-Route::post('profile/{username}/favourites/add', ['as' => 'profile/favourites/add', 'uses' => 'FavouritesController@addToFavourites']);
-Route::post('profile/{username}/favourites/remove', ['as' => 'profile/favourites/remove', 'uses' => 'FavouritesController@removeFromFavourites']);
-Route::post('profile/{username}/favourites/update', ['as' => 'profile/favourites/update', 'uses' => 'FavouritesController@updateFavourites']);
+Route::post('profile/{username}/favourites/add', ['as' => 'profile/favourites/add', 'uses' => 'FavouritesController@add']);
+Route::post('profile/{username}/favourites/remove', ['as' => 'profile/favourites/remove', 'uses' => 'FavouritesController@remove']);
+Route::post('profile/{username}/favourites/update', ['as' => 'profile/favourites/update', 'uses' => 'FavouritesController@update']);
+Route::post('profile/{username}/favourites/reorder', ['as' => 'profile/favourites/reorder', 'uses' => 'FavouritesController@reorder']);
 
 // List
 Route::get('profile/{username}/list', ['as' => 'profile/list', 'uses' => 'ListController@index']);

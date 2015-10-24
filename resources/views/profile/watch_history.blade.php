@@ -37,8 +37,7 @@
 
             {!! $epsWatched->render() !!}
         @else
-            <div class="alert alert-danger">The user has chosen to make their list private. Only they may view it.
-            </div>
+            <div class="alert alert-danger">The user has chosen to make their list private. Only they may view it.</div>
         @endif
     </div>
 @stop

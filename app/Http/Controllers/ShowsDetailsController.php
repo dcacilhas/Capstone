@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Models\Favourite;
 use App\Models\ListEpisodesWatched;
 use App\Models\Lists;
 use App\Models\Show;
@@ -56,11 +57,13 @@ class ShowsDetailsController extends Controller
                     $episode->checked = 'checked';
                 }
             }
+
+            $favourited = Favourite::where('series_id', '=', $seriesId)->exists();
         } else {
             $list = false;
         }
 
-        return view('shows/details', compact('show', 'seasons', 'episodes', 'listStatuses', 'user', 'list', 'epsWatched'));
+        return view('shows/details', compact('show', 'seasons', 'episodes', 'listStatuses', 'user', 'list', 'epsWatched', 'favourited'));
     }
 
     // TODO: Maybe don't need this?

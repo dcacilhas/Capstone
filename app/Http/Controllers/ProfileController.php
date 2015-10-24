@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Models\Favourite;
 use App\Models\User;
 use Auth;
 use DB;
@@ -39,7 +40,12 @@ class ProfileController extends Controller
             $ep->formatted = sprintf('S%02dE%02d', $ep->season, $ep->EpisodeNumber);
         }
 
-        return view('profile/home', compact('user', 'recentEpsWatched'));
+        $favourites = Favourite::join('tvseries', 'favourites.series_id', '=', 'tvseries.id')
+            ->where('user_id', $user->id)
+            ->orderBy('sort_order', 'asc')
+            ->get();
+
+        return view('profile/home', compact('user', 'recentEpsWatched', 'favourites'));
     }
 
     public function showEditProfile()
