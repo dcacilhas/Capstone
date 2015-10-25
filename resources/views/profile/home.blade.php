@@ -29,7 +29,6 @@
                     @foreach($recentEpsWatched as $ep)
                         <li>{!! link_to_route('shows/episode', $ep->SeriesName . ' ' . $ep->formatted, ['seriesId' => $ep->series_id, 'seasonNum' => $ep->season, 'episodeNum' => $ep->EpisodeNumber]) !!}</li>
                     @endforeach
-                    <li>{!! link_to_route('profile/list/watchHistory', 'View Full Watch History', ['username' => $user->username]) !!}</li>
                 </ul>
 
                 <h2>Favourite Shows</h2>
@@ -37,7 +36,6 @@
                     @foreach($favourites as $favourite)
                         <li>{!! link_to_route('shows/details', $favourite->SeriesName, ['seriesId' => $favourite->series_id]) !!}</li>
                     @endforeach
-                    <li>{!! link_to_route('profile/favourites', 'View All Favourites', ['username' => $user->username]) !!}</li>
                 </ul>
             </div>
 

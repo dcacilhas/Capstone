@@ -30,8 +30,8 @@
                 <caption>Watch History</caption>
                 <thead>
                 <tr>
-                    <th class="text-center">#</th>
-                    <th class="col-md-4 text-center">Series Title</th>
+                    <th class="col-md-1 text-center">#</th>
+                    <th class="col-md-3 text-center">Series Title</th>
                     <th class="col-md-4 text-center">Episode Title</th>
                     <th class="col-md-1 text-center">Season</th>
                     <th class="col-md-1 text-center">Episode</th>

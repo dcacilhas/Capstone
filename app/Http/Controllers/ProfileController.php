@@ -58,7 +58,7 @@ class ProfileController extends Controller
         foreach (DB::table('list_statuses')->get() as $listStatus) {
             $count = Lists::where('list_status', $listStatus->list_status)->where('user_id',
                 $user->id)->count('series_id');
-            $value = ($count > 1) ? number_format($count) . ' shows' : $count . ' show';
+            $value = ($count == 1) ? number_format($count) . ' show' : $count . ' shows';
             $statistics->put(camel_case($listStatus->description),
                 ['title' => $listStatus->description, 'value' => $value]);
         }
@@ -71,7 +71,7 @@ class ProfileController extends Controller
             $totalMinutesWatched += $runtime * $epsWatched;
         }
         $statistics->put('totalTimeWatched',
-            ['title' => 'Total Time Watched', 'value' => $this->minutesToString($totalMinutesWatched)]);
+            ['title' => 'Time Watched', 'value' => $this->minutesToString($totalMinutesWatched)]);
         $statistics->put('epsWatched', [
             'title' => 'Episodes Watched',
             'value' => number_format(ListEpisodesWatched::getUserEpisodesWatched($user->id)->count())

@@ -14,9 +14,13 @@
 
                     <h1 class="cover-heading">Who made MyMediaList?</h1>
 
-                    <p class="lead">Created by David Cacilhas. Find him
-                        on {!! link_to('https://github.com/dcacilhas', 'GitHub') !!}
-                        , {!! link_to('https://ca.linkedin.com/in/dcacilhas', 'LinkedIn') !!}.</p>
+                    <p class="lead">
+                        Created by David Cacilhas. Connect with me on {!! link_to('https://github.com/dcacilhas', 'GitHub', ['target' => '_blank']) !!},
+                        {!! link_to('https://bitbucket.org/dcacilhas', 'BitBucket', ['target' => '_blank']) !!},
+                        {!! link_to('https://ca.linkedin.com/in/dcacilhas', 'LinkedIn', ['target' => '_blank']) !!},
+                        and {!! link_to('https://twitter.com/HiTek_', 'Twitter', ['target' => '_blank']) !!}.
+                        Also check out {!! link_to('http://dcacilhas.github.io/', 'my personal website', ['target' => '_blank']) !!}.
+                    </p>
                 </div>
             </div>
         </div>
@@ -38,6 +42,7 @@
 
         body {
             text-align: center;
+            margin-bottom: auto;
         }
 
         /* Extra markup and styles for table-esque vertical and horizontal centering */
@@ -46,6 +51,7 @@
             width: 100%;
             height: 100%; /* For at least Firefox */
             min-height: 100%;
+            padding-bottom: 60px;
         }
 
         .site-wrapper-inner {

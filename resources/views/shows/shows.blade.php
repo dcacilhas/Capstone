@@ -6,7 +6,7 @@
     <div class="container">
         <h1>TV Shows</h1>
 
-        <ul class="nav nav-pills nav-justified">
+        <ul class="nav nav-tabs nav-justified">
             <li role="presentation" class="dropdown @if (isset($selectedFilter)) {{ 'active' }} @endif">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                    aria-expanded="false">

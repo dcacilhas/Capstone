@@ -1,4 +1,4 @@
-<ul class="nav nav-pills nav-justified">
+<ul class="nav nav-tabs nav-justified">
     <li role="presentation"
         class="{{ (Request::route()->getName() == 'profile') ? 'active' : '' }}">{!! link_to_route('profile', 'Profile', ['username' => $user->username]) !!}</li>
     @if (Auth::check() && Auth::user()->username === $user->username)
