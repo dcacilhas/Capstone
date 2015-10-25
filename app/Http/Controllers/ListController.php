@@ -133,10 +133,25 @@ class ListController extends Controller
         $epsWatched = ListEpisodesWatched::getUserEpisodesWatched($user->id)
             ->select('users.id', 'tvseries.SeriesName', 'tvepisodes.seriesid', 'tvepisodes.EpisodeName',
                 'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at')
+            ->getMostRecent();
+        $shows = $epsWatched->get()->unique('seriesid')->lists('SeriesName', 'seriesid')->sort();
+        $epsWatched = $epsWatched->paginate(10);
+
+        return view('profile/watch_history', compact('user', 'epsWatched', 'shows'));
+    }
+
+    public function showWatchHistoryFilter($username, $seriesId)
+    {
+        $user = User::where('username', $username)->first();
+        $epsWatched = ListEpisodesWatched::getUserEpisodesWatched($user->id)
+            ->select('users.id', 'tvseries.SeriesName', 'tvepisodes.seriesid', 'tvepisodes.EpisodeName',
+                'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at');
+        $shows = $epsWatched->get()->unique('seriesid')->lists('SeriesName', 'seriesid')->sort();
+        $epsWatched = $epsWatched->where('list.series_id', '=', $seriesId)
             ->getMostRecent()
             ->paginate(10);
 
-        return view('profile/watch_history', compact('user', 'epsWatched'));
+        return view('profile/watch_history', compact('user', 'epsWatched', 'shows', 'seriesId'));
     }
 
     public function updateListEpisodesWatched($seriesId)

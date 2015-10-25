@@ -6,7 +6,26 @@
     <div class="container">
         @include('includes.profile_submenu')
 
-        @if($user['list_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user['username']))
+        @if($user['list_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user->username))
+            <ul class="nav nav-pills nav-justified">
+                <li class="@if(Request::route()->getName() == 'profile/list/watchHistory'){{ 'active' }}@endif">
+                    {!! link_to_route('profile/list/watchHistory', 'All Shows', ['username' => $user->username]) !!}
+                </li>
+                <li role="presentation" class="dropdown @if(Request::route()->getName() == 'profile/list/watchHistory/show'){{ 'active' }}@endif">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        Filter by Show <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        @foreach($shows as $showId => $showName)
+                            <li class="@if(isset($seriesId) && $showId == $seriesId){{ 'active' }}@endif">
+                                {!! link_to_route('profile/list/watchHistory/show', $showName, ['username' => $user->username, 'seriesId' => $showId]) !!}
+                            </li>
+                        @endforeach
+                    </ul>
+                </li>
+            </ul>
+
             <table class="table table-striped table-bordered">
                 <caption>Watch History</caption>
                 <thead>

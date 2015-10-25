@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\Models\Favourite;
 use App\Models\User;
 use Auth;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -23,7 +24,8 @@ class ProfileController extends Controller
         $user->gender = DB::table('genders')->where('gender', '=', $user->gender)->value('description');
         $recentEpsWatched = DB::table('list_episodes_watched')
             ->where('user_id', $user->id)
-            ->select('list.series_id', 'tvseries.SeriesName','tvepisodes.EpisodeName', 'tvepisodes.EpisodeNumber', 'tvseasons.season')
+            ->select('list.series_id', 'tvseries.SeriesName', 'tvepisodes.EpisodeName', 'tvepisodes.EpisodeNumber',
+                'tvseasons.season')
             ->join('tvepisodes', 'list_episodes_watched.episode_id', '=', 'tvepisodes.id')
             ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
             ->join('tvseries', 'tvepisodes.seriesid', '=', 'tvseries.id')
@@ -65,7 +67,7 @@ class ProfileController extends Controller
         // TODO: Abstract this out: http://laravel.com/docs/5.1/validation#form-request-validation
         $this->validate($request, [
             'gender' => 'in:NULL,M,F',
-            'birthday' => 'before:' . \Carbon\Carbon::now()->toDateString(),
+            'birthday' => 'before:' . Carbon::now()->toDateString(),
             'location' => 'max:50',
             'notification_email' => 'in:0,1',
             'profile_visibility' => 'in:0,1,2',

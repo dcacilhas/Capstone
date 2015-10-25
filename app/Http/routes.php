@@ -53,6 +53,7 @@ Route::post('profile/{username}/favourites/reorder', ['as' => 'profile/favourite
 // List
 Route::get('profile/{username}/list', ['as' => 'profile/list', 'uses' => 'ListController@index']);
 Route::get('profile/{username}/list/watchHistory', ['as' => 'profile/list/watchHistory', 'uses' => 'ListController@showWatchHistory']);
+Route::get('profile/{username}/list/watchHistory/show/{seriesId}', ['as' => 'profile/list/watchHistory/show', 'uses' => 'ListController@showWatchHistoryFilter']);
 Route::post('profile/{username}/list/update', ['as' => 'profile/list/update', 'uses' => 'ListController@updateList']);
 Route::post('profile/{username}/list/remove', ['as' => 'profile/list/remove', 'uses' => 'ListController@removeFromList']);
 Route::post('profile/{username}/list/add', ['as' => 'profile/list/add', 'uses' => 'ListController@addToList']);
