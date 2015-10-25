@@ -11,7 +11,7 @@
                     @if (Auth::check())
                         <small>
                             @if (!$list)
-                                <a href="#" class="add"
+                                <a href="#" onClick="return false;" class="add"
                                    data-toggle="modal"
                                    data-target="#addModal"
                                    data-series-id="{{ $show->id }}"
@@ -21,19 +21,19 @@
                                 </a>
                             @else
                                 @if ($favourited)
-                                    <a href="#" id="favourite"
+                                    <a href="#" onClick="return false;" id="favourite"
                                        data-series-id="{{ $show->id }}"
                                        title="Remove from Favourites">
                                         <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
                                     </a>
                                 @else
-                                    <a href="#" id="favourite" data-series-id="{{ $show->id }}"
+                                    <a href="#" onClick="return false;" id="favourite" data-series-id="{{ $show->id }}"
                                        title="Add to Favourites">
                                         <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
                                     </a>
                                 @endif
 
-                                <a href="#" class="edit"
+                                <a href="#" onClick="return false;" class="edit"
                                    data-toggle="modal"
                                    data-target="#updateModal"
                                    data-series-id="{{ $list->series_id }}"
@@ -43,7 +43,7 @@
                                    title="Edit">
                                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                 </a>
-                                <a href="#" class="remove"
+                                <a href="#" onClick="return false;" class="remove"
                                    data-toggle="modal"
                                    data-target="#removeModal"
                                    data-series-id="{{ $list->series_id }}"
@@ -79,15 +79,15 @@
 
             <div class="col-md-6">
                 <h3>Episodes</h3>
-                <a href="#" id="showAllEpisodes">Show All</a> | <a href="#" id="hideAllEpisodes">Hide All</a> <br>
+                <a href="#" onClick="return false;" id="showAllEpisodes">Show All</a> | <a href="#" onClick="return false;" id="hideAllEpisodes">Hide All</a> <br>
                 @if ($list)
-                    <a href="#" id="checkAllEpisodes">Check All</a> | <a href="#" id="uncheckAllEpisodes">Uncheck All</a>
+                    <a href="#" onClick="return false;" id="checkAllEpisodes">Check All</a> | <a href="#" onClick="return false;" id="uncheckAllEpisodes">Uncheck All</a>
                 @endif
                 @foreach($seasons as $season)
-                    <h4 class="seasons"><a href="#" class="seasons">Season {{ $season->season }}</a></h4>
+                    <h4 class="seasons"><a href="#" onClick="return false;" onClick="return false;" class="seasons">Season {{ $season->season }}</a></h4>
                     <div class="episodes">
                     @if ($list)
-                        <a href="#" class="checkSeason">Check Season {{ $season->season }}</a> | <a href="#" class="uncheckSeason">Uncheck Season {{ $season->season }}</a>
+                        <a href="#" onClick="return false;" class="checkSeason">Check Season {{ $season->season }}</a> | <a href="#" onClick="return false;" class="uncheckSeason">Uncheck Season {{ $season->season }}</a>
                     @endif
                         <ol>
                             @foreach($episodes as $episode)
