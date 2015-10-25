@@ -25,9 +25,9 @@ class ListController extends Controller
         $status = Input::get('status');
         $listStatuses = DB::table('list_statuses')->get();
         $shows = $this->getShows($status, $user);
-        $this->addProgressAndLastEpisodeWatched($shows);
+        $this->addExtras($shows);
 
-        return view('profile/list', compact('user', 'shows', 'status', 'listStatuses'));
+        return view('profile.list', compact('user', 'shows', 'status', 'listStatuses'));
     }
 
     /**
@@ -53,7 +53,7 @@ class ListController extends Controller
      *
      * @param $shows
      */
-    private function addProgressAndLastEpisodeWatched($shows)
+    private function addExtras($shows)
     {
         foreach ($shows as $show) {
             $epsTotalCount = Show::find($show->series_id)->getEpisodes()->count();
@@ -137,7 +137,7 @@ class ListController extends Controller
         $shows = $epsWatched->get()->unique('seriesid')->lists('SeriesName', 'seriesid')->sort();
         $epsWatched = $epsWatched->paginate(10);
 
-        return view('profile/watch_history', compact('user', 'epsWatched', 'shows'));
+        return view('profile.watch_history', compact('user', 'epsWatched', 'shows'));
     }
 
     public function showWatchHistoryFilter($username, $seriesId)
@@ -151,7 +151,7 @@ class ListController extends Controller
             ->getMostRecent()
             ->paginate(10);
 
-        return view('profile/watch_history', compact('user', 'epsWatched', 'shows', 'seriesId'));
+        return view('profile.watch_history', compact('user', 'epsWatched', 'shows', 'seriesId'));
     }
 
     public function updateListEpisodesWatched($seriesId)

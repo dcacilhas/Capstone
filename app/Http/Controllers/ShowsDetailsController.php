@@ -63,7 +63,7 @@ class ShowsDetailsController extends Controller
             $list = false;
         }
 
-        return view('shows/details', compact('show', 'seasons', 'episodes', 'listStatuses', 'user', 'list', 'epsWatched', 'favourited'));
+        return view('shows.details', compact('show', 'seasons', 'episodes', 'listStatuses', 'user', 'list', 'epsWatched', 'favourited'));
     }
 
     // TODO: Maybe don't need this?

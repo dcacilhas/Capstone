@@ -12,8 +12,8 @@ use Auth;
 use Carbon\Carbon;
 use DateTime;
 use DB;
-use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
@@ -70,17 +70,17 @@ class ProfileController extends Controller
         $statistics->put('totalTimeWatched', ['title' => 'Total Time Watched', 'value' => $this->minutesToString($totalMinutesWatched)]);
         $statistics->put('epsWatched', ['title' => 'Episodes Watched', 'value' => number_format(ListEpisodesWatched::getUserEpisodesWatched($user->id)->count())]);
 
-        return view('profile/home', compact('user', 'recentEpsWatched', 'favourites', 'statistics'));
+        return view('profile.home', compact('user', 'recentEpsWatched', 'favourites', 'statistics'));
     }
 
     public function showEditProfile()
     {
-        return view('profile/edit', ['user' => Auth::user()]);
+        return view('profile.edit', ['user' => Auth::user()]);
     }
 
     public function showEditAccount()
     {
-        return view('profile/account', ['user' => Auth::user()]);
+        return view('profile.account', ['user' => Auth::user()]);
     }
 
     public function postProfile(Request $request)
