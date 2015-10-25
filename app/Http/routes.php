@@ -47,7 +47,7 @@ Route::post('profile/{username}/postPassword',
 Route::get('profile/{username}/favourites', ['as' => 'profile/favourites', 'uses' => 'FavouritesController@index']);
 Route::post('profile/{username}/favourites/add', ['as' => 'profile/favourites/add', 'uses' => 'FavouritesController@add']);
 Route::post('profile/{username}/favourites/remove', ['as' => 'profile/favourites/remove', 'uses' => 'FavouritesController@remove']);
-Route::post('profile/{username}/favourites/update', ['as' => 'profile/favourites/update', 'uses' => 'FavouritesController@update']);
+Route::post('profile/{username}/favourites/{seriesId}/update', ['as' => 'profile/favourites/update', 'uses' => 'FavouritesController@update']);
 Route::post('profile/{username}/favourites/reorder', ['as' => 'profile/favourites/reorder', 'uses' => 'FavouritesController@reorder']);
 
 // List

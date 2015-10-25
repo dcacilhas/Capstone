@@ -65,13 +65,13 @@ class FavouritesController extends Controller
         return back();
     }
 
-    public function update($seriesId)
+    public function update($username, $seriesId)
     {
-        $userId = Auth::id();
-        $isFavourited = Favourite::where('user_id', $userId)->where('series_id', $seriesId)->exists();
+        $user = User::where('username', $username)->first();
+        $isFavourited = Favourite::where('user_id', $user->id)->where('series_id', $seriesId)->exists();
         if ($isFavourited) {
             // remove
-            Favourite::where('user_id', $userId)->where('series_id', $seriesId)->delete();
+            Favourite::where('user_id', $user->id)->where('series_id', $seriesId)->delete();
 
             // Update sort_order for all favourites
             $favourites = Favourite::orderBy('sort_order', 'asc')->get();
@@ -89,7 +89,7 @@ class FavouritesController extends Controller
                 $sortOrder += 1;
             }
             $favourite = new Favourite;
-            $favourite->user_id = $userId;
+            $favourite->user_id = $user->id;
             $favourite->series_id = $seriesId;
             $favourite->sort_order = $sortOrder;
             $favourite->save();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Favourite;
 use App\Models\ListEpisodesWatched;
 use App\Models\Lists;
 use App\Models\Show;
@@ -50,6 +51,7 @@ class ListController extends Controller
     /**
      * Adds calculated progress (total episodes/episodes watched) to each show.
      * Adds last episode watched to each show.
+     * Adds if show is favourited or not.
      *
      * @param $shows
      */
@@ -78,6 +80,9 @@ class ListController extends Controller
                 $show->episode_number = $lastEpWatched->EpisodeNumber;
             }
             $show->last_episode_watched_formatted = $lastEpWatchedFormatted;
+            if (Auth::check()) {
+                $show->favourited = Favourite::where('series_id', $show->series_id)->where('user_id', Auth::user()->id)->exists();
+            }
         }
     }
 

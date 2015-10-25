@@ -55,20 +55,26 @@ class ShowsController extends Controller
             return view('shows.shows', compact('user', 'genres', 'filters', 'shows', 'listStatuses', 'selectedGenre'));
         }
 
-        return view('shows/shows', compact('user', 'genres', 'filters', 'listStatuses'));
+        return view('shows.shows', compact('user', 'genres', 'filters', 'listStatuses'));
     }
 
     /**
+     * Adds site rating and first aired date.
+     * If user is logged in:
+     *  Checks if show is in list to display Add/Remove/Edit buttons
+     *  Adds user's rating and list status
+     *
      * @param $shows
      * @param $user
      */
     private function addAdditionalShowInfo($shows, $user)
     {
-        // Check if show exists in user's list so we can display the Add Show button or not
-        // Also add Site Rating to results
-        if (Auth::check()) {
+        if ($user) {
             foreach ($shows as $show) {
-                $show->is_in_list = Lists::where('user_id', $user->id)->where('series_id', $show->id)->exists();
+                $listQuery = Lists::where('user_id', $user->id)->where('series_id', $show->id);
+                $show->is_in_list = $listQuery->exists();
+                $show->rating = $listQuery->value('rating');
+                $show->list_status = $listQuery->value('list_status');
                 $show->SiteRating = Lists::where('series_id', $show->id)->whereNotNull('rating')->avg('rating');
                 if ($show->SiteRating) {
                     $show->SiteRating = number_format($show->SiteRating, 1);

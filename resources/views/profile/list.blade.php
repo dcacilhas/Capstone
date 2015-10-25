@@ -44,6 +44,19 @@
 
                                         @if ((Auth::check() && Auth::user()->username === $user->username))
                                             <div class="pull-right">
+                                                @if ($show->favourited)
+                                                    <a href="#" onClick="return false;" class="favourite"
+                                                       data-series-id="{{ $show->series_id }}"
+                                                       title="Remove from Favourites">
+                                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                    </a>
+                                                @else
+                                                    <a href="#" onClick="return false;" class="favourite"
+                                                       data-series-id="{{ $show->series_id }}"
+                                                       title="Add to Favourites">
+                                                        <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+                                                    </a>
+                                                @endif
                                                 <a href="#" class="edit"
                                                    data-toggle="modal"
                                                    data-target="#updateModal"
@@ -166,30 +179,61 @@
 @stop
 
 @section('javascript')
-    <script>
-        $('#updateModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget),
-                title = button.data('series-title'),
-                rating = button.data('series-rating'),
-                status = button.data('series-status'),
-                id = button.data('series-id'),
-                modal = $(this);
-            modal.find('#series_id').val(id);
-            modal.find('.modal-title').text(title);
-            modal.find('#rating').val(rating);
-            modal.find('#status_' + status).prop('checked', true);
-        });
+    @if (Auth::check() && Auth::getUser()->username === $user->username)
+        <script>
+            $('#updateModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget),
+                    title = button.data('series-title'),
+                    rating = button.data('series-rating'),
+                    status = button.data('series-status'),
+                    id = button.data('series-id'),
+                    modal = $(this);
+                modal.find('#series_id').val(id);
+                modal.find('.modal-title').text(title);
+                modal.find('#rating').val(rating);
+                modal.find('#status_' + status).prop('checked', true);
+            });
 
-        $('#removeModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget),
-                title = button.data('series-title'),
-                id = button.data('series-id'),
-                modal = $(this);
-            modal.find('#series_id').val(id);
-            modal.find('.modal-title').text(title);
-            modal.find('p').html("Are you sure you want to remove <strong>" + title + "</strong> from your list?");
-        });
-    </script>
+            $('#removeModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget),
+                    title = button.data('series-title'),
+                    id = button.data('series-id'),
+                    modal = $(this);
+                modal.find('#series_id').val(id);
+                modal.find('.modal-title').text(title);
+                modal.find('p').html("Are you sure you want to remove <strong>" + title + "</strong> from your list?");
+            });
+
+            $('.favourite').click(function () {
+                var _this = $(this),
+                    url = "{{ route('profile/favourites', ['username' => $user->username]) }}" + "/" + $(this).data('seriesId') + "/update";
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    beforeSend: function (xhr) {
+                        var token = $("meta[name='csrf_token']").attr('content');
+
+                        if (token) {
+                            return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+                        }
+                    },
+                    data: { seriesId: $(this).data('seriesId') },
+                    success: function () {
+                        var star = _this.find('span');
+                        if (star.hasClass('glyphicon-star')) {
+                            star.removeClass('glyphicon-star').addClass('glyphicon-star-empty').parent().prop('title', 'Add to Favourites');
+                        } else {
+                            star.removeClass('glyphicon-star-empty').addClass('glyphicon-star').parent().prop('title', 'Remove from Favourites');
+                        }
+                    },
+                    error: function () {
+                        alert("error!!!!");
+                    }
+                });
+            });
+        </script>
+    @endif
 @stop
 
 @section('css')

@@ -21,13 +21,14 @@
                                 </a>
                             @else
                                 @if ($favourited)
-                                    <a href="#" onClick="return false;" id="favourite"
+                                    <a href="#" onClick="return false;" class="favourite"
                                        data-series-id="{{ $show->id }}"
                                        title="Remove from Favourites">
                                         <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
                                     </a>
                                 @else
-                                    <a href="#" onClick="return false;" id="favourite" data-series-id="{{ $show->id }}"
+                                    <a href="#" onClick="return false;" class="favourite"
+                                       data-series-id="{{ $show->id }}"
                                        title="Add to Favourites">
                                         <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
                                     </a>
@@ -313,10 +314,11 @@
                     });
                 @endif
 
-                $('#favourite').click(function () {
+                $('.favourite').click(function () {
+                    var _this = $(this);
                     $.ajax({
                         type: "POST",
-                        url: "{{ route('profile/favourites/update', ['seriesId' => $show->id]) }}",
+                        url: "{{ route('profile/favourites/update', ['username' => $user->username, 'seriesId' => $show->id]) }}",
                         beforeSend: function (xhr) {
                             var token = $("meta[name='csrf_token']").attr('content');
 
@@ -326,7 +328,7 @@
                         },
                         data: { seriesId: $(this).data('seriesId') },
                         success: function () {
-                            var star = $('#favourite').find('span');
+                            var star = _this.find('span');
                             if (star.hasClass('glyphicon-star')) {
                                 star.removeClass('glyphicon-star').addClass('glyphicon-star-empty').parent().prop('title', 'Add to Favourites');
                             } else {
