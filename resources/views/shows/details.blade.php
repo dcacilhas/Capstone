@@ -66,7 +66,10 @@
                         <li>Your Rating: {{ $list->rating }}</li>
                     @endif
                     <li>Site Rating: {{ $show->SiteRating }}</li>
-                    <li>Links: <a href="http://www.imdb.com/title/{{ $show->IMDB_ID }}">IMDB</a></li>
+                    <li>Links:
+                        <a href="http://www.imdb.com/title/{{ $show->IMDB_ID }}">IMDB</a>,
+                        <a href="http://thetvdb.com/?tab=series&id={{ $show->id }}">TVDB</a>
+                    </li>
                 </ul>
 
                 <h3>Overview</h3>
@@ -325,9 +328,9 @@
                         success: function () {
                             var star = $('#favourite').find('span');
                             if (star.hasClass('glyphicon-star')) {
-                                star.removeClass('glyphicon-star').addClass('glyphicon-star-empty');
+                                star.removeClass('glyphicon-star').addClass('glyphicon-star-empty').parent().prop('title', 'Add to Favourites');
                             } else {
-                                star.removeClass('glyphicon-star-empty').addClass('glyphicon-star');
+                                star.removeClass('glyphicon-star-empty').addClass('glyphicon-star').parent().prop('title', 'Remove from Favourites');
                             }
                         },
                         error: function () {

@@ -7,6 +7,7 @@
         <div class="row">
             <div class="col-md-6">
                 <h1>
+                    {!! link_to_route('shows/details', $series->SeriesName, ['seriesId' => $series->id]) !!}:
                     {{ $episode->episodename }}
                     @if(Auth::check() && $episode->seriesIsOnList)
                         <small>
@@ -23,7 +24,10 @@
                 <h4>Season {{ $episode->season }} Episode {{ $episode->episodenumber }}</h4>
 
                 <ul>
-                    <li>Links: <a href="http://www.imdb.com/title/{{ $episode->IMDB_ID }}">IMDB</a></li>
+                    <li>Links:
+                        <a href="http://www.imdb.com/title/{{ $episode->IMDB_ID }}">IMDB</a>,
+                        <a href="http://thetvdb.com/?tab=episode&seriesid={{ $series->id }}&seasonid={{ $episode->season }}&id={{ $episode->id }}&lid=7">TVDB</a>
+                    </li>
                     <li>Aired: {{ $episode->firstaired }}</li>
                     <li>Director: {{ $episode->director }}</li>
                     <li>Writer: {{ $episode->writer }}</li>
