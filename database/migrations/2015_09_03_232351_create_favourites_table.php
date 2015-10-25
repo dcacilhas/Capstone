@@ -17,7 +17,7 @@ class CreateFavouritesTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
             $table->integer('series_id')->unsigned();
-            $table->foreign('series_id')->references('id')->on('tvseries');
+            $table->foreign('series_id')->references('series_id')->on('list')->onDelete('cascade');
             $table->tinyInteger('sort_order')->unsigned();
             $table->timestamps();
         });
