@@ -43,6 +43,11 @@
 
             <div class="col-md-4">
                 <h2>Statistics</h2>
+                <ul>
+                    @foreach($statistics as $statistic)
+                        <li>{{ $statistic['title'] }}: {{ $statistic['value'] }}</li>
+                    @endforeach
+                </ul>
             </div>
         @else
             <div class="alert alert-danger">The user has chosen to make their profile private. Only they may view it.
