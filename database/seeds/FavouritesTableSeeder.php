@@ -28,10 +28,12 @@ class FavouritesTableSeeder extends Seeder
         $seriesIds = [70327, 78874, 81189];
 
         for ($i = 1; $i <= $numUsers; $i++) {
+            $sortOrder = 1;
             foreach ($seriesIds as $seriesId) {
                 DB::table('favourites')->insert([
                     'user_id' => $i,
                     'series_id' => $seriesId,
+                    'sort_order' => $sortOrder++,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                 ]);
