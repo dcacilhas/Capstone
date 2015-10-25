@@ -56,22 +56,75 @@ class ProfileController extends Controller
         // Statistics: Add show count by status (Watching, Completed, etc.)
         $statistics = new Collection;
         foreach (DB::table('list_statuses')->get() as $listStatus) {
-            $count = Lists::where('list_status', $listStatus->list_status)->where('user_id', $user->id)->count('series_id');
+            $count = Lists::where('list_status', $listStatus->list_status)->where('user_id',
+                $user->id)->count('series_id');
             $value = ($count > 1) ? number_format($count) . ' shows' : $count . ' show';
-            $statistics->put(camel_case($listStatus->description), ['title' => $listStatus->description, 'value' => $value]);
+            $statistics->put(camel_case($listStatus->description),
+                ['title' => $listStatus->description, 'value' => $value]);
         }
 
-
+        // Statistics: Add total time watched and episodes watched
         $totalMinutesWatched = 0;
         foreach (User::find($user->id)->getList()->get() as $show) {
             $runtime = (int)Show::where('id', $show->series_id)->value('runtime');
             $epsWatched = ListEpisodesWatched::where('list_id', $show->id)->count();
             $totalMinutesWatched += $runtime * $epsWatched;
         }
-        $statistics->put('totalTimeWatched', ['title' => 'Total Time Watched', 'value' => $this->minutesToString($totalMinutesWatched)]);
-        $statistics->put('epsWatched', ['title' => 'Episodes Watched', 'value' => number_format(ListEpisodesWatched::getUserEpisodesWatched($user->id)->count())]);
+        $statistics->put('totalTimeWatched',
+            ['title' => 'Total Time Watched', 'value' => $this->minutesToString($totalMinutesWatched)]);
+        $statistics->put('epsWatched', [
+            'title' => 'Episodes Watched',
+            'value' => number_format(ListEpisodesWatched::getUserEpisodesWatched($user->id)->count())
+        ]);
 
-        return view('profile.home', compact('user', 'recentEpsWatched', 'favourites', 'statistics'));
+        // Genres: Add count and calculate total
+        $genres = DB::table('genres')->get();
+        $list = User::find($user->id)->getList()
+            ->select('list.*', 'tvseries.genre')
+            ->join('tvseries', 'list.series_id', '=', 'tvseries.id')
+            ->get();
+        $genreTotal = 0;
+        foreach ($list as $show) {
+            foreach ($genres as $key => $row) {
+                if (str_contains($show->genre, $row->genre)) {
+                    (isset($row->count)) ? $row->count++ : $row->count = 1;
+                    $genreTotal++;
+                }
+            }
+        }
+
+        // Genres: Add percentage and sort by count value
+        $count = [];
+        foreach ($genres as $key => $row) {
+            if (isset($row->count)) {
+                $genres[$key]->percentage = round(($row->count / $genreTotal) * 100);
+                $count[$key] = $row->count;
+            } else {
+                $count[$key] = 0;
+            }
+        }
+        array_multisort($count, SORT_DESC, $genres);
+
+        return view('profile.home', compact('user', 'recentEpsWatched', 'favourites', 'statistics', 'genres'));
+    }
+
+    private function minutesToString($minutes)
+    {
+        $seconds = $minutes * 60;
+        $dtF = new DateTime("@0");
+        $dtT = new DateTime("@$seconds");
+        if ($seconds < 3600) {
+            $str = $dtF->diff($dtT)->format('%i minutes');
+        } elseif ($seconds < 7200) {
+            $str = $dtF->diff($dtT)->format('%h hour, %i minutes');
+        } elseif ($seconds < 86400) {
+            $str = $dtF->diff($dtT)->format('%h hours, %i minutes');
+        } elseif ($seconds < 172800) {
+            $str = $dtF->diff($dtT)->format('%a day, %h hours, %i minutes');
+        } else {
+            $str = $dtF->diff($dtT)->format('%a days, %h hours, %i minutes');
+        }
+        return $str;
     }
 
     public function showEditProfile()
@@ -176,24 +229,5 @@ class ProfileController extends Controller
         }
 
         return back()->with('status', 'Password successfully updated!');
-    }
-
-    private function minutesToString($minutes)
-    {
-        $seconds = $minutes * 60;
-        $dtF = new DateTime("@0");
-        $dtT = new DateTime("@$seconds");
-        if ($seconds < 3600) {
-            $str = $dtF->diff($dtT)->format('%i minutes');
-        } elseif ($seconds < 7200) {
-            $str = $dtF->diff($dtT)->format('%h hour, %i minutes');
-        } elseif ($seconds < 86400) {
-            $str = $dtF->diff($dtT)->format('%h hours, %i minutes');
-        } elseif ($seconds < 172800) {
-            $str = $dtF->diff($dtT)->format('%a day, %h hours, %i minutes');
-        } else {
-            $str = $dtF->diff($dtT)->format('%a days, %h hours, %i minutes');
-        }
-        return $str;
     }
 }

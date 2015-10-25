@@ -48,10 +48,46 @@
                         <li>{{ $statistic['title'] }}: {{ $statistic['value'] }}</li>
                     @endforeach
                 </ul>
+
+                <h2>Genres Watched</h2>
+                <div id="chart_div"></div>
             </div>
         @else
             <div class="alert alert-danger">The user has chosen to make their profile private. Only they may view it.
             </div>
         @endif
     </div>
+@stop
+
+@section('javascript')
+    @if($user['profile_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user['username']))
+        <script src="https://www.google.com/jsapi"></script>
+        <script>
+            google.load('visualization', '1.0', {'packages':['corechart']});
+            google.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Genre');
+                data.addColumn('number', 'Count');
+                data.addRows([
+                    @foreach($genres as $genre)
+                        @if(isset($genre->count))
+                            ['{{ $genre->genre }}', {{ $genre->count }}],
+                        @endif
+                    @endforeach
+                ]);
+
+                var options = {
+                    'width':'100%',
+                    'height':'100%',
+                    sliceVisibilityThreshold: .05,
+                    chartArea:{left:0,top:10,width:'100%',height:'100%'}
+                };
+
+                var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
+            }
+        </script>
+    @endif
 @stop
