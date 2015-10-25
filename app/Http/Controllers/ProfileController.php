@@ -50,6 +50,7 @@ class ProfileController extends Controller
         $favourites = Favourite::join('tvseries', 'favourites.series_id', '=', 'tvseries.id')
             ->where('user_id', $user->id)
             ->orderBy('sort_order', 'asc')
+            ->take(5)
             ->get();
 
         // Statistics: Add show count by status (Watching, Completed, etc.)
