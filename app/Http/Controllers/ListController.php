@@ -40,11 +40,9 @@ class ListController extends Controller
      */
     private function getShows($status, $user)
     {
-        if ($status === null) {
-            $shows = User::find($user->id)->getListWithSeries()->get();
-        } else {
-            $shows = User::find($user->id)->getListWithSeries()->where('list_status', $status)->get();
-        }
+        $shows = User::find($user->id)->getListWithSeries();
+        (is_null($status)) ? $shows = $shows->get() : $shows = $shows->where('list_status', $status)->get();
+
         return $shows;
     }
 
@@ -58,14 +56,11 @@ class ListController extends Controller
     private function addExtras($shows)
     {
         foreach ($shows as $show) {
-            $epsTotalCount = Show::find($show->series_id)->getEpisodes()->count();
-            $epsWatchedCount = ListEpisodesWatched::getListEpisodesWatched($show->id)->count();
-
-            if ($show->list_status === 2) {
-                $show->progress = 100;
-            } else {
-                $show->progress = number_format($epsWatchedCount / $epsTotalCount * 100, 0);
-            }
+            $epsTotal = Show::find($show->series_id)->getEpisodes()->count();
+            $epsWatched = ListEpisodesWatched::getListEpisodesWatched($show->id)->count();
+            ($show->list_status === 2) ?
+                $show->progress = 100 :
+                $show->progress = number_format($epsWatched / $epsTotal * 100, 0);
 
             $lastEpWatched = ListEpisodesWatched::getListEpisodesWatched($show->id)
                 ->select('tvepisodes.EpisodeNumber', 'tvseasons.season')
@@ -74,14 +69,15 @@ class ListController extends Controller
 
             $lastEpWatchedFormatted = null;
             if (!empty($lastEpWatched)) {
-                $lastEpWatchedFormatted = sprintf('S%02dE%02d', $lastEpWatched->season,
-                    $lastEpWatched->EpisodeNumber);
+                $lastEpWatchedFormatted = sprintf('S%02dE%02d', $lastEpWatched->season, $lastEpWatched->EpisodeNumber);
                 $show->season_number = $lastEpWatched->season;
                 $show->episode_number = $lastEpWatched->EpisodeNumber;
             }
             $show->last_episode_watched_formatted = $lastEpWatchedFormatted;
             if (Auth::check()) {
-                $show->favourited = Favourite::where('series_id', $show->series_id)->where('user_id', Auth::user()->id)->exists();
+                $show->favourited = Favourite::where('series_id', $show->series_id)
+                    ->where('user_id', Auth::user()->id)
+                    ->exists();
             }
         }
     }
@@ -96,11 +92,9 @@ class ListController extends Controller
         $input = $request->all();
         $user = User::where('username', $request->username)->first();
         $list = Lists::where('user_id', $user->id)->where('series_id', $input['series_id'])->first();
-        if (isset($input['rating'])) {
-            $list->fill(['rating' => (int)$input['rating'], 'list_status' => (int)$input['status']]);
-        } else {
+        (isset($input['rating'])) ?
+            $list->fill(['rating' => (int)$input['rating'], 'list_status' => (int)$input['status']]) :
             $list->fill(['list_status' => (int)$input['status']]);
-        }
         $list->save();
 
         return back();
@@ -169,12 +163,7 @@ class ListController extends Controller
         $ep = ListEpisodesWatched::where('episode_id', $episodeId)
             ->where('list_id', $listId)
             ->first();
-
-        if ($ep) {
-            $ep->delete();
-        } else {
-            ListEpisodesWatched::create(['episode_id' => $episodeId, 'list_id' => $listId]);
-        }
+        ($ep) ? $ep->delete() : ListEpisodesWatched::create(['episode_id' => $episodeId, 'list_id' => $listId]);
 
         echo true;
     }

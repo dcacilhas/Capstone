@@ -25,12 +25,12 @@ class ShowsController extends Controller
         // Shows Starting With filter
         $filter = Input::get('filter');
         if (in_array(strtoupper($filter), $filters)) {
-            $shows = ($filter === '#') ? Show::whereRaw("SeriesName REGEXP '^[0-9]+'") : Show::where('SeriesName',
-                'LIKE', $filter . '%');
+            $shows = ($filter === '#') ?
+                Show::whereRaw("SeriesName REGEXP '^[0-9]+'") :
+                Show::where('SeriesName', 'LIKE', $filter . '%');
             $shows = $shows->orderBy('SeriesName', 'asc')
                 ->select('id', 'SeriesName', 'Status', 'FirstAired', 'Network', 'Runtime', 'Rating')
                 ->paginate(50);
-
             $this->addAdditionalShowInfo($shows, $user);
             $selectedFilter = urlencode($filter);
 
@@ -48,7 +48,6 @@ class ShowsController extends Controller
                 ->where('SeriesName', 'NOT LIKE', '*%')
                 ->where('SeriesName', '<>', '')
                 ->paginate(50);
-
             $this->addAdditionalShowInfo($shows, $user);
             $selectedGenre = $genre;
 
