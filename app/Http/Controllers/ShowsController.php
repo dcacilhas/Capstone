@@ -32,7 +32,7 @@ class ShowsController extends Controller
                 ->select('id', 'SeriesName', 'Status', 'FirstAired', 'Network', 'Runtime', 'Rating')
                 ->paginate(50);
             $this->addAdditionalShowInfo($shows, $user);
-            $selectedFilter = urlencode($filter);
+            $selectedFilter = $filter;
 
             return view('shows.shows', compact('user', 'genres', 'filters', 'shows', 'listStatuses', 'selectedFilter'));
         }
