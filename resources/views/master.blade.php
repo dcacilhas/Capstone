@@ -16,8 +16,10 @@
     <style>
         body {
             padding-top: 50px;
+            /* Margin bottom by footer height */
+            margin-bottom: 60px;
+            overflow-y: scroll;
         }
-
         .starter-template {
             padding: 40px 15px;
             text-align: center;
@@ -29,13 +31,6 @@
             position: relative;
             min-height: 100%;
         }
-
-        body {
-            /* Margin bottom by footer height */
-            margin-bottom: 60px;
-            overflow-y: scroll;
-        }
-
         .footer {
             position: absolute;
             bottom: 0;
@@ -44,6 +39,11 @@
             height: 60px;
             padding-top: 15px;
             background-color: #f5f5f5;
+        }
+        @media (min-width: 768px) {
+            .navbar-form {
+                padding: 0;
+            }
         }
     </style>
 
@@ -82,6 +82,22 @@
                     <li class="{{ isActiveRoute('register') }}">{!! link_to_route('register', 'Register') !!}</li>
                 @endif
             </ul>
+
+            {!! Form::open(['route'=> 'search', 'id' => 'search', 'class' => 'navbar-form navbar-right', 'role' => 'search']) !!}
+                <div class="form-group">
+                    <div class="input-group">
+                        <input name="query" type="text" class="form-control" aria-label="Search box">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="filter">Shows</span><span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li class="filter-select"><a href="#" onclick="return false;">Shows</a></li>
+                                <li class="filter-select"><a href="#" onclick="return false;">Users</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {!! Form::close() !!}
         </div>
         <!--/.nav-collapse -->
     </div>
@@ -105,6 +121,21 @@
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.filter-select').click(function () {
+            $('#search').find('.filter').text($(this).text());
+        });
+
+        $('#search').submit(function (event) {
+            var _this = $(this),
+                query = _this.find('input[name="query"]').val(),
+                url = _this.attr('action'),
+                filter = _this.find('.filter').text();
+            _this.attr('action', url + '/' + filter.toLowerCase() + '/' + query);
+        });
+    })
+</script>
 @yield('javascript')
 </body>
 </html>

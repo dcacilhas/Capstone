@@ -1,11 +1,15 @@
 <?php
 
 use Carbon\Carbon;
+use Elasticquent\ElasticquentTrait;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
+use App\Models\User;
 
 class UserTableSeeder extends Seeder
 {
+    use ElasticquentTrait;
+
     /**
      * Run the database seeds.
      *
@@ -15,12 +19,12 @@ class UserTableSeeder extends Seeder
     {
         $faker = Factory::create();
 
-        $usernames = ['JohnDoe', 'JaneDoe', 'JohnRoe', 'JaneRoe'];
+        $usernames = ['John Doe', 'Jane Doe', 'John Roe', 'Jane Roe'];
 
-        foreach($usernames as $username) {
+        foreach ($usernames as $username) {
             DB::table('users')->insert([
                 'username' => $username,
-                'email' => strtolower($username) . '@gmail.com',
+                'email' => strtolower(str_replace(' ', '', $username)) . '@gmail.com',
                 'password' => bcrypt('password'),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -33,5 +37,8 @@ class UserTableSeeder extends Seeder
                 'list_visibility' => rand(0, 2)
             ]);
         }
+
+        User::rebuildMapping();
+        User::reindex();
     }
 }

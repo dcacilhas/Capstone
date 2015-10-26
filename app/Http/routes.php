@@ -57,6 +57,11 @@ Route::post('profile/{username}/list/remove', ['as' => 'profile.list.remove', 'u
 Route::post('profile/{username}/list/add', ['as' => 'profile.list.add', 'uses' => 'ListController@addToList']);
 Route::post('list/{seriesId}/updateListEpisodesWatched', ['as' => 'list.updateListEpisodesWatched', 'uses' => 'ListController@updateListEpisodesWatched']);
 
+// Search
+Route::get('search', ['as' => 'search', 'uses' => 'SearchController@index']);
+Route::post('search/users/{query}', ['as' => 'search.user', 'uses' => 'SearchController@postUserSearch']);
+Route::post('search/shows/{query}', ['as' => 'search.show', 'uses' => 'SearchController@postShowSearch']);
+
 // Authentication
 Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
 Route::post('login', ['as' => 'login', 'uses' => 'Auth\AuthController@postLogin']);

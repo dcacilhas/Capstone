@@ -2,16 +2,28 @@
 
 namespace App\Models;
 
+use Elasticquent\ElasticquentTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Show extends Model
 {
+    use ElasticquentTrait;
+
     /**
      * The database table used by the model.
      *
      * @var string
      */
     protected $table = 'tvseries';
+
+    protected $fillable = ['SeriesName'];
+
+    protected $mappingProperties = [
+        'SeriesName' => [
+            'type' => 'string',
+            "analyzer" => "standard",
+        ]
+    ];
 
     /**
      * Query of episodes for a TV show.

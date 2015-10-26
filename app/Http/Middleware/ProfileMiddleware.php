@@ -18,6 +18,7 @@ class ProfileMiddleware
      */
     public function handle($request, Closure $next)
     {
+        // TODO: Fix this. Not working for profile/nouser
         // User does not exist
         if (!User::where('username', '=', $request->username)->exists()) {
             return abort(404);

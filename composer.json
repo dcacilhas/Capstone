@@ -6,7 +6,8 @@
     "type": "project",
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "5.1.*"
+        "laravel/framework": "5.1.*",
+        "fairholm/elasticquent": "dev-feature/laravel-5"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -55,5 +56,11 @@
     },
     "config": {
         "preferred-install": "dist"
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/nWidart/Elasticquent"
+        }
+    ]
 }

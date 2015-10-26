@@ -171,6 +171,7 @@ class ProfileController extends Controller
 
         $user->fill($input);
         $user->save();
+        $user->reindex();
 
         return back()->with('status', 'Profile successfully updated!');
     }
@@ -191,6 +192,7 @@ class ProfileController extends Controller
         if (Hash::check($input['password'], $user->password)) {
             $user->fill(['email' => $input['email']]);
             $user->save();
+            $user->reindex();
         } else {
             return redirect()->route('profile/account', [$user->username])
                 ->withErrors('The password is incorrect.')

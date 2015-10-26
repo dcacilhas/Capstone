@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Elasticquent\ElasticquentTrait;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -12,7 +13,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
-    use Authenticatable, Authorizable, CanResetPassword;
+    use Authenticatable, Authorizable, CanResetPassword, ElasticquentTrait;
 
     /**
      * The database table used by the model.
@@ -40,12 +41,28 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'list_visibility'
     ];
 
+    protected $mappingProperties = [
+        'username' => [
+            'type' => 'string',
+            'analyzer' => 'standard'
+        ]
+    ];
+
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = ['password', 'password_confirmation', 'remember_token'];
+    protected $hidden = [
+        'password',
+        'password_confirmation',
+        'remember_token',
+        'avatar_path',
+        'notification_email',
+        'profile_visibility',
+        'list_visibility',
+        'notifications_last_checked'
+    ];
 
     public function getList() {
         return $this->hasMany('App\Models\Lists');
