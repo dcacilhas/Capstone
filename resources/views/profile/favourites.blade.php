@@ -31,7 +31,7 @@
                 <?php $i = 1; ?>
                 @foreach($favourites as $favourite)
                     <li id="item-{{ $favourite->series_id }}">
-                        {!! link_to_route('shows/details', $favourite->SeriesName, ['seriesId' => $favourite->series_id]) !!}
+                        {!! link_to_route('shows.details', $favourite->SeriesName, ['seriesId' => $favourite->series_id]) !!}
                         @if (Auth::check() && Auth::getUser()->username === $user->username)
                             <a href="#" class="remove"
                                data-toggle="modal"
@@ -68,7 +68,7 @@
 
                         $.ajax({
                             type: "POST",
-                            url: "{{ route('profile/favourites/reorder', ['username' => $user->username]) }}",
+                            url: "{{ route('profile.favourites.reorder', ['username' => $user->username]) }}",
                             beforeSend: function (xhr) {
                                 var token = $("meta[name='csrf_token']").attr('content');
 

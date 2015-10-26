@@ -70,14 +70,16 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="{{ (Request::route()->getName() == 'home') ? 'active' : '' }}">{!! link_to_route('home', 'Home') !!}</li>
-                <li class="{{ (Request::route()->getName() == 'shows') ? 'active' : '' }}">{!! link_to_route('shows', 'TV Shows') !!}</li>
+                <li class="{{ isActiveRoute('home') }}">{!! link_to_route('home', 'Home') !!}</li>
+                <li class="{{ starts_with(Request::route()->getName(), 'shows') ? 'active' : '' }}">{!! link_to_route('shows', 'TV Shows') !!}</li>
                 @if (Auth::check())
-                    <li class="{{ starts_with(Request::route()->getName(), 'profile') ? 'active' : '' }}">{!! link_to_route('profile', 'Profile', ['username' => Auth::user()->username]) !!}</li>
+                    <li class="{{ starts_with(Request::route()->getName(), 'profile') ? 'active' : '' }}">
+                        {!! link_to_route('profile', 'Profile', ['username' => Auth::user()->username]) !!}
+                    </li>
                     <li>{!! link_to_route('logout', 'Log Out') !!}</li>
                 @else
-                    <li class="{{ (Request::route()->getName() == 'login') ? 'active' : '' }}">{!! link_to_route('login', 'Log In') !!}</li>
-                    <li class="{{ (Request::route()->getName() == 'register') ? 'active' : '' }}">{!! link_to_route('register', 'Register') !!}</li>
+                    <li class="{{ isActiveRoute('login') }}">{!! link_to_route('login', 'Log In') !!}</li>
+                    <li class="{{ isActiveRoute('register') }}">{!! link_to_route('register', 'Register') !!}</li>
                 @endif
             </ul>
         </div>

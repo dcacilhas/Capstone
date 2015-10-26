@@ -8,10 +8,8 @@
 
         @if($user['profile_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user['username']))
             <div class="col-md-4">
-                @if(!empty($user->about))
-                    <h2>About {{ $user->username }}</h2>
-                    <p>{!! nl2br(e($user->about)) !!}</p>
-                @endif
+                <h2>About {{ $user->username }}</h2>
+                <p>{!! nl2br(e($user->about)) !!}</p>
 
                 <h2>Details</h2>
                 <ul>
@@ -27,14 +25,14 @@
                 <ul>
                     <!-- TODO: Format this better. Separate series/episode links. -->
                     @foreach($recentEpsWatched as $ep)
-                        <li>{!! link_to_route('shows/episode', $ep->SeriesName . ' ' . $ep->formatted, ['seriesId' => $ep->series_id, 'seasonNum' => $ep->season, 'episodeNum' => $ep->EpisodeNumber]) !!}</li>
+                        <li>{!! link_to_route('shows.episode', $ep->SeriesName . ' ' . $ep->formatted, ['seriesId' => $ep->series_id, 'seasonNum' => $ep->season, 'episodeNum' => $ep->EpisodeNumber]) !!}</li>
                     @endforeach
                 </ul>
 
                 <h2>Favourite Shows</h2>
                 <ul>
                     @foreach($favourites as $favourite)
-                        <li>{!! link_to_route('shows/details', $favourite->SeriesName, ['seriesId' => $favourite->series_id]) !!}</li>
+                        <li>{!! link_to_route('shows.details', $favourite->SeriesName, ['seriesId' => $favourite->series_id]) !!}</li>
                     @endforeach
                 </ul>
             </div>

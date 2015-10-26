@@ -6,7 +6,7 @@
     <div class="container">
         @include('includes.profile_submenu')
 
-        {!! Form::model($user, ['route' => ['profile/postProfile', $user->username], 'class' => 'form-horizontal']) !!}
+        {!! Form::model($user, ['route' => ['profile.postProfile', $user->username], 'class' => 'form-horizontal']) !!}
 
         <!-- TODO: Separate errors for each form: http://laravel.com/docs/5.1/validation#other-validation-approaches -->
         @include('errors.errors')

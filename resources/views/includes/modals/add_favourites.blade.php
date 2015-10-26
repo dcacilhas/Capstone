@@ -8,7 +8,7 @@
                 <h4 class="modal-title" id="addModalLabel">Add To Favourites</h4>
             </div>
             <div class="modal-body">
-                {!! Form::open(['route' => ['profile/favourites/add', $user->username], 'class' => 'form-horizontal']) !!}
+                {!! Form::open(['route' => ['profile.favourites.add', $user->username], 'class' => 'form-horizontal']) !!}
 
                 <div class="form-group">
                     {!! Form::label('favourites', 'Shows to Favourite: ', ['class' => 'col-sm-4 control-label']) !!}

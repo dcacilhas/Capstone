@@ -32,9 +32,7 @@
         </ul>
 
         @if (session('status'))
-            <div class="alert alert-success">
-                {{ session('status') }}
-            </div>
+            <div class="alert alert-success">{{ session('status') }}</div>
         @endif
 
         @if (isset($shows))
@@ -58,7 +56,7 @@
                     <tr>
                         <th scope="row" class="text-center">{{ $i++ }}</th>
                         <td>
-                            {!! link_to_route('shows/details', $show->SeriesName, ['id' => $show->id]) !!}
+                            {!! link_to_route('shows.details', $show->SeriesName, ['id' => $show->id]) !!}
                             @if ((Auth::check() && Auth::user()->username === $user->username))
                                 <div class="pull-right">
                                     @if (!$show->is_in_list)
@@ -176,7 +174,7 @@
 
             $('.favourite').click(function () {
                 var _this = $(this),
-                        url = "{{ route('profile/favourites', ['username' => $user->username]) }}" + "/" + $(this).data('seriesId') + "/update";
+                        url = "{{ route('profile.favourites', ['username' => $user->username]) }}" + "/" + $(this).data('seriesId') + "/update";
 
                 $.ajax({
                     type: "POST",

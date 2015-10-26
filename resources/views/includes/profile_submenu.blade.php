@@ -1,15 +1,32 @@
 <ul class="nav nav-tabs nav-justified">
-    <li role="presentation"
-        class="{{ (Request::route()->getName() == 'profile') ? 'active' : '' }}">{!! link_to_route('profile', 'Profile', ['username' => $user->username]) !!}</li>
+    <li role="presentation" class="{{ isActiveRoute('profile') }}">
+        {!! link_to_route('profile', 'Home', ['username' => $user->username]) !!}
+    </li>
     @if (Auth::check() && Auth::user()->username === $user->username)
-        <li role="presentation"
-            class="{{ (Request::route()->getName() == 'profile/edit') ? 'active' : '' }}">{!! link_to_route('profile/edit', 'Edit Profile', ['username' => $user->username]) !!}</li>
-        <li role="presentation"
-            class="{{ (Request::route()->getName() == 'profile/account') ? 'active' : '' }}">{!! link_to_route('profile/account', 'Edit Account', ['username' => $user->username]) !!}</li>
+        <li role="presentation" class="dropdown {{ areActiveRoutes(['profile.edit.profile', 'profile.edit.account']) }}">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+               aria-expanded="false">
+                Edit <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li role="presentation" class="{{ isActiveRoute('profile.edit.profile') }}">
+                    {!! link_to_route('profile.edit.profile', 'Profile', ['username' => $user->username]) !!}
+                </li>
+                <li role="presentation" class="{{ isActiveRoute('profile.edit.account') }}">
+                    {!! link_to_route('profile.edit.account', 'Account', ['username' => $user->username]) !!}
+                </li>
+            </ul>
+        </li>
     @endif
-    <li role="presentation" class="{{ (Request::route()->getName() == 'profile/list') ? 'active' : '' }}">{!! link_to_route('profile/list', 'List', ['username' => $user->username]) !!}</li>
-    <li role="presentation" class="{{ (starts_with(Request::route()->getName(), 'profile/list/watchHistory')) ? 'active' : '' }}">{!! link_to_route('profile/list/watchHistory', 'Watch History', ['username' => $user->username]) !!}</li>
-    <li role="presentation"class="{{ (Request::route()->getName() == 'profile/favourites') ? 'active' : '' }}">{!! link_to_route('profile/favourites', 'Favourites', ['username' => $user->username]) !!}</li>
+    <li role="presentation" class="{{ isActiveRoute('profile.list') }}">
+        {!! link_to_route('profile.list', 'List', ['username' => $user->username]) !!}
+    </li>
+    <li role="presentation" class="{{ areActiveRoutes(['profile.list.history', 'profile.list.history.show']) }}">
+        {!! link_to_route('profile.list.history', 'History', ['username' => $user->username]) !!}
+    </li>
+    <li role="presentation"class="{{ isActiveRoute('profile.favourites') ? 'active' : '' }}">
+        {!! link_to_route('profile.favourites', 'Favourites', ['username' => $user->username]) !!}
+    </li>
     <li role="presentation"><a href="#">Friends</a></li>
     @if (Auth::check() && Auth::user()->username === $user->username)
         <li role="presentation"><a href="#">Notifications</a></li>

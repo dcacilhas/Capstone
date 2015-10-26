@@ -7,8 +7,7 @@
                 <h4 class="modal-title" id="updateModalLabel"></h4>
             </div>
             <div class="modal-body">
-                {!! Form::model($shows, ['route' => ['profile/list/update', $user->username], 'class' => 'form-horizontal']) !!}
-
+                {!! Form::model($shows, ['route' => ['profile.list.update', $user->username], 'class' => 'form-horizontal']) !!}
                 {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
 
                 <div class="form-group">

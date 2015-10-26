@@ -126,7 +126,7 @@ class ListController extends Controller
         return back()->with('status', $input['series_name'] . ' was successfully added to your list!');
     }
 
-    public function showWatchHistory($username)
+    public function showHistory($username)
     {
         $user = User::where('username', $username)->first();
         $epsWatched = ListEpisodesWatched::getUserEpisodesWatched($user->id)
@@ -136,10 +136,10 @@ class ListController extends Controller
         $shows = $epsWatched->get()->unique('seriesid')->lists('SeriesName', 'seriesid')->sort();
         $epsWatched = $epsWatched->paginate(10);
 
-        return view('profile.watch_history', compact('user', 'epsWatched', 'shows'));
+        return view('profile.history', compact('user', 'epsWatched', 'shows'));
     }
 
-    public function showWatchHistoryFilter($username, $seriesId)
+    public function showHistoryFilter($username, $seriesId)
     {
         $user = User::where('username', $username)->first();
         $epsWatched = ListEpisodesWatched::getUserEpisodesWatched($user->id)
@@ -150,7 +150,7 @@ class ListController extends Controller
             ->getMostRecent()
             ->paginate(10);
 
-        return view('profile.watch_history', compact('user', 'epsWatched', 'shows', 'seriesId'));
+        return view('profile.history', compact('user', 'epsWatched', 'shows', 'seriesId'));
     }
 
     public function updateListEpisodesWatched($seriesId)

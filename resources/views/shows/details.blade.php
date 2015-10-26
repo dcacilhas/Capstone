@@ -68,8 +68,8 @@
                     @endif
                     <li>Site Rating: {{ $show->SiteRating }}</li>
                     <li>Links:
-                        <a href="http://www.imdb.com/title/{{ $show->IMDB_ID }}">IMDB</a>,
-                        <a href="http://thetvdb.com/?tab=series&id={{ $show->id }}">TVDB</a>
+                        <a href="http://www.imdb.com/title/{{ $show->IMDB_ID }}" target="_blank">IMDB</a>,
+                        <a href="http://thetvdb.com/?tab=series&id={{ $show->id }}" target="_blank">TVDB</a>
                     </li>
                 </ul>
 
@@ -97,7 +97,7 @@
                                         @if($list)
                                             <input type="checkbox" id="{{ $episode->id }}" class="episode" {{ $episode->checked or '' }} />
                                         @endif
-                                        {!! link_to_route('shows/episode', $episode->episodename, ['seriesId' => $episode->seriesid, 'seasonNum' => $season->season, 'episodeNum' => $episode->episodenumber]) !!}
+                                        {!! link_to_route('shows.episode', $episode->episodename, ['seriesId' => $episode->seriesid, 'seasonNum' => $season->season, 'episodeNum' => $episode->episodenumber]) !!}
                                     </li>
                                 @endif
                             @endforeach
@@ -190,7 +190,7 @@
                     $('.episode').change(function () {
                         $.ajax({
                             type: "POST",
-                            url: "{{ route('list/updateListEpisodesWatched', ['seriesId' => $show->id]) }}",
+                            url: "{{ route('list.updateListEpisodesWatched', ['seriesId' => $show->id]) }}",
                             beforeSend: function (xhr) {
                                 var token = $("meta[name='csrf_token']").attr('content');
 
@@ -213,7 +213,7 @@
                     var _this = $(this);
                     $.ajax({
                         type: "POST",
-                        url: "{{ route('profile/favourites/update', ['username' => $user->username, 'seriesId' => $show->id]) }}",
+                        url: "{{ route('profile.favourites.update', ['username' => $user->username, 'seriesId' => $show->id]) }}",
                         beforeSend: function (xhr) {
                             var token = $("meta[name='csrf_token']").attr('content');
 

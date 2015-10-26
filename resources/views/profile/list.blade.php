@@ -8,16 +8,21 @@
 
         @if($user['list_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user->username))
             <ul class="nav nav-pills nav-justified">
-                <li role="presentation"
-                    @if($status === null) class="active" @endif>{!! link_to_route('profile/list', 'All', ['username' => $user->username]) !!}</li>
-                <li role="presentation"
-                    @if($status === '0') class="active" @endif>{!! link_to_route('profile/list', 'Watching', ['username' => $user->username, 'status' => '0']) !!}</li>
-                <li role="presentation"
-                    @if($status === '1') class="active" @endif>{!! link_to_route('profile/list', 'Plan To Watch', ['username' => $user->username, 'status' => '1']) !!}</li>
-                <li role="presentation"
-                    @if($status === '2') class="active" @endif>{!! link_to_route('profile/list', 'Completed', ['username' => $user->username, 'status' => '2']) !!}</li>
-                <li role="presentation"
-                    @if($status === '3') class="active" @endif>{!! link_to_route('profile/list', 'On Hold', ['username' => $user->username, 'status' => '3']) !!}</li>
+                <li role="presentation" @if($status === null) class="active" @endif>
+                    {!! link_to_route('profile.list', 'All', ['username' => $user->username]) !!}
+                </li>
+                <li role="presentation" @if($status === '0') class="active" @endif>
+                    {!! link_to_route('profile.list', 'Watching', ['username' => $user->username, 'status' => '0']) !!}
+                </li>
+                <li role="presentation" @if($status === '1') class="active" @endif>
+                    {!! link_to_route('profile.list', 'Plan To Watch', ['username' => $user->username, 'status' => '1']) !!}
+                </li>
+                <li role="presentation" @if($status === '2') class="active" @endif>
+                    {!! link_to_route('profile.list', 'Completed', ['username' => $user->username, 'status' => '2']) !!}
+                </li>
+                <li role="presentation" @if($status === '3') class="active" @endif>
+                    {!! link_to_route('profile.list', 'On Hold', ['username' => $user->username, 'status' => '3']) !!}
+                </li>
             </ul>
 
             @foreach($listStatuses as $listStatus)
@@ -40,7 +45,7 @@
                                 <tr>
                                     <th scope="row" class="text-center">{{ $i++ }}</th>
                                     <td>
-                                        {!! link_to_route('shows/details', $show->SeriesName, ['seriesId' => $show->series_id]) !!}
+                                        {!! link_to_route('shows.details', $show->SeriesName, ['seriesId' => $show->series_id]) !!}
 
                                         @if ((Auth::check() && Auth::user()->username === $user->username))
                                             <div class="pull-right">
@@ -48,13 +53,15 @@
                                                     <a href="#" onClick="return false;" class="favourite"
                                                        data-series-id="{{ $show->series_id }}"
                                                        title="Remove from Favourites">
-                                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                        <span class="glyphicon glyphicon-star"
+                                                              aria-hidden="true"></span>
                                                     </a>
                                                 @else
                                                     <a href="#" onClick="return false;" class="favourite"
                                                        data-series-id="{{ $show->series_id }}"
                                                        title="Add to Favourites">
-                                                        <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+                                                        <span class="glyphicon glyphicon-star-empty"
+                                                              aria-hidden="true"></span>
                                                     </a>
                                                 @endif
                                                 <a href="#" class="edit"
@@ -81,7 +88,7 @@
                                     <td class="text-center">{{ $show->rating }}</td>
                                     <td class="text-center">
                                         @if($show->last_episode_watched_formatted)
-                                            {!! link_to_route('shows/episode', $show->last_episode_watched_formatted, ['seriesId' => $show->series_id, 'seasonNum' => $show->season_number, 'episodeNum' => $show->episode_number]) !!}
+                                            {!! link_to_route('shows.episode', $show->last_episode_watched_formatted, ['seriesId' => $show->series_id, 'seasonNum' => $show->season_number, 'episodeNum' => $show->episode_number]) !!}
                                         @endif
                                     </td>
                                     <td>
@@ -137,7 +144,7 @@
 
             $('.favourite').click(function () {
                 var _this = $(this),
-                    url = "{{ route('profile/favourites', ['username' => $user->username]) }}" + "/" + $(this).data('seriesId') + "/update";
+                    url = "{{ route('profile.favourites', ['username' => $user->username]) }}" + "/" + $(this).data('seriesId') + "/update";
 
                 $.ajax({
                     type: "POST",

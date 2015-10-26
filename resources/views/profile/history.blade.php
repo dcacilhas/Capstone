@@ -8,10 +8,10 @@
 
         @if($user['list_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user->username))
             <ul class="nav nav-pills nav-justified">
-                <li class="@if(Request::route()->getName() == 'profile/list/watchHistory'){{ 'active' }}@endif">
-                    {!! link_to_route('profile/list/watchHistory', 'All Shows', ['username' => $user->username]) !!}
+                <li class="{{ isActiveRoute('profile.list.history') }}">
+                    {!! link_to_route('profile.list.history', 'All Shows', ['username' => $user->username]) !!}
                 </li>
-                <li role="presentation" class="dropdown @if(Request::route()->getName() == 'profile/list/watchHistory/show'){{ 'active' }}@endif">
+                <li role="presentation" class="dropdown {{ isActiveRoute('profile.list.history.show') }}">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                        aria-expanded="false">
                         Filter by Show <span class="caret"></span>
@@ -19,7 +19,7 @@
                     <ul class="dropdown-menu">
                         @foreach($shows as $showId => $showName)
                             <li class="@if(isset($seriesId) && $showId == $seriesId){{ 'active' }}@endif">
-                                {!! link_to_route('profile/list/watchHistory/show', $showName, ['username' => $user->username, 'seriesId' => $showId]) !!}
+                                {!! link_to_route('profile.list.history.show', $showName, ['username' => $user->username, 'seriesId' => $showId]) !!}
                             </li>
                         @endforeach
                     </ul>
@@ -43,8 +43,8 @@
                 @foreach($epsWatched as $ep)
                     <tr>
                         <th scope="row" class="text-center">{{ $i++ }}</th>
-                        <td class="text-center">{!! link_to_route('shows/details', $ep->SeriesName, ['id' => $ep->seriesid]) !!}</td>
-                        <td class="text-center">{!! link_to_route('shows/episode', $ep->EpisodeName, ['seriesId' => $ep->seriesid, 'seasonNum' => $ep->season, 'episodeNum' => $ep->EpisodeNumber]) !!}</td>
+                        <td class="text-center">{!! link_to_route('shows.details', $ep->SeriesName, ['id' => $ep->seriesid]) !!}</td>
+                        <td class="text-center">{!! link_to_route('shows.episode', $ep->EpisodeName, ['seriesId' => $ep->seriesid, 'seasonNum' => $ep->season, 'episodeNum' => $ep->EpisodeNumber]) !!}</td>
                         <td class="text-center">{{ $ep->season }}</td>
                         <td class="text-center">{{ $ep->EpisodeNumber }}</td>
                         <!-- TODO: Detect user's timezone. -->

@@ -6,7 +6,7 @@
     <div class="container">
         @include('includes.profile_submenu')
 
-        {!! Form::model($user, ['route' => ['profile/postEmail', $user->username], 'class' => 'form-horizontal']) !!}
+        {!! Form::model($user, ['route' => ['profile.postEmail', $user->username], 'class' => 'form-horizontal']) !!}
         @include('errors.errors')
 
         @if (session('status'))
@@ -51,7 +51,7 @@
 
         {!! Form::close() !!}
 
-        {!! Form::model($user, ['route' => ['profile/postPassword', $user->username], 'class' => 'form-horizontal']) !!}
+        {!! Form::model($user, ['route' => ['profile.postPassword', $user->username], 'class' => 'form-horizontal']) !!}
         @include('errors.errors')
 
         <h2>Change Password</h2>

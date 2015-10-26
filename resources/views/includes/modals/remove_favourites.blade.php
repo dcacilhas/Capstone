@@ -8,17 +8,14 @@
                 <h4 class="modal-title" id="removeModalLabel"></h4>
             </div>
             <div class="modal-body">
-                {!! Form::model($favourites, ['route' => ['profile/favourites/remove', $user->username], 'class' => 'form-horizontal']) !!}
-
+                {!! Form::model($favourites, ['route' => ['profile.favourites.remove', $user->username], 'class' => 'form-horizontal']) !!}
                 {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
-
                 <p></p>
             </div>
             <div class="modal-footer">
                 {!! Form::submit('Yes', ['class' => 'btn btn-primary']) !!}
                 <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
             </div>
-
             {!! Form::close() !!}
         </div>
     </div>
