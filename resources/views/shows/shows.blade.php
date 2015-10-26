@@ -12,10 +12,28 @@
                    aria-expanded="false">
                     Shows Starting With <span class="caret"></span>
                 </a>
-                <ul class="dropdown-menu">
-                    @foreach($filters as $filter)
-                        <li class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">{!! link_to_route('shows', $filter, ['filter' => $filter]) !!}</li>
-                    @endforeach
+                <ul class="dropdown-menu multi-column columns-3">
+                    <li class="col-sm-4">
+                        <ul class="multi-column-dropdown">
+                            @foreach(array_slice($filters, 0, 9) as $filter)
+                                <li role="presentation" class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">{!! link_to_route('shows', $filter, ['filter' => $filter]) !!}</li>
+                            @endforeach
+                        </ul>
+                    </li>
+                    <li class="col-sm-4">
+                        <ul class="multi-column-dropdown">
+                            @foreach(array_slice($filters, 9, 9) as $filter)
+                                <li class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">{!! link_to_route('shows', $filter, ['filter' => $filter]) !!}</li>
+                            @endforeach
+                        </ul>
+                    </li>
+                    <li class="col-sm-4">
+                        <ul class="multi-column-dropdown">
+                            @foreach(array_slice($filters, 18, 9) as $filter)
+                                <li class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">{!! link_to_route('shows', $filter, ['filter' => $filter]) !!}</li>
+                            @endforeach
+                        </ul>
+                    </li>
                 </ul>
             </li>
             <li role="presentation" class="dropdown @if (isset($selectedGenre)) {{ 'active' }} @endif">
@@ -23,10 +41,28 @@
                    aria-expanded="false">
                     Genres <span class="caret"></span>
                 </a>
-                <ul class="dropdown-menu">
-                    @foreach($genres as $genre)
-                        <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">{!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}</li>
-                    @endforeach
+                <ul class="dropdown-menu multi-column columns-3">
+                    <li class="col-sm-4">
+                        <ul class="multi-column-dropdown">
+                            @foreach(array_slice($genres, 0, 9) as $genre)
+                                <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">{!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}</li>
+                            @endforeach
+                        </ul>
+                    </li>
+                    <li class="col-sm-4">
+                        <ul class="multi-column-dropdown">
+                            @foreach(array_slice($genres, 9, 9) as $genre)
+                                <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">{!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}</li>
+                            @endforeach
+                        </ul>
+                    </li>
+                    <li class="col-sm-4">
+                        <ul class="multi-column-dropdown">
+                            @foreach(array_slice($genres, 18, 9) as $genre)
+                                <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">{!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}</li>
+                            @endforeach
+                        </ul>
+                    </li>
                 </ul>
             </li>
         </ul>
@@ -37,7 +73,7 @@
 
         @if (isset($shows))
             <table class="table table-striped table-bordered">
-                <caption>Filter: {{ $selectedGenre or urldecode($selectedFilter) }}</caption>
+                <caption>Filter: {{ $selectedGenre or $selectedFilter }}</caption>
                 <thead>
                 <tr>
                     <th class="col-md-1 text-center">#</th>
@@ -116,7 +152,7 @@
             </table>
 
             @if (isset($selectedFilter))
-                {!! $shows->appends(['filter' => $selectedFilter])->render() !!}
+                {!! $shows->appends(['filter' => urlencode($selectedFilter)])->render() !!}
             @else
                 {!! $shows->appends(['genre' => $selectedGenre])->render() !!}
             @endif
@@ -136,7 +172,7 @@
 @stop
 
 @section('javascript')
-    @if (Auth::check() && Auth::getUser()->username === $user->username)
+    @if (Auth::check() && Auth::user()->username === $user->username)
         <script>
             $('#addModal').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget),
@@ -202,4 +238,51 @@
             });
         </script>
     @endif
+@stop
+
+@section('css')
+    <style>
+        .dropdown-menu {
+            min-width: 200px;
+        }
+        .dropdown-menu.columns-2 {
+            min-width: 400px;
+        }
+        .dropdown-menu.columns-3 {
+            /*min-width: 600px;*/
+            width: 100%;
+        }
+        .dropdown-menu li a {
+            padding: 5px 15px;
+            font-weight: 300;
+        }
+        .multi-column-dropdown {
+            list-style: none;
+            padding-left: 0;
+        }
+        .multi-column-dropdown li a {
+            display: block;
+            clear: both;
+            line-height: 1.428571429;
+            color: #333;
+            white-space: normal;
+        }
+        .multi-column-dropdown li a:hover {
+            text-decoration: none;
+            color: #262626;
+            background-color: #f5f5f5;
+        }
+        .multi-column-dropdown li.active > a {
+            color: #fff;
+            text-decoration: none;
+            background-color: #337ab7;
+            outline: 0;
+        }
+        @media (max-width: 767px) {
+            .dropdown-menu.multi-column {
+                min-width: 240px !important;
+                overflow-x: hidden;
+            }
+        }
+    </style>
 @stop
