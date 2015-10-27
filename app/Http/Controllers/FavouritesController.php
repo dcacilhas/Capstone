@@ -34,16 +34,13 @@ class FavouritesController extends Controller
         $seriesIds = Input::get('favouritesToAdd');
         foreach ($seriesIds as $seriesId) {
             $sortOrder = Favourite::max('sort_order');
-            if (is_null($sortOrder)) {
-                $sortOrder = 1;
-            } else {
-                $sortOrder += 1;
-            }
-            $favourite = new Favourite;
-            $favourite->user_id = $user->id;
-            $favourite->series_id = $seriesId;
-            $favourite->sort_order = $sortOrder;
-            $favourite->save();
+            $sortOrder = $sortOrder ? $sortOrder++ : 1;
+//            if (is_null($sortOrder)) {
+//                $sortOrder = 1;
+//            } else {
+//                $sortOrder += 1;
+//            }
+            Favourite::create(['user_id' => $user->id, 'series_id' => $seriesId, 'sort_order' => $sortOrder]);
         }
 
         return back();

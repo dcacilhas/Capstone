@@ -59,8 +59,10 @@ Route::post('list/{seriesId}/updateListEpisodesWatched', ['as' => 'list.updateLi
 
 // Search
 Route::get('search', ['as' => 'search', 'uses' => 'SearchController@index']);
-Route::post('search/users/{query}', ['as' => 'search.user', 'uses' => 'SearchController@postUserSearch']);
-Route::post('search/shows/{query}', ['as' => 'search.show', 'uses' => 'SearchController@postShowSearch']);
+Route::post('search/users/{query?}', ['as' => 'search.user', 'uses' => 'SearchController@postUserSearch']);
+Route::get('search/users/{query?}', ['as' => 'search.user', 'uses' => 'SearchController@postUserSearch']);
+Route::post('search/shows/{query?}', ['as' => 'search.show', 'uses' => 'SearchController@postShowSearch']);
+Route::get('search/shows/{query?}', ['as' => 'search.show', 'uses' => 'SearchController@postShowSearch']);
 
 // Authentication
 Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);

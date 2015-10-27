@@ -83,10 +83,10 @@
                 @endif
             </ul>
 
-            {!! Form::open(['route'=> 'search', 'id' => 'search', 'class' => 'navbar-form navbar-right', 'role' => 'search']) !!}
+            {!! Form::open(['route'=> 'search', 'id' => 'searchForm', 'class' => 'navbar-form navbar-right', 'role' => 'search']) !!}
                 <div class="form-group">
                     <div class="input-group">
-                        <input name="query" type="text" class="form-control" aria-label="Search box">
+                        <input id="searchBox" name="query" type="text" class="form-control" aria-label="Search box" required>
                         <div class="input-group-btn">
                             <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
                             <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="filter">Shows</span><span class="caret"></span></button>
@@ -124,15 +124,15 @@
 <script>
     $(document).ready(function () {
         $('.filter-select').click(function () {
-            $('#search').find('.filter').text($(this).text());
+            $('#searchForm').find('.filter').text($(this).text());
         });
 
-        $('#search').submit(function (event) {
-            var _this = $(this),
-                query = _this.find('input[name="query"]').val(),
-                url = _this.attr('action'),
-                filter = _this.find('.filter').text();
-            _this.attr('action', url + '/' + filter.toLowerCase() + '/' + query);
+        $('#searchForm').submit(function (event) {
+            var that = $(this),
+                query = $('#searchBox').val(),
+                url = that.attr('action'),
+                filter = that.find('.filter').text();
+            that.attr('action', url + '/' + filter.toLowerCase() + '/' + query);
         });
     })
 </script>

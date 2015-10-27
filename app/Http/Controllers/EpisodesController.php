@@ -38,8 +38,9 @@ class EpisodesController extends Controller
                 ->select('list_episodes_watched.episode_id')
                 ->get();
             $episode->isOnList = $epsWatched->contains('episode_id', $episode->id);
-            $episode->seriesIsOnList = Lists::where('user_id', $user->id)->where('series_id',
-                $episode->seriesid)->exists();
+            $episode->seriesIsOnList = Lists::where('user_id', $user->id)
+                ->where('series_id', $episode->seriesid)
+                ->exists();
         }
 
         $series = Show::where('id', $episode->seriesid)->select('id', 'SeriesName')->first();
