@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Elasticquent\ElasticquentTrait;
-use Illuminate\Database\Eloquent\Model;
+use Eloquent;
 
-class Show extends Model
+class Show extends Eloquent
 {
     use ElasticquentTrait;
 

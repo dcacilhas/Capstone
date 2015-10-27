@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Eloquent;
 
-class ListEpisodesWatched extends Model
+class ListEpisodesWatched extends Eloquent
 {
     /**
      * The database table used by the model.
