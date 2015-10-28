@@ -15,11 +15,6 @@ class SearchController extends Controller
 {
     public function index()
     {
-//        Add tvseries to ElasticSearch (avoid memory limit)
-//        Show::chunk(200, function ($shows) {
-//            $shows->addToIndex();
-//        });
-
         return view('search.search');
     }
 
@@ -58,7 +53,7 @@ class SearchController extends Controller
             ]);
         }
 
-        return view('search.users', compact('users'));
+        return view('search.users', compact('query', 'users'));
     }
 
     public function postShowSearch($query = null)
@@ -92,7 +87,7 @@ class SearchController extends Controller
         $this->addAdditionalShowInfo($shows, Auth::user());
         $listStatuses = DB::table('list_statuses')->get();
 
-        return view('search.shows', compact('shows', 'listStatuses', 'query'));
+        return view('search.shows', compact('query', 'shows', 'listStatuses'));
     }
 
     /**

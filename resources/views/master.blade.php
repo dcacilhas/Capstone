@@ -45,6 +45,9 @@
                 padding: 0;
             }
         }
+        .filter-text {
+            margin-right: 5px;
+        }
     </style>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -71,11 +74,14 @@
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li class="{{ isActiveRoute('home') }}">{!! link_to_route('home', 'Home') !!}</li>
-                <li class="{{ starts_with(Request::route()->getName(), 'shows') ? 'active' : '' }}">{!! link_to_route('shows', 'TV Shows') !!}</li>
                 @if (Auth::check())
                     <li class="{{ starts_with(Request::route()->getName(), 'profile') ? 'active' : '' }}">
                         {!! link_to_route('profile', 'Profile', ['username' => Auth::user()->username]) !!}
                     </li>
+                @endif
+                <li class="{{ starts_with(Request::route()->getName(), 'shows') ? 'active' : '' }}">{!! link_to_route('shows', 'TV Shows') !!}</li>
+                <li class="{{ starts_with(Request::route()->getName(), 'search') ? 'active' : '' }}">{!! link_to_route('search', 'Search') !!}</li>
+                @if (Auth::check())
                     <li>{!! link_to_route('logout', 'Log Out') !!}</li>
                 @else
                     <li class="{{ isActiveRoute('login') }}">{!! link_to_route('login', 'Log In') !!}</li>
@@ -83,21 +89,11 @@
                 @endif
             </ul>
 
-            {!! Form::open(['route'=> 'search', 'id' => 'searchForm', 'class' => 'navbar-form navbar-right', 'role' => 'search']) !!}
-                <div class="form-group">
-                    <div class="input-group">
-                        <input id="searchBox" name="query" type="text" class="form-control" aria-label="Search box" required>
-                        <div class="input-group-btn">
-                            <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-                            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="filter">Shows</span><span class="caret"></span></button>
-                            <ul class="dropdown-menu dropdown-menu-right">
-                                <li class="filter-select"><a href="#" onclick="return false;">Shows</a></li>
-                                <li class="filter-select"><a href="#" onclick="return false;">Users</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            {!! Form::close() !!}
+            @if(!starts_with(Request::route()->getName(), 'search'))
+                {!! Form::open(['route'=> 'search', 'class' => 'search-form navbar-form navbar-right', 'role' => 'search']) !!}
+                    @include('search.searchbox')
+                {!! Form::close() !!}
+            @endif
         </div>
         <!--/.nav-collapse -->
     </div>
@@ -124,14 +120,14 @@
 <script>
     $(document).ready(function () {
         $('.filter-select').click(function () {
-            $('#searchForm').find('.filter').text($(this).text());
+            $('.search-form').find('.filter-text').text($(this).text());
         });
 
-        $('#searchForm').submit(function (event) {
+        $('.search-form').submit(function (event) {
             var that = $(this),
-                query = $('#searchBox').val().trim(),
+                query = that.find('.search-box').val().trim(),
                 url = that.attr('action'),
-                filter = that.find('.filter').text();
+                filter = that.find('.filter-text').text();
             that.attr('action', url + '/' + filter.toLowerCase() + '/' + query);
         });
     })

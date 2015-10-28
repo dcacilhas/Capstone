@@ -5,10 +5,15 @@
 @section('content')
     <div class="container">
         <h1>Search</h1>
+
         <p>
             Enter your search terms in the search box in the navigation bar.
             Use the drop down menu to search for either Shows or Users.
         </p>
+
+        {!! Form::open(['route'=> 'search', 'class' => 'search-form', 'role' => 'search']) !!}
+            @include('search.searchbox')
+        {!! Form::close() !!}
 
         @yield('search_results')
     </div>
@@ -17,7 +22,7 @@
 @section('javascript')
     <script>
         $(document).ready(function () {
-            $('#searchBox').focus();
+            $('.search-box').focus();
         });
     </script>
 @stop

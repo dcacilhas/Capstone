@@ -1,7 +1,7 @@
 @extends('search.search')
 
 @section('search_results')
-    <h3>Search results for "{{ $query }}"</h3>
+    <h3>Search TV Shows: Results for "{{ $query }}"</h3>
 
     @include('includes.shows.table')
 
