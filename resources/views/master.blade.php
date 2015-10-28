@@ -129,7 +129,7 @@
 
         $('#searchForm').submit(function (event) {
             var that = $(this),
-                query = $('#searchBox').val(),
+                query = $('#searchBox').val().trim(),
                 url = that.attr('action'),
                 filter = that.find('.filter').text();
             that.attr('action', url + '/' + filter.toLowerCase() + '/' + query);

@@ -29,7 +29,7 @@ class ShowsController extends Controller
                 Show::where('SeriesName', 'LIKE', $filter . '%');
             $shows = $shows->orderBy('SeriesName', 'asc')
                 ->select('id', 'SeriesName', 'Status', 'FirstAired', 'Network', 'Runtime', 'Rating')
-                ->paginate(50);
+                ->paginate(25);
             $this->addAdditionalShowInfo($shows, Auth::user());
             $selectedFilter = $filter;
 
@@ -46,7 +46,7 @@ class ShowsController extends Controller
                 ->whereNotNull('SeriesName')
                 ->where('SeriesName', 'NOT LIKE', '*%')
                 ->where('SeriesName', '<>', '')
-                ->paginate(50);
+                ->paginate(25);
             $this->addAdditionalShowInfo($shows, Auth::user());
             $selectedGenre = $genre;
 
