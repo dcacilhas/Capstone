@@ -59,6 +59,7 @@
 @section('javascript')
     @if (Auth::check() && Auth::getUser()->username === $user->username)
         <script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+        <script src="{{ asset('assets/js/vendor/jquery.ui.touch-punch.min.js') }}"></script>
         <script>
             $(document).ready(function () {
                 $('#sortable').sortable({
