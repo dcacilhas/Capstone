@@ -8,7 +8,7 @@
                 <h4 class="modal-title" id="addModalLabel"></h4>
             </div>
             <div class="modal-body">
-                {!! Form::open(['route' => ['profile.list.add', $user->username], 'class' => 'form-horizontal']) !!}
+                {!! Form::open(['route' => ['profile.list.add', Auth::user()->username], 'class' => 'form-horizontal']) !!}
 
                 {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
                 {!! Form::hidden('series_name', null, ['id' => 'series_name']) !!}

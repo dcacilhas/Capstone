@@ -30,7 +30,8 @@ class Show extends Eloquent
      *
      * @return mixed
      */
-    public function getEpisodes() {
+    public function getEpisodes()
+    {
         return $this->hasMany('App\Models\Episode', 'seriesid')
             ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
             ->where('tvepisodes.seriesid', $this->id)

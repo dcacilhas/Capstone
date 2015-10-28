@@ -93,7 +93,7 @@
                         <th scope="row" class="text-center">{{ $i++ }}</th>
                         <td>
                             {!! link_to_route('shows.details', $show->SeriesName, ['id' => $show->id]) !!}
-                            @if ((Auth::check() && Auth::user()->username === $user->username))
+                            @if (Auth::check())
                                 <div class="pull-right">
                                     @if (!$show->is_in_list)
                                         <a href="#" class="add"
@@ -172,7 +172,7 @@
 @stop
 
 @section('javascript')
-    @if (Auth::check() && Auth::user()->username === $user->username)
+    @if (Auth::check())
         <script>
             $('#addModal').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget),
@@ -210,7 +210,7 @@
 
             $('.favourite').click(function () {
                 var _this = $(this),
-                        url = "{{ route('profile.favourites', ['username' => $user->username]) }}" + "/" + $(this).data('seriesId') + "/update";
+                        url = "{{ route('profile.favourites', ['username' => Auth::user()->username]) }}" + "/" + $(this).data('seriesId') + "/update";
 
                 $.ajax({
                     type: "POST",

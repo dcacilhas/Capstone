@@ -5,16 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\Models\Lists;
 use App\Models\Show;
+use Auth;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use DB;
+use Input;
 
 class ShowsController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
         $filters = range('A', 'Z');
         array_unshift($filters, '#');
         $listStatuses = DB::table('list_statuses')->get();
@@ -31,10 +30,10 @@ class ShowsController extends Controller
             $shows = $shows->orderBy('SeriesName', 'asc')
                 ->select('id', 'SeriesName', 'Status', 'FirstAired', 'Network', 'Runtime', 'Rating')
                 ->paginate(50);
-            $this->addAdditionalShowInfo($shows, $user);
+            $this->addAdditionalShowInfo($shows, Auth::user());
             $selectedFilter = $filter;
 
-            return view('shows.shows', compact('user', 'genres', 'filters', 'shows', 'listStatuses', 'selectedFilter'));
+            return view('shows.shows', compact('genres', 'filters', 'shows', 'listStatuses', 'selectedFilter'));
         }
 
         // Genres filter
@@ -48,13 +47,13 @@ class ShowsController extends Controller
                 ->where('SeriesName', 'NOT LIKE', '*%')
                 ->where('SeriesName', '<>', '')
                 ->paginate(50);
-            $this->addAdditionalShowInfo($shows, $user);
+            $this->addAdditionalShowInfo($shows, Auth::user());
             $selectedGenre = $genre;
 
-            return view('shows.shows', compact('user', 'genres', 'filters', 'shows', 'listStatuses', 'selectedGenre'));
+            return view('shows.shows', compact('genres', 'filters', 'shows', 'listStatuses', 'selectedGenre'));
         }
 
-        return view('shows.shows', compact('user', 'genres', 'filters', 'listStatuses'));
+        return view('shows.shows', compact('genres', 'filters', 'listStatuses'));
     }
 
     /**

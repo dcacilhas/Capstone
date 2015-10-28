@@ -7,7 +7,7 @@
                 <h4 class="modal-title" id="removeModalLabel"></h4>
             </div>
             <div class="modal-body">
-                {!! Form::model($shows, ['route' => ['profile.list.remove', $user->username], 'class' => 'form-horizontal']) !!}
+                {!! Form::model($shows, ['route' => ['profile.list.remove', Auth::user()->username], 'class' => 'form-horizontal']) !!}
                 {!! Form::hidden('series_id', null, ['id' => 'series_id']) !!}
                 <p></p>
             </div>
