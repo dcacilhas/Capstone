@@ -15,7 +15,7 @@
     <!-- Custom styles for this template -->
     <style>
         body {
-            padding-top: 50px;
+            padding-top: 60px;
             /* Margin bottom by footer height */
             margin-bottom: 60px;
             overflow-y: scroll;

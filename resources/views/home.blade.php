@@ -48,7 +48,7 @@
             width: 100%;
             height: 100%; /* For at least Firefox */
             min-height: 100%;
-            padding-bottom: 60px;
+            padding-bottom: 70px;
         }
 
         .site-wrapper-inner {

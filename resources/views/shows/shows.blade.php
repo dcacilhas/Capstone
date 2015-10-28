@@ -16,21 +16,27 @@
                     <li class="col-sm-4">
                         <ul class="multi-column-dropdown">
                             @foreach(array_slice($filters, 0, 9) as $filter)
-                                <li role="presentation" class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">{!! link_to_route('shows', $filter, ['filter' => $filter]) !!}</li>
+                                <li role="presentation" class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">
+                                    {!! link_to_route('shows', $filter, ['filter' => $filter]) !!}
+                                </li>
                             @endforeach
                         </ul>
                     </li>
                     <li class="col-sm-4">
                         <ul class="multi-column-dropdown">
                             @foreach(array_slice($filters, 9, 9) as $filter)
-                                <li class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">{!! link_to_route('shows', $filter, ['filter' => $filter]) !!}</li>
+                                <li class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">
+                                    {!! link_to_route('shows', $filter, ['filter' => $filter]) !!}
+                                </li>
                             @endforeach
                         </ul>
                     </li>
                     <li class="col-sm-4">
                         <ul class="multi-column-dropdown">
                             @foreach(array_slice($filters, 18, 9) as $filter)
-                                <li class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">{!! link_to_route('shows', $filter, ['filter' => $filter]) !!}</li>
+                                <li class="@if (isset($selectedFilter) && $selectedFilter == $filter) {{ 'active' }} @endif">
+                                    {!! link_to_route('shows', $filter, ['filter' => $filter]) !!}
+                                </li>
                             @endforeach
                         </ul>
                     </li>
@@ -45,21 +51,27 @@
                     <li class="col-sm-4">
                         <ul class="multi-column-dropdown">
                             @foreach(array_slice($genres, 0, 9) as $genre)
-                                <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">{!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}</li>
+                                <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">
+                                    {!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}
+                                </li>
                             @endforeach
                         </ul>
                     </li>
                     <li class="col-sm-4">
                         <ul class="multi-column-dropdown">
                             @foreach(array_slice($genres, 9, 9) as $genre)
-                                <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">{!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}</li>
+                                <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">
+                                    {!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}
+                                </li>
                             @endforeach
                         </ul>
                     </li>
                     <li class="col-sm-4">
                         <ul class="multi-column-dropdown">
                             @foreach(array_slice($genres, 18, 9) as $genre)
-                                <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">{!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}</li>
+                                <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">
+                                    {!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}
+                                </li>
                             @endforeach
                         </ul>
                     </li>
@@ -72,84 +84,93 @@
         @endif
 
         @if (isset($shows))
-            <table class="table table-striped table-bordered">
-                <caption>Filter: {{ $selectedGenre or $selectedFilter }}</caption>
-                <thead>
-                <tr>
-                    <th class="col-md-1 text-center">#</th>
-                    <th class="col-md-4">Series Title</th>
-                    <th class="col-md-1 text-center">Status</th>
-                    <th class="col-md-1 text-center">First Aired</th>
-                    <th class="col-md-1 text-center">Network</th>
-                    <th class="col-md-1 text-center">Runtime (mins)</th>
-                    <th class="col-md-1 text-center">Rating</th>
-                    <th class="col-md-1 text-center">Site Rating</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php $i = $shows->firstItem(); ?>
-                @foreach($shows as $show)
+            <h3>
+                @if(isset($selectedGenre))
+                    Genre: {{ $selectedGenre }}
+                @elseif(isset($selectedFilter))
+                    Shows Starting With: {{ $selectedFilter }}
+                @endif
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
                     <tr>
-                        <th scope="row" class="text-center">{{ $i++ }}</th>
-                        <td>
-                            {!! link_to_route('shows.details', $show->SeriesName, ['id' => $show->id]) !!}
-                            @if (Auth::check())
-                                <div class="pull-right">
-                                    @if (!$show->is_in_list)
-                                        <a href="#" class="add"
-                                           data-toggle="modal"
-                                           data-target="#addModal"
-                                           data-series-id="{{ $show->id }}"
-                                           data-series-title="{{ $show->SeriesName }}"
-                                           title="Add to List">
-                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                        </a>
-                                    @else
-                                        @if ($show->favourited)
-                                            <a href="#" onClick="return false;" class="favourite"
+                        <th class="col-md-1 text-center">#</th>
+                        <th class="col-md-4">Series Title</th>
+                        <th class="col-md-1 text-center">Status</th>
+                        <th class="col-md-1 text-center">First Aired</th>
+                        <th class="col-md-1 text-center">Network</th>
+                        <th class="col-md-1 text-center">Runtime (mins)</th>
+                        <th class="col-md-1 text-center">Rating</th>
+                        <th class="col-md-1 text-center">Site Rating</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php $i = $shows->firstItem(); ?>
+                    @foreach($shows as $show)
+                        <tr>
+                            <th scope="row" class="text-center">{{ $i++ }}</th>
+                            <td>
+                                {!! link_to_route('shows.details', $show->SeriesName, ['id' => $show->id]) !!}
+                                @if (Auth::check())
+                                    <div class="pull-right">
+                                        @if (!$show->is_in_list)
+                                            <a href="#" class="add"
+                                               data-toggle="modal"
+                                               data-target="#addModal"
                                                data-series-id="{{ $show->id }}"
-                                               title="Remove from Favourites">
-                                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                               data-series-title="{{ $show->SeriesName }}"
+                                               title="Add to List">
+                                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                             </a>
                                         @else
-                                            <a href="#" onClick="return false;" class="favourite"
+                                            @if ($show->favourited)
+                                                <a href="#" onClick="return false;" class="favourite"
+                                                   data-series-id="{{ $show->id }}"
+                                                   title="Remove from Favourites">
+                                                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                </a>
+                                            @else
+                                                <a href="#" onClick="return false;" class="favourite"
+                                                   data-series-id="{{ $show->id }}"
+                                                   title="Add to Favourites">
+                                                    <span class="glyphicon glyphicon-star-empty"
+                                                          aria-hidden="true"></span>
+                                                </a>
+                                            @endif
+                                            <a href="#" class="edit"
+                                               data-toggle="modal"
+                                               data-target="#updateModal"
                                                data-series-id="{{ $show->id }}"
-                                               title="Add to Favourites">
-                                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+                                               data-series-title="{{ $show->SeriesName }}"
+                                               data-series-rating="{{ $show->rating }}"
+                                               data-series-status="{{ $show->list_status }}"
+                                               title="Edit">
+                                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                            </a>
+                                            <a href="#" class="remove"
+                                               data-toggle="modal"
+                                               data-target="#removeModal"
+                                               data-series-id="{{ $show->id }}"
+                                               data-series-title="{{ $show->SeriesName }}"
+                                               title="Remove">
+                                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                             </a>
                                         @endif
-                                        <a href="#" class="edit"
-                                           data-toggle="modal"
-                                           data-target="#updateModal"
-                                           data-series-id="{{ $show->id }}"
-                                           data-series-title="{{ $show->SeriesName }}"
-                                           data-series-rating="{{ $show->rating }}"
-                                           data-series-status="{{ $show->list_status }}"
-                                           title="Edit">
-                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                        </a>
-                                        <a href="#" class="remove"
-                                           data-toggle="modal"
-                                           data-target="#removeModal"
-                                           data-series-id="{{ $show->id }}"
-                                           data-series-title="{{ $show->SeriesName }}"
-                                           title="Remove">
-                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                        </a>
-                                    @endif
-                                </div>
-                            @endif
-                        </td>
-                        <td class="text-center">{{ $show->Status }}</td>
-                        <td class="text-center">{{ $show->FirstAired }}</td>
-                        <td class="text-center">{{ $show->Network }}</td>
-                        <td class="text-center">{{ $show->Runtime }}</td>
-                        <td class="text-center">{{ $show->Rating }}</td>
-                        <td class="text-center">{{ $show->SiteRating }}</td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+                                    </div>
+                                @endif
+                            </td>
+                            <td class="text-center">{{ $show->Status }}</td>
+                            <td class="text-center">{{ $show->FirstAired }}</td>
+                            <td class="text-center">{{ $show->Network }}</td>
+                            <td class="text-center">{{ $show->Runtime }}</td>
+                            <td class="text-center">{{ $show->Rating }}</td>
+                            <td class="text-center">{{ $show->SiteRating }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
 
             @if (isset($selectedFilter))
                 {!! $shows->appends(['filter' => urlencode($selectedFilter)])->render() !!}
@@ -222,7 +243,7 @@
                             return xhr.setRequestHeader('X-CSRF-TOKEN', token);
                         }
                     },
-                    data: { seriesId: $(this).data('seriesId') },
+                    data: {seriesId: $(this).data('seriesId')},
                     success: function () {
                         var star = _this.find('span');
                         if (star.hasClass('glyphicon-star')) {
@@ -245,21 +266,26 @@
         .dropdown-menu {
             min-width: 200px;
         }
+
         .dropdown-menu.columns-2 {
             min-width: 400px;
         }
+
         .dropdown-menu.columns-3 {
             /*min-width: 600px;*/
             width: 100%;
         }
+
         .dropdown-menu li a {
             padding: 5px 15px;
             font-weight: 300;
         }
+
         .multi-column-dropdown {
             list-style: none;
             padding-left: 0;
         }
+
         .multi-column-dropdown li a {
             display: block;
             clear: both;
@@ -267,17 +293,20 @@
             color: #333;
             white-space: normal;
         }
+
         .multi-column-dropdown li a:hover {
             text-decoration: none;
             color: #262626;
             background-color: #f5f5f5;
         }
+
         .multi-column-dropdown li.active > a {
             color: #fff;
             text-decoration: none;
             background-color: #337ab7;
             outline: 0;
         }
+
         @media (max-width: 767px) {
             .dropdown-menu.multi-column {
                 min-width: 240px !important;
