@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Models\User;
 use App\Models\Favourite;
-use DB;
+use App\Models\User;
 use Auth;
 use Illuminate\Support\Facades\Input;
 
@@ -18,9 +17,7 @@ class FavouritesController extends Controller
             ->where('user_id', $user->id)
             ->orderBy('sort_order', 'asc')
             ->get();
-        $favouritesIds = Favourite::where('user_id', $user->id)
-            ->lists('series_id');
-        // Add show is in list but not in favourites
+        $favouritesIds = Favourite::where('user_id', $user->id)->lists('series_id');
         $showsNotFavourited = $user->getListWithSeries()
             ->whereNotIn('series_id', $favouritesIds)
             ->get();
@@ -32,65 +29,52 @@ class FavouritesController extends Controller
     {
         $user = User::where('username', $username)->first();
         $seriesIds = Input::get('favouritesToAdd');
-        foreach ($seriesIds as $seriesId) {
-            $sortOrder = Favourite::max('sort_order');
-            $sortOrder = $sortOrder ? $sortOrder++ : 1;
-//            if (is_null($sortOrder)) {
-//                $sortOrder = 1;
-//            } else {
-//                $sortOrder += 1;
-//            }
-            Favourite::create(['user_id' => $user->id, 'series_id' => $seriesId, 'sort_order' => $sortOrder]);
-        }
+        $this->addFavourite($user->id, $seriesIds);
 
         return back();
+    }
+
+    private function addFavourite($userId, $seriesIds)
+    {
+        $sortOrder = Favourite::where('user_id', $userId)->max('sort_order');
+        if (is_array($seriesIds)) {
+            foreach ($seriesIds as $seriesId) {
+                $sortOrder = $sortOrder ? ++$sortOrder : 1;
+                Favourite::create(['user_id' => $userId, 'series_id' => $seriesId, 'sort_order' => $sortOrder]);
+            }
+        } else {
+            $sortOrder = $sortOrder ? ++$sortOrder : 1;
+            Favourite::create(['user_id' => $userId, 'series_id' => $seriesIds, 'sort_order' => $sortOrder]);
+        }
     }
 
     public function remove($username)
     {
         $user = User::where('username', $username)->first();
-        Favourite::where('user_id', $user->id)->where('series_id', Input::get('series_id'))->delete();
+        $seriesId = Input::get('series_id');
+        $this->removeFavourite($user->id, $seriesId);
+
+        return back();
+    }
+
+    private function removeFavourite($userId, $seriesId)
+    {
+        Favourite::where('user_id', $userId)->where('series_id', $seriesId)->delete();
 
         // Update sort_order for all favourites
-        $favourites = Favourite::orderBy('sort_order', 'asc')->get();
+        $favourites = Favourite::where('user_id', $userId)->orderBy('sort_order', 'asc')->get();
         $sortOrder = 1;
         foreach ($favourites as $favourite) {
             $favourite->sort_order = $sortOrder++;
             $favourite->save();
         }
-
-        return back();
     }
 
     public function update($username, $seriesId)
     {
         $user = User::where('username', $username)->first();
         $isFavourited = Favourite::where('user_id', $user->id)->where('series_id', $seriesId)->exists();
-        if ($isFavourited) {
-            // remove
-            Favourite::where('user_id', $user->id)->where('series_id', $seriesId)->delete();
-
-            // Update sort_order for all favourites
-            $favourites = Favourite::orderBy('sort_order', 'asc')->get();
-            $sortOrder = 1;
-            foreach ($favourites as $favourite) {
-                $favourite->sort_order = $sortOrder++;
-                $favourite->save();
-            }
-        } else {
-            // add
-            $sortOrder = Favourite::max('sort_order');
-            if (is_null($sortOrder)) {
-                $sortOrder = 1;
-            } else {
-                $sortOrder += 1;
-            }
-            $favourite = new Favourite;
-            $favourite->user_id = $user->id;
-            $favourite->series_id = $seriesId;
-            $favourite->sort_order = $sortOrder;
-            $favourite->save();
-        }
+        $isFavourited ? $this->removeFavourite($user->id, $seriesId) : $this->addFavourite($user->id, $seriesId);
 
         echo true;
     }
