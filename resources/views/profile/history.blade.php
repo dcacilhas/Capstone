@@ -26,33 +26,39 @@
                 </li>
             </ul>
 
-            <table class="table table-striped table-bordered">
-                <caption>Watch History</caption>
-                <thead>
-                <tr>
-                    <th class="col-md-1 text-center">#</th>
-                    <th class="col-md-3 text-center">Series Title</th>
-                    <th class="col-md-3 text-center">Episode Title</th>
-                    <th class="col-md-1 text-center">Season</th>
-                    <th class="col-md-1 text-center">Episode</th>
-                    <th class="col-md-3 text-center">Watched On</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php $i = $epsWatched->firstItem(); ?>
-                @foreach($epsWatched as $ep)
+            <h3>Watch History
+                <small>{{ $epsWatched->total() }} episodes @if(isset($seriesId)) of {{ $shows[$seriesId] }} @endif
+                    watched
+                </small>
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
                     <tr>
-                        <th scope="row" class="text-center">{{ $i++ }}</th>
-                        <td class="text-center">{!! link_to_route('shows.details', $ep->SeriesName, ['id' => $ep->seriesid]) !!}</td>
-                        <td class="text-center">{!! link_to_route('shows.episode', $ep->EpisodeName, ['seriesId' => $ep->seriesid, 'seasonNum' => $ep->season, 'episodeNum' => $ep->EpisodeNumber]) !!}</td>
-                        <td class="text-center">{{ $ep->season }}</td>
-                        <td class="text-center">{{ $ep->EpisodeNumber }}</td>
-                        <!-- TODO: Detect user's timezone. -->
-                        <td class="text-center">{{ \Carbon\Carbon::createFromTimeStamp(strtotime($ep->updated_at))->toDayDateTimeString() }}</td>
+                        <th class="col-md-1 text-center">#</th>
+                        <th class="col-md-3 text-center">Series Title</th>
+                        <th class="col-md-3 text-center">Episode Title</th>
+                        <th class="col-md-1 text-center">Season</th>
+                        <th class="col-md-1 text-center">Episode</th>
+                        <th class="col-md-3 text-center">Watched On</th>
                     </tr>
-                @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    <?php $i = $epsWatched->firstItem(); ?>
+                    @foreach($epsWatched as $ep)
+                        <tr>
+                            <th scope="row" class="text-center">{{ $i++ }}</th>
+                            <td class="text-center">{!! link_to_route('shows.details', $ep->SeriesName, ['id' => $ep->seriesid]) !!}</td>
+                            <td class="text-center">{!! link_to_route('shows.episode', $ep->EpisodeName, ['seriesId' => $ep->seriesid, 'seasonNum' => $ep->season, 'episodeNum' => $ep->EpisodeNumber]) !!}</td>
+                            <td class="text-center">{{ $ep->season }}</td>
+                            <td class="text-center">{{ $ep->EpisodeNumber }}</td>
+                            <!-- TODO: Detect user's timezone. -->
+                            <td class="text-center">{{ \Carbon\Carbon::createFromTimeStamp(strtotime($ep->updated_at))->toDayDateTimeString() }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
 
             {!! $epsWatched->render() !!}
         @else

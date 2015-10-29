@@ -23,7 +23,7 @@ class ListController extends Controller
     public function index($username)
     {
         $user = User::where('username', $username)->first();
-        $status = Input::get('status');
+        $status = Input::get('status') !== null ? (int)Input::get('status') : null;
         $listStatuses = DB::table('list_statuses')->get();
         $shows = $this->getShows($status, $user);
         $this->addExtras($shows);
@@ -40,7 +40,7 @@ class ListController extends Controller
      */
     private function getShows($status, $user)
     {
-        $shows = User::find($user->id)->getListWithSeries()->orderBy('SeriesName', 'asc');
+        $shows = User::findOrFail($user->id)->getListWithSeries()->orderBy('SeriesName', 'asc');
         is_null($status) ? $shows = $shows->get() : $shows = $shows->where('list_status', $status)->get();
 
         return $shows;
@@ -92,7 +92,7 @@ class ListController extends Controller
         $input = $request->all();
         $user = User::where('username', $request->username)->first();
         $list = Lists::where('user_id', $user->id)->where('series_id', $input['series_id'])->first();
-        (isset($input['rating'])) ?
+        isset($input['rating']) ?
             $list->fill(['rating' => (int)$input['rating'], 'list_status' => (int)$input['status']]) :
             $list->fill(['list_status' => (int)$input['status']]);
         $list->save();
@@ -134,7 +134,7 @@ class ListController extends Controller
                 'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at')
             ->getMostRecent();
         $shows = $epsWatched->get()->unique('seriesid')->lists('SeriesName', 'seriesid')->sort();
-        $epsWatched = $epsWatched->paginate(10);
+        $epsWatched = $epsWatched->paginate(25);
 
         return view('profile.history', compact('user', 'epsWatched', 'shows'));
     }

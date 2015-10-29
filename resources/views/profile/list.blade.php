@@ -8,100 +8,95 @@
 
         @if($user['list_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user->username))
             <ul class="nav nav-pills nav-justified">
-                <li role="presentation" @if($status === null) class="active" @endif>
+                <li role="presentation" @if(is_null($status)) class="active" @endif>
                     {!! link_to_route('profile.list', 'All', ['username' => $user->username]) !!}
                 </li>
-                <li role="presentation" @if($status === '0') class="active" @endif>
-                    {!! link_to_route('profile.list', 'Watching', ['username' => $user->username, 'status' => '0']) !!}
-                </li>
-                <li role="presentation" @if($status === '1') class="active" @endif>
-                    {!! link_to_route('profile.list', 'Plan To Watch', ['username' => $user->username, 'status' => '1']) !!}
-                </li>
-                <li role="presentation" @if($status === '2') class="active" @endif>
-                    {!! link_to_route('profile.list', 'Completed', ['username' => $user->username, 'status' => '2']) !!}
-                </li>
-                <li role="presentation" @if($status === '3') class="active" @endif>
-                    {!! link_to_route('profile.list', 'On Hold', ['username' => $user->username, 'status' => '3']) !!}
-                </li>
+                @foreach($listStatuses as $listStatus)
+                    <li role="presentation" @if($status === $listStatus->list_status) class="active" @endif>
+                        {!! link_to_route('profile.list', $listStatus->description, ['username' => $user->username, 'status' => $listStatus->list_status]) !!}
+                    </li>
+                @endforeach
             </ul>
 
             @foreach($listStatuses as $listStatus)
                 @if($shows->contains('list_status', $listStatus->list_status))
-                    <table class="table table-striped table-bordered">
-                        <caption>{{ $listStatus->description }}</caption>
-                        <thead>
-                        <tr>
-                            <th class="col-md-1 col-sm-1 text-center">#</th>
-                            <th class="col-md-6 col-sm-4">Series Title</th>
-                            <th class="col-md-1 col-sm-1 text-center">Rating</th>
-                            <th class="col-md-2 col-sm-3 text-center">Last Episode Watched</th>
-                            <th class="col-md-2 col-sm-3 text-center">Progress</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php $i = 1; ?>
-                        @foreach($shows as $show)
-                            @if($show->list_status === $listStatus->list_status)
-                                <tr>
-                                    <th scope="row" class="text-center">{{ $i++ }}</th>
-                                    <td>
-                                        {!! link_to_route('shows.details', $show->SeriesName, ['seriesId' => $show->series_id]) !!}
+                    <h4>{{ $listStatus->description }}</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="col-md-1 text-center">#</th>
+                                <th class="col-md-6">Series Title</th>
+                                <th class="col-md-1 text-center">Rating</th>
+                                <th class="col-md-2 text-center">Last Episode Watched</th>
+                                <th class="col-md-2 text-center">Progress</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php $i = 1; ?>
+                            @foreach($shows as $show)
+                                @if($show->list_status === $listStatus->list_status)
+                                    <tr>
+                                        <th scope="row" class="text-center">{{ $i++ }}</th>
+                                        <td>
+                                            {!! link_to_route('shows.details', $show->SeriesName, ['seriesId' => $show->series_id]) !!}
 
-                                        @if ((Auth::check() && Auth::user()->username === $user->username))
-                                            <div class="pull-right">
-                                                @if ($show->favourited)
-                                                    <a href="#" onClick="return false;" class="favourite"
+                                            @if ((Auth::check() && Auth::user()->username === $user->username))
+                                                <div class="pull-right">
+                                                    @if ($show->favourited)
+                                                        <a href="#" onClick="return false;" class="favourite"
+                                                           data-series-id="{{ $show->series_id }}"
+                                                           title="Remove from Favourites">
+                                                            <span class="glyphicon glyphicon-star"
+                                                                  aria-hidden="true"></span>
+                                                        </a>
+                                                    @else
+                                                        <a href="#" onClick="return false;" class="favourite"
+                                                           data-series-id="{{ $show->series_id }}"
+                                                           title="Add to Favourites">
+                                                            <span class="glyphicon glyphicon-star-empty"
+                                                                  aria-hidden="true"></span>
+                                                        </a>
+                                                    @endif
+                                                    <a href="#" class="edit"
+                                                       data-toggle="modal"
+                                                       data-target="#updateModal"
                                                        data-series-id="{{ $show->series_id }}"
-                                                       title="Remove from Favourites">
-                                                        <span class="glyphicon glyphicon-star"
-                                                              aria-hidden="true"></span>
+                                                       data-series-title="{{ $show->SeriesName }}"
+                                                       data-series-rating="{{ $show->rating }}"
+                                                       data-series-status="{{ $show->list_status }}"
+                                                       title="Edit">
+                                                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                                     </a>
-                                                @else
-                                                    <a href="#" onClick="return false;" class="favourite"
+                                                    <a href="#" class="remove"
+                                                       data-toggle="modal"
+                                                       data-target="#removeModal"
                                                        data-series-id="{{ $show->series_id }}"
-                                                       title="Add to Favourites">
-                                                        <span class="glyphicon glyphicon-star-empty"
-                                                              aria-hidden="true"></span>
+                                                       data-series-title="{{ $show->SeriesName }}"
+                                                       title="Remove">
+                                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                                     </a>
-                                                @endif
-                                                <a href="#" class="edit"
-                                                   data-toggle="modal"
-                                                   data-target="#updateModal"
-                                                   data-series-id="{{ $show->series_id }}"
-                                                   data-series-title="{{ $show->SeriesName }}"
-                                                   data-series-rating="{{ $show->rating }}"
-                                                   data-series-status="{{ $show->list_status }}"
-                                                   title="Edit">
-                                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                                </a>
-                                                <a href="#" class="remove"
-                                                   data-toggle="modal"
-                                                   data-target="#removeModal"
-                                                   data-series-id="{{ $show->series_id }}"
-                                                   data-series-title="{{ $show->SeriesName }}"
-                                                   title="Remove">
-                                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                                </a>
+                                                </div>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">{{ $show->rating }}</td>
+                                        <td class="text-center">
+                                            @if($show->last_episode_watched_formatted)
+                                                {!! link_to_route('shows.episode', $show->last_episode_watched_formatted, ['seriesId' => $show->series_id, 'seasonNum' => $show->season_number, 'episodeNum' => $show->episode_number]) !!}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width: {{ $show->progress }}%;"></div>
+                                                <span>@if ($show->progress > 0) {{ $show->progress }}% @endif</span>
                                             </div>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">{{ $show->rating }}</td>
-                                    <td class="text-center">
-                                        @if($show->last_episode_watched_formatted)
-                                            {!! link_to_route('shows.episode', $show->last_episode_watched_formatted, ['seriesId' => $show->series_id, 'seasonNum' => $show->season_number, 'episodeNum' => $show->episode_number]) !!}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <div class="progress">
-                                            <div class="progress-bar" style="width: {{ $show->progress }}%;"></div>
-                                            <span>@if ($show->progress > 0) {{ $show->progress }}% @endif</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endif
-                        @endforeach
-                        </tbody>
-                    </table>
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 @endif
             @endforeach
         @else
