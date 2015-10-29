@@ -78,7 +78,7 @@ return [
     |
     */
 
-    'key' => env('APP_KEY', '7m0UOMznsbMq7fYpFHidMAXlq97K9xAQ'),
+    'key' => env('APP_KEY', 'SomeRandomString'),
 
     'cipher' => 'AES-256-CBC',
 
@@ -155,6 +155,11 @@ return [
          */
         Collective\Html\HtmlServiceProvider::class,
 
+        /*
+         * DebugBar
+         */
+        Barryvdh\Debugbar\ServiceProvider::class,
+
     ],
 
     /*
@@ -205,6 +210,7 @@ return [
         'Form'      => Collective\Html\FormFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,
         'Gate'      => Illuminate\Support\Facades\Gate::class,
+        'Debugbar'  => Barryvdh\Debugbar\Facade::class,
 
     ],
 
