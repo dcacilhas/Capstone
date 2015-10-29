@@ -55,7 +55,7 @@ Route::get('profile/{username}/list/history/show/{seriesId}', ['as' => 'profile.
 Route::post('profile/{username}/list/update', ['as' => 'profile.list.update', 'uses' => 'ListController@updateList']);
 Route::post('profile/{username}/list/remove', ['as' => 'profile.list.remove', 'uses' => 'ListController@removeFromList']);
 Route::post('profile/{username}/list/add', ['as' => 'profile.list.add', 'uses' => 'ListController@addToList']);
-Route::post('list/{seriesId}/updateListEpisodesWatched', ['as' => 'list.updateListEpisodesWatched', 'uses' => 'ListController@updateListEpisodesWatched']);
+Route::post('list/{seriesId}/updateEpisodesWatched', ['as' => 'list.episodes.update', 'uses' => 'ListController@updateEpisodesWatched']);
 
 // Search
 Route::get('search', ['as' => 'search', 'uses' => 'SearchController@index']);

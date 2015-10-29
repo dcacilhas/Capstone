@@ -12,10 +12,10 @@
                     @if(Auth::check() && $episode->seriesIsOnList)
                         <small>
                             @if($episode->isOnList)
-                                <input type="checkbox" id="{{ $episode->id }}" checked />
+                                <input type="checkbox" id="{{ $episode->id }}" checked/>
                                 <label for="{{ $episode->id }}">Watched</label>
                             @else
-                                <input type="checkbox" id="{{ $episode->id }}" />
+                                <input type="checkbox" id="{{ $episode->id }}"/>
                                 <label for="{{ $episode->id }}">Unwatched</label>
                             @endif
                         </small>
@@ -26,7 +26,8 @@
                 <ul>
                     <li>Links:
                         <a href="http://www.imdb.com/title/{{ $episode->IMDB_ID }}" target="_blank">IMDB</a>,
-                        <a href="http://thetvdb.com/?tab=episode&seriesid={{ $series->id }}&seasonid={{ $episode->season }}&id={{ $episode->id }}&lid=7" target="_blank">TVDB</a>
+                        <a href="http://thetvdb.com/?tab=episode&seriesid={{ $series->id }}&seasonid={{ $episode->season }}&id={{ $episode->id }}&lid=7"
+                           target="_blank">TVDB</a>
                     </li>
                     <li>Aired: {{ $episode->firstaired }}</li>
                     <li>Director: {{ $episode->director }}</li>
@@ -42,36 +43,34 @@
 
 @section('javascript')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             @if(Auth::check() && $episode->seriesIsOnList)
                 // TODO: Cleanup. Maybe add success/error messages for user.
-                $('#{{ $episode->id }}').change(function () {
-                    if (this.checked) {
-                        $('label[for="' + this.id + '"]').html('Watched');
-                        $('#' + this.id  +'').prop('checked', true);
-                    } else {
-                        $('label[for="' + this.id + '"]').html('Unwatched');
-                        $('#' + this.id  +'').prop('checked', false);
-                    }
-
+                $('#{{ $episode->id }}').click(function () {
+                    var that = $(this);
+                    toggleLabel(that);
                     $.ajax({
                         type: "POST",
-                        url: "{{ route('list.updateListEpisodesWatched', ['seriesId' => $episode->seriesid]) }}",
+                        url: "{{ route('list.episodes.update', ['seriesId' => $episode->seriesid]) }}",
                         beforeSend: function (xhr) {
                             var token = $("meta[name='csrf_token']").attr('content');
-
                             if (token) {
                                 return xhr.setRequestHeader('X-CSRF-TOKEN', token);
                             }
                         },
-                        data: { episodeId: $(this).attr('id') },
-//                        success: function (data) {
-//
-//                        },
+                        data: {episodeIds: $(this).attr('id')},
                         error: function () {
+                            that.prop('checked', !that.prop('checked'));
+                            toggleLabel(that);
                             alert("error!!!!");
                         }
                     });
+
+                    function toggleLabel(checkbox) {
+                        var checked = checkbox.prop('checked'),
+                                label = $('label[for="' + checkbox.attr('id') + '"]');
+                        label.text(checked ? 'Watched' : 'Unwatched');
+                    }
                 });
             @endif
         });

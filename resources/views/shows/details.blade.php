@@ -80,22 +80,33 @@
 
             <div class="col-md-6">
                 <h3>Episodes</h3>
-                <a href="#" onClick="return false;" id="showAllEpisodes">Show All</a> | <a href="#" onClick="return false;" id="hideAllEpisodes">Hide All</a> <br>
+                <a href="#" onClick="return false;" id="showAllEpisodes">Show All</a> | <a href="#"
+                                                                                           onClick="return false;"
+                                                                                           id="hideAllEpisodes">Hide
+                    All</a> <br>
                 @if ($list)
-                    <a href="#" onClick="return false;" id="checkAllEpisodes">Check All</a> | <a href="#" onClick="return false;" id="uncheckAllEpisodes">Uncheck All</a>
+                    <a href="#" onClick="return false;" id="checkAllEpisodes">Check All</a> | <a href="#"
+                                                                                                 onClick="return false;"
+                                                                                                 id="uncheckAllEpisodes">Uncheck
+                        All</a>
                 @endif
                 @foreach($seasons as $season)
-                    <h4 class="seasons"><a href="#" onClick="return false;" onClick="return false;" class="seasons">Season {{ $season->season }}</a></h4>
+                    <h4 class="seasons"><a href="#" onClick="return false;" onClick="return false;" class="seasons">Season {{ $season->season }}</a>
+                    </h4>
                     <div class="episodes">
-                    @if ($list)
-                        <a href="#" onClick="return false;" class="checkSeason">Check Season {{ $season->season }}</a> | <a href="#" onClick="return false;" class="uncheckSeason">Uncheck Season {{ $season->season }}</a>
-                    @endif
+                        @if ($list)
+                            <a href="#" onClick="return false;" class="checkSeason">Check
+                                Season {{ $season->season }}</a> | <a href="#" onClick="return false;"
+                                                                      class="uncheckSeason">Uncheck
+                                Season {{ $season->season }}</a>
+                        @endif
                         <ol>
                             @foreach($episodes as $episode)
                                 @if($episode->season === $season->season)
                                     <li>
                                         @if($list)
-                                            <input type="checkbox" id="{{ $episode->id }}" class="episode" {{ $episode->checked or '' }} />
+                                            <input type="checkbox" id="{{ $episode->id }}"
+                                                   class="episode" {{ $episode->checked or '' }} />
                                         @endif
                                         {!! link_to_route('shows.episode', $episode->episodename, ['seriesId' => $episode->seriesid, 'seasonNum' => $season->season, 'episodeNum' => $episode->episodenumber]) !!}
                                     </li>
@@ -115,22 +126,21 @@
                 @include('includes.modals.remove_show', ['shows' => $show])
             @endif
         @endif
-        </div>
     </div>
 @stop
 
 @section('javascript')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('.seasons').click(function () {
                 $(this).next().toggle();
             });
 
-            $('#showAllEpisodes').click(function() {
+            $('#showAllEpisodes').click(function () {
                 $('.episodes').show();
             });
 
-            $('#hideAllEpisodes').click(function() {
+            $('#hideAllEpisodes').click(function () {
                 $('.episodes').hide();
             });
 
@@ -146,51 +156,85 @@
                         modal.find('.modal-title').text(title);
                         modal.find('#status_0').prop('checked', true);
                     });
-                @else
-                    $('#checkAllEpisodes').click(function() {
-                        $('.episode:not(:checked)').prop('checked', true).trigger('change');
-                    });
+            @else
+                $('#updateModal').on('show.bs.modal', function (event) {
+                    var button = $(event.relatedTarget),
+                            title = button.data('series-title'),
+                            rating = button.data('series-rating'),
+                            status = button.data('series-status'),
+                            id = button.data('series-id'),
+                            modal = $(this);
+                    modal.find('#series_id').val(id);
+                    modal.find('.modal-title').text(title);
+                    modal.find('#rating').val(rating);
+                    modal.find('#status_' + status).prop('checked', true);
+                });
 
-                    $('#uncheckAllEpisodes').click(function() {
-                        $('.episode:checked').prop('checked', false).trigger('change');
-                    });
+                $('#removeModal').on('show.bs.modal', function (event) {
+                    var button = $(event.relatedTarget),
+                            title = button.data('series-title'),
+                            id = button.data('series-id'),
+                            modal = $(this);
+                    modal.find('#series_id').val(id);
+                    modal.find('.modal-title').text(title);
+                    modal.find('p').html("Are you sure you want to remove <strong>" + title + "</strong> from your list?");
+                });
 
-                    $('.checkSeason').click(function() {
-                        $(this).siblings().find('.episode:not(:checked)').prop('checked', true).trigger('change');
-                    });
+                $('#checkAllEpisodes, .checkSeason').click(function () {
+                    var that = $(this),
+                            unwatchedEps = that.siblings().find('.episode:not(:checked)');
+                    var episodeIds = unwatchedEps.map(function () {
+                        return $(this).attr('id');
+                    }).get();
+                    unwatchedEps.prop('checked', !unwatchedEps.prop('checked'));
+                    if (episodeIds.length) {
+                        updateEpisodes(episodeIds, unwatchedEps, 'add');
+                    }
+                });
 
-                    $('.uncheckSeason').click(function() {
-                        $(this).siblings().find('.episode:checked').prop('checked', false).trigger('change');
-                    });
+                $('#uncheckAllEpisodes, .uncheckSeason').click(function () {
+                    var that = $(this),
+                            watchedEps = that.siblings().find('.episode:checked');
+                    var episodeIds = watchedEps.map(function () {
+                        return $(this).attr('id');
+                    }).get();
+                    watchedEps.prop('checked', !watchedEps.prop('checked'));
+                    if (episodeIds.length) {
+                        updateEpisodes(episodeIds, watchedEps, 'remove');
+                    }
+                });
 
-                    $('#updateModal').on('show.bs.modal', function (event) {
-                        var button = $(event.relatedTarget),
-                                title = button.data('series-title'),
-                                rating = button.data('series-rating'),
-                                status = button.data('series-status'),
-                                id = button.data('series-id'),
-                                modal = $(this);
-                        modal.find('#series_id').val(id);
-                        modal.find('.modal-title').text(title);
-                        modal.find('#rating').val(rating);
-                        modal.find('#status_' + status).prop('checked', true);
-                    });
+                $('.episode').click(function (e) {
+                    var that = $(this),
+                            episodeId = that.attr('id');
+                    updateEpisodes(episodeId, that, '');
+                });
 
-                    $('#removeModal').on('show.bs.modal', function (event) {
-                        var button = $(event.relatedTarget),
-                                title = button.data('series-title'),
-                                id = button.data('series-id'),
-                                modal = $(this);
-                        modal.find('#series_id').val(id);
-                        modal.find('.modal-title').text(title);
-                        modal.find('p').html("Are you sure you want to remove <strong>" + title + "</strong> from your list?");
+                // TODO: Cleanup. Maybe add success/error messages for user.
+                function updateEpisodes(episodeIds, checkboxes, action) {
+                    $.ajax({
+                        type: "POST",
+                        url: '{{ route('list.episodes.update', ['seriesId' => $show->id]) }}',
+                        beforeSend: function (xhr) {
+                            var token = $("meta[name='csrf_token']").attr('content');
+                            if (token) {
+                                return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+                            }
+                        },
+                        data: {episodeIds: episodeIds, action: action},
+                        error: function () {
+                            checkboxes.prop('checked', !checkboxes.prop('checked'));
+                            alert("error!!!!");
+                        }
                     });
+                }
+            @endif
 
-                    // TODO: Cleanup. Maybe add success/error messages for user.
-                    $('.episode').change(function () {
+            $('.favourite').click(function () {
+                        var that = $(this);
                         $.ajax({
                             type: "POST",
-                            url: "{{ route('list.updateListEpisodesWatched', ['seriesId' => $show->id]) }}",
+                            url: "{{ route('profile.favourites.update', ['username' => $user->username, 'seriesId' => $show->id]) }}",
                             beforeSend: function (xhr) {
                                 var token = $("meta[name='csrf_token']").attr('content');
 
@@ -198,44 +242,22 @@
                                     return xhr.setRequestHeader('X-CSRF-TOKEN', token);
                                 }
                             },
-                            data: { episodeId: $(this).attr('id') },
-        //                    success: function (data) {
-        //                        alert(data);
-        //                    },
+                            data: {seriesId: $(this).data('seriesId')},
+                            success: function () {
+                                var star = that.find('span');
+                                if (star.hasClass('glyphicon-star')) {
+                                    star.removeClass('glyphicon-star').addClass('glyphicon-star-empty').parent().prop('title', 'Add to Favourites');
+                                } else {
+                                    star.removeClass('glyphicon-star-empty').addClass('glyphicon-star').parent().prop('title', 'Remove from Favourites');
+                                }
+                            },
                             error: function () {
                                 alert("error!!!!");
                             }
                         });
                     });
-                @endif
-
-                $('.favourite').click(function () {
-                    var _this = $(this);
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ route('profile.favourites.update', ['username' => $user->username, 'seriesId' => $show->id]) }}",
-                        beforeSend: function (xhr) {
-                            var token = $("meta[name='csrf_token']").attr('content');
-
-                            if (token) {
-                                return xhr.setRequestHeader('X-CSRF-TOKEN', token);
-                            }
-                        },
-                        data: { seriesId: $(this).data('seriesId') },
-                        success: function () {
-                            var star = _this.find('span');
-                            if (star.hasClass('glyphicon-star')) {
-                                star.removeClass('glyphicon-star').addClass('glyphicon-star-empty').parent().prop('title', 'Add to Favourites');
-                            } else {
-                                star.removeClass('glyphicon-star-empty').addClass('glyphicon-star').parent().prop('title', 'Remove from Favourites');
-                            }
-                        },
-                        error: function () {
-                            alert("error!!!!");
-                        }
-                    });
-                });
             @endif
+
         });
     </script>
 @stop

@@ -29,9 +29,9 @@ class ProfileMiddleware
         if (Auth::guest() || strcasecmp($request->username, Auth::user()->username) !== 0) {
             $routeName = $request->route()->getName();
 
-            if ($routeName === 'profile/edit' || $routeName === 'profile/account') {
+            if ($routeName === 'profile.edit.profile' || $routeName === 'profile.edit.account') {
                 // TODO: Maybe use a not authorized error page instead?
-                return back();
+                return abort(403);
             }
         }
 

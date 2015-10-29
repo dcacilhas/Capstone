@@ -8,6 +8,7 @@ use App\Models\Lists;
 use App\Models\Show;
 use App\Models\User;
 use Auth;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Input;
@@ -17,7 +18,7 @@ class ListController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth.profile', ['except' => ['updateListEpisodesWatched']]);
+        $this->middleware('auth.profile', ['except' => ['updateEpisodesWatched']]);
     }
 
     public function index($username)
@@ -148,22 +149,47 @@ class ListController extends Controller
         $shows = $epsWatched->get()->unique('seriesid')->lists('SeriesName', 'seriesid')->sort();
         $epsWatched = $epsWatched->where('list.series_id', '=', $seriesId)
             ->getMostRecent()
-            ->paginate(10);
+            ->paginate(25);
+        if ($epsWatched->count() === 0) {
+            abort(404);
+        }
 
         return view('profile.history', compact('user', 'epsWatched', 'shows', 'seriesId'));
     }
 
-    public function updateListEpisodesWatched($seriesId)
+    public function updateEpisodesWatched($seriesId)
     {
-        $episodeId = (int)Input::get('episodeId');
-        $userId = Auth::user()->id;
+        if (!$episodeIds = Input::get('episodeIds')) {
+            return;
+        }
+
         $listId = Lists::where('series_id', $seriesId)
-            ->where('user_id', $userId)
+            ->where('user_id', Auth::user()->id)
             ->value('id');
-        $ep = ListEpisodesWatched::where('episode_id', $episodeId)
-            ->where('list_id', $listId)
-            ->first();
-        ($ep) ? $ep->delete() : ListEpisodesWatched::create(['episode_id' => $episodeId, 'list_id' => $listId]);
+
+        // If checking more than one episode at once
+        if (is_array($episodeIds)) {
+            $action = Input::get('action');
+            if ($action === 'add') {
+                $now = Carbon::now('utc')->toDateTimeString();
+                foreach ($episodeIds as $episodeId) {
+                    $data[] = [
+                        'episode_id' => $episodeId,
+                        'list_id' => $listId,
+                        'created_at' => $now,
+                        'updated_at' => $now
+                    ];
+                }
+                ListEpisodesWatched::insert($data);
+            } else {
+                if ($action === 'remove') {
+                    ListEpisodesWatched::where('list_id', $listId)->whereIn('episode_id', $episodeIds)->delete();
+                }
+            }
+        } else {
+            $ep = ListEpisodesWatched::where('episode_id', $episodeIds)->where('list_id', $listId)->first();
+            $ep ? $ep->delete() : ListEpisodesWatched::create(['episode_id' => $episodeIds, 'list_id' => $listId]);
+        }
 
         echo true;
     }
