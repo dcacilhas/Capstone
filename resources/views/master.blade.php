@@ -67,7 +67,6 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="{{ isActiveRoute('home') }}">{!! link_to_route('home', 'Home') !!}</li>
                 @if (Auth::check())
                     <li class="{{ starts_with(Request::route()->getName(), 'profile') ? 'active' : '' }}">
                         {!! link_to_route('profile', 'Profile', ['username' => Auth::user()->username]) !!}

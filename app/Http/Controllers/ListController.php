@@ -40,8 +40,8 @@ class ListController extends Controller
      */
     private function getShows($status, $user)
     {
-        $shows = User::find($user->id)->getListWithSeries();
-        (is_null($status)) ? $shows = $shows->get() : $shows = $shows->where('list_status', $status)->get();
+        $shows = User::find($user->id)->getListWithSeries()->orderBy('SeriesName', 'asc');
+        is_null($status) ? $shows = $shows->get() : $shows = $shows->where('list_status', $status)->get();
 
         return $shows;
     }

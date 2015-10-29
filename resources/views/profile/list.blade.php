@@ -31,11 +31,11 @@
                         <caption>{{ $listStatus->description }}</caption>
                         <thead>
                         <tr>
-                            <th class="col-md-1 text-center">#</th>
-                            <th class="col-md-6">Series Title</th>
-                            <th class="col-md-1 text-center">Rating</th>
-                            <th class="col-md-2 text-center">Last Episode Watched</th>
-                            <th class="col-md-2 text-center">Progress</th>
+                            <th class="col-md-1 col-sm-1 text-center">#</th>
+                            <th class="col-md-6 col-sm-4">Series Title</th>
+                            <th class="col-md-1 col-sm-1 text-center">Rating</th>
+                            <th class="col-md-2 col-sm-3 text-center">Last Episode Watched</th>
+                            <th class="col-md-2 col-sm-3 text-center">Progress</th>
                         </tr>
                         </thead>
                         <tbody>
