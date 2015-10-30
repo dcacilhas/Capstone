@@ -148,7 +148,8 @@ class ProfileController extends Controller
             'location' => 'max:50',
             'notification_email' => 'in:0,1',
             'profile_visibility' => 'in:0,1,2',
-            'list_visibility' => 'in:0,1,2'
+            'list_visibility' => 'in:0,1,2',
+            'avatar' => 'image'
         ]);
 
         $input = $request->all();

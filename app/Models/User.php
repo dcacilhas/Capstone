@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Codesleeve\Stapler\ORM\EloquentTrait;
+use Codesleeve\Stapler\ORM\StaplerableInterface;
 use Elasticquent\ElasticquentTrait;
 use Eloquent;
 use Illuminate\Auth\Authenticatable;
@@ -11,9 +13,9 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 
-class User extends Eloquent implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
+class User extends Eloquent implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, StaplerableInterface
 {
-    use Authenticatable, Authorizable, CanResetPassword, ElasticquentTrait;
+    use Authenticatable, Authorizable, CanResetPassword, ElasticquentTrait, EloquentTrait;
 
     /**
      * The database table used by the model.
@@ -21,7 +23,6 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
      * @var string
      */
     protected $table = 'users';
-
     /**
      * The attributes that are mass assignable.
      *
@@ -35,19 +36,17 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
         'birthday',
         'location',
         'gender',
-        'avatar_path',
+        'avatar',
         'notification_email',
         'profile_visibility',
         'list_visibility'
     ];
-
     protected $mappingProperties = [
         'username' => [
             'type' => 'string',
             'analyzer' => 'standard'
         ]
     ];
-
     /**
      * The attributes excluded from the model's JSON form.
      *
@@ -64,11 +63,28 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
         'notifications_last_checked'
     ];
 
-    public function getList() {
+    public function __construct(array $attributes = [])
+    {
+        $this->hasAttachedFile('avatar', [
+            'styles' => [
+                'large' => '256x256',
+                'avatar' => '128x128',
+                'thumb' => '64x64'
+            ],
+            'default_url' => 'assets/img/:style/avatar-placeholder.png',
+            'default_style' => 'avatar'
+        ]);
+
+        parent::__construct($attributes);
+    }
+
+    public function getList()
+    {
         return $this->hasMany('App\Models\Lists');
     }
 
-    public function getListWithSeries() {
+    public function getListWithSeries()
+    {
         return $this->hasMany('App\Models\Lists')
             ->select('list.*', 'tvseries.SeriesName')
             ->join('tvseries', 'list.series_id', '=', 'tvseries.id')

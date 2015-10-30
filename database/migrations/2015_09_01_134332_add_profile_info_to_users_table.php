@@ -20,7 +20,6 @@ class AddProfileInfoToUsersTable extends Migration
             $table->string('location', 50)->nullable();
             $table->char('gender', 1)->nullable();
             $table->foreign('gender')->references('gender')->on('genders');
-            $table->string('avatar_path')->nullable();
             $table->boolean('notification_email')->default(1);
             $table->tinyInteger('profile_visibility')->default(0);
             $table->foreign('profile_visibility')->references('profile_visibility')->on('profile_visibilities');
@@ -47,7 +46,6 @@ class AddProfileInfoToUsersTable extends Migration
                 'birthday',
                 'location',
                 'gender',
-                'avatar_path',
                 'notification_email',
                 'profile_visibility',
                 'list_visibility'

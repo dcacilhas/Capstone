@@ -20,11 +20,6 @@
             margin-bottom: 60px;
             overflow-y: scroll;
         }
-        .starter-template {
-            padding: 40px 15px;
-            text-align: center;
-        }
-
         /* Sticky footer styles
 -------------------------------------------------- */
         html {

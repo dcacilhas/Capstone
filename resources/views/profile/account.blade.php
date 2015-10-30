@@ -15,38 +15,41 @@
             </div>
         @endif
 
-        <h2>Change Email</h2>
+        <h2>Edit Account</h2>
 
+        <h3>Change Email</h3>
         <div class="form-group">
             {!! Form::label('current_email', 'Current: ', ['class' => 'col-sm-2 control-label']) !!}
-            <div class="col-sm-10">
+            <div class="col-md-10">
                 <p class="form-control-static">{{ $user->email }}</p>
             </div>
         </div>
 
         <div class="form-group">
             {!! Form::label('email', 'New: ', ['class' => 'col-sm-2 control-label']) !!}
-            <div class="col-sm-10">
+            <div class="col-md-10">
                 {!! Form::text('email', '', ['class' => 'form-control', 'placeholder' => 'New Email']) !!}
             </div>
         </div>
 
         <div class="form-group">
             {!! Form::label('email_confirmation', 'Confirm: ', ['class' => 'col-sm-2 control-label']) !!}
-            <div class="col-sm-10">
+            <div class="col-md-10">
                 {!! Form::text('email_confirmation', null, ['class' => 'form-control', 'placeholder' => 'Confirm New Email']) !!}
             </div>
         </div>
 
         <div class="form-group">
             {!! Form::label('password', 'Password: ', ['class' => 'col-sm-2 control-label']) !!}
-            <div class="col-sm-10">
+            <div class="col-md-10">
                 {!! Form::password('password', ['class' => 'form-control', 'placeholder' => 'Password']) !!}
             </div>
         </div>
 
         <div class="form-group">
-            {!! Form::submit('Change Email', ['class' => 'btn btn-primary btn-lg btn-block']) !!}
+            <div class="col-md-10 col-md-offset-2">
+                {!! Form::submit('Change Email', ['class' => 'btn btn-primary btn-lg btn-block']) !!}
+            </div>
         </div>
 
         {!! Form::close() !!}
@@ -54,31 +57,33 @@
         {!! Form::model($user, ['route' => ['profile.postPassword', $user->username], 'class' => 'form-horizontal']) !!}
         @include('errors.errors')
 
-        <h2>Change Password</h2>
+        <h3>Change Password</h3>
 
         <div class="form-group">
             {!! Form::label('current_password', 'Current: ', ['class' => 'col-sm-2 control-label']) !!}
-            <div class="col-sm-10">
+            <div class="col-md-10">
                 {!! Form::password('current_password', ['class' => 'form-control', 'placeholder' => 'Current Password']) !!}
             </div>
         </div>
 
         <div class="form-group">
             {!! Form::label('password', 'New: ', ['class' => 'col-sm-2 control-label']) !!}
-            <div class="col-sm-10">
+            <div class="col-md-10">
                 {!! Form::password('password', ['class' => 'form-control', 'placeholder' => 'New Password']) !!}
             </div>
         </div>
 
         <div class="form-group">
             {!! Form::label('password_confirmation', 'Confirm: ', ['class' => 'col-sm-2 control-label']) !!}
-            <div class="col-sm-10">
+            <div class="col-md-10">
                 {!! Form::password('password_confirmation', ['class' => 'form-control', 'placeholder' => 'Confirm New Password']) !!}
             </div>
         </div>
 
         <div class="form-group">
-            {!! Form::submit('Change Password', ['class' => 'btn btn-primary btn-lg btn-block']) !!}
+            <div class="col-md-10 col-md-offset-2">
+                {!! Form::submit('Change Password', ['class' => 'btn btn-primary btn-lg btn-block']) !!}
+            </div>
         </div>
 
         {!! Form::close() !!}

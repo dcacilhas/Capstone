@@ -160,6 +160,11 @@ return [
          */
         Barryvdh\Debugbar\ServiceProvider::class,
 
+        /*
+         * Laravel-Stapler
+         */
+        Codesleeve\LaravelStapler\Providers\L5ServiceProvider::class,
+
     ],
 
     /*
