@@ -190,7 +190,5 @@ class ListController extends Controller
             $ep = ListEpisodesWatched::where('episode_id', $episodeIds)->where('list_id', $listId)->first();
             $ep ? $ep->delete() : ListEpisodesWatched::create(['episode_id' => $episodeIds, 'list_id' => $listId]);
         }
-
-        echo true;
     }
 }

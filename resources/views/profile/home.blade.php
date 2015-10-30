@@ -7,7 +7,7 @@
         @include('includes.profile_submenu')
 
         @if($user['profile_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user['username']))
-            <div class="col-md-4">
+            <div class="col-md-4 col-sm-6">
                 {!! Html::image($user->avatar->url('large'), 'Avatar', ['class' => 'img-responsive img-thumbnail center-block']) !!}
                 <h3 class="text-center">{{ $user->username }}</h3>
                 <dl class="dl-horizontal">
@@ -23,7 +23,7 @@
                 <p class="text-justify">{!! nl2br(e($user->about)) !!}</p>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-4 col-sm-6">
                 <h3>Recently Watched</h3>
                 <ul class="list-unstyled">
                     <!-- TODO: Format this better. Separate series/episode links. -->
@@ -40,7 +40,7 @@
                 </ul>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-4 col-sm-6">
                 <h3>Statistics</h3>
                 <dl class="dl-horizontal">
                     @foreach($statistics as $statistic)

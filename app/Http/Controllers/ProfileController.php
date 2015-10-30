@@ -139,8 +139,6 @@ class ProfileController extends Controller
 
     public function postProfile(Request $request)
     {
-        $user = Auth::user();
-
         // TODO: Abstract this out: http://laravel.com/docs/5.1/validation#form-request-validation
         $this->validate($request, [
             'gender' => 'in:NULL,M,F',
@@ -149,7 +147,7 @@ class ProfileController extends Controller
             'notification_email' => 'in:0,1',
             'profile_visibility' => 'in:0,1,2',
             'list_visibility' => 'in:0,1,2',
-            'avatar' => 'image'
+            'avatar' => 'image|max:1500'
         ]);
 
         $input = $request->all();
@@ -170,11 +168,43 @@ class ProfileController extends Controller
             $input['about'] = null;
         }
 
+        $user = Auth::user();
         $user->fill($input);
         $user->save();
         $user->reindex();
 
         return back()->with('status', 'Profile successfully updated!');
+    }
+
+    public function uploadAvatar(Request $request)
+    {
+        $this->validate($request, [
+            'avatar' => 'image|max:1500'
+        ]);
+
+        $user = Auth::user();
+        $user->fill($request->all());
+        if ($user->save()) {
+            return back()->with('status', 'Avatar successfully updated!');
+        } else {
+            return back()->withErrors('There was an error when uploading your avatar.');
+        }
+    }
+
+    public function removeAvatar()
+    {
+        $user = Auth::user();
+        if ($user->avatar->originalFileName()) {
+            $user->avatar = STAPLER_NULL;
+            if ($user->save()) {
+                return back()->with('status', 'Avatar successfully removed!');
+
+            } else {
+                return back()->withErrors('There was an error when removing your avatar.');
+            }
+        } else {
+            return back()->withErrors('You have no avatar to be removed.');
+        }
     }
 
     public function postEmail(Request $request)

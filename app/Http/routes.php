@@ -40,6 +40,8 @@ Route::get('profile/{username}/edit/account', ['as' => 'profile.edit.account', '
 Route::post('profile/{username}/postProfile', ['as' => 'profile.postProfile', 'uses' => 'ProfileController@postProfile']);
 Route::post('profile/{username}/postEmail', ['as' => 'profile.postEmail', 'uses' => 'ProfileController@postEmail']);
 Route::post('profile/{username}/postPassword', ['as' => 'profile.postPassword', 'uses' => 'ProfileController@postPassword']);
+Route::post('profile/{username}/uploadAvatar', ['as' => 'profile.uploadAvatar', 'uses' => 'ProfileController@uploadAvatar']);
+Route::post('profile/{username}/removeAvatar', ['as' => 'profile.removeAvatar', 'uses' => 'ProfileController@removeAvatar']);
 
 // Favourites
 Route::get('profile/{username}/favourites', ['as' => 'profile.favourites', 'uses' => 'FavouritesController@index']);
