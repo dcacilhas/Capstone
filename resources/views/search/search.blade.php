@@ -7,7 +7,7 @@
         <h1>Search</h1>
 
         <p>
-            Enter your search terms in the search box in the navigation bar.
+            Enter your search terms in the search box below.
             Use the drop down menu to search for either Shows or Users.
         </p>
 

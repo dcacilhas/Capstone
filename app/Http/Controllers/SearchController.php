@@ -32,16 +32,26 @@ class SearchController extends Controller
                 'fields' => ['username', 'email'],
                 'default_operator' => 'AND'
             ]
-        ]);
+        ], null, null, 1000);
 
-//        if ($users->totalHits() === 0) {
-//            $users = User::searchByQuery([
-//                'query_string' => [
-//                    'query' => $query,
-//                    'fields' => ['username', 'email']
-//                ]
-//            ]);
-//        }
+        if ($users->totalHits() === 0) {
+            $users = Show::searchByQuery([
+                'multi_match' => [
+                    'query' => $query,
+                    'fields' => ['username', 'email']
+                ]
+            ], null, null, 1000);
+        }
+
+        if ($users->totalHits() === 0) {
+            $users = User::searchByQuery([
+                'multi_match' => [
+                    'query' => $query,
+                    'fields' => ['username', 'email'],
+                    'fuzziness' => 1
+                ]
+            ], null, null, 1000);
+        }
 
         if ($users->totalHits() === 0) {
             $users = User::searchByQuery([
@@ -50,8 +60,10 @@ class SearchController extends Controller
                     'fields' => ['username', 'email'],
                     'fuzziness' => 2
                 ]
-            ]);
+            ], null, null, 1000);
         }
+
+        $users = $users->paginate();
 
         return view('search.users', compact('query', 'users'));
     }

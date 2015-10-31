@@ -185,6 +185,7 @@ class ProfileController extends Controller
         $user = Auth::user();
         $user->fill($request->all());
         if ($user->save()) {
+            $user->reindex();
             return back()->with('status', 'Avatar successfully updated!');
         } else {
             return back()->withErrors('There was an error when uploading your avatar.');
@@ -197,6 +198,7 @@ class ProfileController extends Controller
         if ($user->avatar->originalFileName()) {
             $user->avatar = STAPLER_NULL;
             if ($user->save()) {
+                $user->reindex();
                 return back()->with('status', 'Avatar successfully removed!');
 
             } else {
