@@ -8,7 +8,6 @@
         "php": ">=5.5.9",
         "laravel/framework": "5.1.*",
         "elasticquent/elasticquent": "dev-master",
-        "barryvdh/laravel-debugbar": "^2.0",
         "codesleeve/laravel-stapler": "^1.0"
     },
     "require-dev": {
@@ -17,6 +16,7 @@
         "phpunit/phpunit": "~4.0",
         "phpspec/phpspec": "~2.1",
         "barryvdh/laravel-ide-helper": "^2.1",
+        "barryvdh/laravel-debugbar": "^2.0",
         "laravelcollective/html": "5.1.*"
     },
     "autoload": {

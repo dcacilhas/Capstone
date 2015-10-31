@@ -13,6 +13,8 @@ use Input;
 
 class SearchController extends Controller
 {
+    private $limit = 1000;
+
     public function index()
     {
         return view('search.search');
@@ -32,7 +34,7 @@ class SearchController extends Controller
                 'fields' => ['username', 'email'],
                 'default_operator' => 'AND'
             ]
-        ], null, null, 1000);
+        ], null, null, $this->limit);
 
         if ($users->totalHits() === 0) {
             $users = Show::searchByQuery([
@@ -40,7 +42,7 @@ class SearchController extends Controller
                     'query' => $query,
                     'fields' => ['username', 'email']
                 ]
-            ], null, null, 1000);
+            ], null, null, $this->limit);
         }
 
         if ($users->totalHits() === 0) {
@@ -50,7 +52,7 @@ class SearchController extends Controller
                     'fields' => ['username', 'email'],
                     'fuzziness' => 1
                 ]
-            ], null, null, 1000);
+            ], null, null, $this->limit);
         }
 
         if ($users->totalHits() === 0) {
@@ -60,10 +62,10 @@ class SearchController extends Controller
                     'fields' => ['username', 'email'],
                     'fuzziness' => 2
                 ]
-            ], null, null, 1000);
+            ], null, null, $this->limit);
         }
 
-        $users = $users->paginate();
+        $users = $users->paginate(24);
 
         return view('search.users', compact('query', 'users'));
     }
@@ -81,8 +83,8 @@ class SearchController extends Controller
                 'query' => $query,
                 'fields' => ['SeriesName'],
                 'default_operator' => 'AND'
-            ]
-        ], null, null, 1000);
+            ],
+        ], null, null, $this->limit);
 
         if ($shows->totalHits() === 0) {
             $shows = Show::searchByQuery([
@@ -92,7 +94,7 @@ class SearchController extends Controller
                         'fuzziness' => 1
                     ]
                 ]
-            ], null, null, 1000);
+            ], null, null, $this->limit);
         }
 
         $shows = $shows->paginate();

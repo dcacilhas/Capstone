@@ -171,7 +171,7 @@ class ProfileController extends Controller
         $user = Auth::user();
         $user->fill($input);
         $user->save();
-        $user->reindex();
+        $user->updateIndex();
 
         return back()->with('status', 'Profile successfully updated!');
     }
@@ -185,7 +185,7 @@ class ProfileController extends Controller
         $user = Auth::user();
         $user->fill($request->all());
         if ($user->save()) {
-            $user->reindex();
+            $user->updateIndex();
             return back()->with('status', 'Avatar successfully updated!');
         } else {
             return back()->withErrors('There was an error when uploading your avatar.');
@@ -198,7 +198,7 @@ class ProfileController extends Controller
         if ($user->avatar->originalFileName()) {
             $user->avatar = STAPLER_NULL;
             if ($user->save()) {
-                $user->reindex();
+                $user->updateIndex();
                 return back()->with('status', 'Avatar successfully removed!');
 
             } else {
@@ -225,7 +225,7 @@ class ProfileController extends Controller
         if (Hash::check($input['password'], $user->password)) {
             $user->fill(['email' => $input['email']]);
             $user->save();
-            $user->reindex();
+            $user->updateIndex();
         } else {
             return redirect()->route('profile/account', [$user->username])
                 ->withErrors('The password is incorrect.')
