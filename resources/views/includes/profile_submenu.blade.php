@@ -24,10 +24,12 @@
     <li role="presentation" class="{{ areActiveRoutes(['profile.list.history', 'profile.list.history.show']) }}">
         {!! link_to_route('profile.list.history', 'History', ['username' => $user->username]) !!}
     </li>
-    <li role="presentation"class="{{ isActiveRoute('profile.favourites') ? 'active' : '' }}">
+    <li role="presentation" class="{{ isActiveRoute('profile.favourites') ? 'active' : '' }}">
         {!! link_to_route('profile.favourites', 'Favourites', ['username' => $user->username]) !!}
     </li>
-    <li role="presentation"><a href="#">Friends</a></li>
+    <li role="presentation" class="{{ isActiveRoute('profile.friends') ? 'active' : '' }}">
+        {!! link_to_route('profile.friends', 'Friends', ['username' => $user->username]) !!}
+    </li>
     @if (Auth::check() && Auth::user()->username === $user->username)
         <li role="presentation"><a href="#">Notifications</a></li>
     @endif

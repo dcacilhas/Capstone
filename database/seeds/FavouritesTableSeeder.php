@@ -27,6 +27,7 @@ class FavouritesTableSeeder extends Seeder
         $numUsers = 4;
         $seriesIds = [70327, 78874, 81189];
 
+        // Generate favourites for first 4 users
         for ($i = 1; $i <= $numUsers; $i++) {
             $sortOrder = 1;
             foreach ($seriesIds as $seriesId) {
