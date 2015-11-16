@@ -14,8 +14,10 @@ class Friend extends Eloquent
      */
     protected $table = 'friends';
 
-    public function getFriends($userId)
-    {
-        return $this->where();
-    }
+    protected $fillable = ['user_id', 'friend_id'];
+
+//    public function getFriends($userId)
+//    {
+//        return $this->where();
+//    }
 }

@@ -26,86 +26,89 @@ class ProfileController extends Controller
     public function index($username)
     {
         $user = User::where('username', $username)->first();
-        $user->gender = DB::table('genders')->where('gender', '=', $user->gender)->value('description');
-        $recentEpsWatched = DB::table('list_episodes_watched')
-            ->where('user_id', $user->id)
-            ->select('list.series_id', 'tvseries.SeriesName', 'tvepisodes.EpisodeName', 'tvepisodes.EpisodeNumber',
-                'tvseasons.season')
-            ->join('tvepisodes', 'list_episodes_watched.episode_id', '=', 'tvepisodes.id')
-            ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
-            ->join('tvseries', 'tvepisodes.seriesid', '=', 'tvseries.id')
-            ->join('list', 'list_episodes_watched.list_id', '=', 'list.id')
-            ->join('users', 'list.user_id', '=', 'users.id')
-            ->orderBy('list_episodes_watched.updated_at', 'desc')
-            ->orderBy('list_episodes_watched.created_at', 'desc')
-            ->orderBy('tvseasons.season', 'desc')
-            ->orderBy('tvepisodes.EpisodeNumber', 'desc')
-            ->take(5)
-            ->get();
+        $canViewProfile = $this->canViewProfile($user);
+        if ($canViewProfile) {
+            $user->gender = DB::table('genders')->where('gender', '=', $user->gender)->value('description');
+            $recentEpsWatched = DB::table('list_episodes_watched')
+                ->where('user_id', $user->id)
+                ->select('list.series_id', 'tvseries.SeriesName', 'tvepisodes.EpisodeName', 'tvepisodes.EpisodeNumber',
+                    'tvseasons.season')
+                ->join('tvepisodes', 'list_episodes_watched.episode_id', '=', 'tvepisodes.id')
+                ->join('tvseasons', 'tvepisodes.seasonid', '=', 'tvseasons.id')
+                ->join('tvseries', 'tvepisodes.seriesid', '=', 'tvseries.id')
+                ->join('list', 'list_episodes_watched.list_id', '=', 'list.id')
+                ->join('users', 'list.user_id', '=', 'users.id')
+                ->orderBy('list_episodes_watched.updated_at', 'desc')
+                ->orderBy('list_episodes_watched.created_at', 'desc')
+                ->orderBy('tvseasons.season', 'desc')
+                ->orderBy('tvepisodes.EpisodeNumber', 'desc')
+                ->take(5)
+                ->get();
 
-        foreach ($recentEpsWatched as $ep) {
-            $ep->formatted = sprintf('S%02dE%02d', $ep->season, $ep->EpisodeNumber);
-        }
+            foreach ($recentEpsWatched as $ep) {
+                $ep->formatted = sprintf('S%02dE%02d', $ep->season, $ep->EpisodeNumber);
+            }
 
-        $favourites = Favourite::join('tvseries', 'favourites.series_id', '=', 'tvseries.id')
-            ->where('user_id', $user->id)
-            ->orderBy('sort_order', 'asc')
-            ->take(5)
-            ->get();
+            $favourites = Favourite::join('tvseries', 'favourites.series_id', '=', 'tvseries.id')
+                ->where('user_id', $user->id)
+                ->orderBy('sort_order', 'asc')
+                ->take(5)
+                ->get();
 
-        // Statistics: Add show count by status (Watching, Completed, etc.)
-        $statistics = new Collection;
-        foreach (DB::table('list_statuses')->get() as $listStatus) {
-            $count = Lists::where('list_status', $listStatus->list_status)->where('user_id',
-                $user->id)->count('series_id');
-            $value = ($count == 1) ? number_format($count) . ' show' : $count . ' shows';
-            $statistics->put(camel_case($listStatus->description),
-                ['title' => $listStatus->description, 'value' => $value]);
-        }
+            // Statistics: Add show count by status (Watching, Completed, etc.)
+            $statistics = new Collection;
+            foreach (DB::table('list_statuses')->get() as $listStatus) {
+                $count = Lists::where('list_status', $listStatus->list_status)->where('user_id',
+                    $user->id)->count('series_id');
+                $value = ($count == 1) ? number_format($count) . ' show' : $count . ' shows';
+                $statistics->put(camel_case($listStatus->description),
+                    ['title' => $listStatus->description, 'value' => $value]);
+            }
 
-        // Statistics: Add total time watched and episodes watched
-        $totalMinutesWatched = 0;
-        foreach (User::find($user->id)->getList()->get() as $show) {
-            $runtime = (int)Show::where('id', $show->series_id)->value('runtime');
-            $epsWatched = ListEpisodesWatched::where('list_id', $show->id)->count();
-            $totalMinutesWatched += $runtime * $epsWatched;
-        }
-        $statistics->put('totalTimeWatched',
-            ['title' => 'Time Watched', 'value' => $this->minutesToString($totalMinutesWatched)]);
-        $statistics->put('epsWatched', [
-            'title' => 'Episodes Watched',
-            'value' => number_format(ListEpisodesWatched::getUserEpisodesWatched($user->id)->count())
-        ]);
+            // Statistics: Add total time watched and episodes watched
+            $totalMinutesWatched = 0;
+            foreach (User::find($user->id)->getList()->get() as $show) {
+                $runtime = (int)Show::where('id', $show->series_id)->value('runtime');
+                $epsWatched = ListEpisodesWatched::where('list_id', $show->id)->count();
+                $totalMinutesWatched += $runtime * $epsWatched;
+            }
+            $statistics->put('totalTimeWatched',
+                ['title' => 'Time Watched', 'value' => $this->minutesToString($totalMinutesWatched)]);
+            $statistics->put('epsWatched', [
+                'title' => 'Episodes Watched',
+                'value' => number_format(ListEpisodesWatched::getUserEpisodesWatched($user->id)->count())
+            ]);
 
-        // Genres: Add count and calculate total
-        $genres = DB::table('genres')->get();
-        $list = User::find($user->id)->getList()
-            ->select('list.*', 'tvseries.genre')
-            ->join('tvseries', 'list.series_id', '=', 'tvseries.id')
-            ->get();
-        $genreTotal = 0;
-        foreach ($list as $show) {
-            foreach ($genres as $key => $row) {
-                if (str_contains($show->genre, $row->genre)) {
-                    (isset($row->count)) ? $row->count++ : $row->count = 1;
-                    $genreTotal++;
+            // Genres: Add count and calculate total
+            $genres = DB::table('genres')->get();
+            $list = User::find($user->id)->getList()
+                ->select('list.*', 'tvseries.genre')
+                ->join('tvseries', 'list.series_id', '=', 'tvseries.id')
+                ->get();
+            $genreTotal = 0;
+            foreach ($list as $show) {
+                foreach ($genres as $key => $row) {
+                    if (str_contains($show->genre, $row->genre)) {
+                        (isset($row->count)) ? $row->count++ : $row->count = 1;
+                        $genreTotal++;
+                    }
                 }
             }
-        }
 
-        // Genres: Add percentage and sort by count value
-        $count = [];
-        foreach ($genres as $key => $row) {
-            if (isset($row->count)) {
-                $genres[$key]->percentage = round(($row->count / $genreTotal) * 100);
-                $count[$key] = $row->count;
-            } else {
-                $count[$key] = 0;
+            // Genres: Add percentage and sort by count value
+            $count = [];
+            foreach ($genres as $key => $row) {
+                if (isset($row->count)) {
+                    $genres[$key]->percentage = round(($row->count / $genreTotal) * 100);
+                    $count[$key] = $row->count;
+                } else {
+                    $count[$key] = 0;
+                }
             }
+            array_multisort($count, SORT_DESC, $genres);
         }
-        array_multisort($count, SORT_DESC, $genres);
 
-        return view('profile.home', compact('user', 'recentEpsWatched', 'favourites', 'statistics', 'genres'));
+        return view('profile.home', compact('user', 'recentEpsWatched', 'favourites', 'statistics', 'genres', 'canViewProfile'));
     }
 
     private function minutesToString($minutes)
@@ -264,5 +267,49 @@ class ProfileController extends Controller
         }
 
         return back()->with('status', 'Password successfully updated!');
+    }
+
+    /**
+     * @param $user
+     * @return bool
+     */
+    private function canViewProfile($user)
+    {
+// If user is viewing their own profile
+        if (Auth::check() && Auth::user()->username === $user->username || $user->profile_visibility === 0) {
+            $canViewProfile = true;
+            return $canViewProfile;
+        } else {
+            // If user's profile is public
+//            if ($user->profile_visibility === 0) {
+//                $canViewProfile = true;
+//            }
+
+            // If user's profile is private
+            if ($user->profile_visibility === 1) {
+                $canViewProfile = false;
+            }
+
+            // If user's profile is set to friends only
+            if ($user->profile_visibility === 2) {
+                // TODO: Extract this to model
+                $friendIds = DB::table('friends as f1')->join('friends as f2', function ($query) use ($user) {
+                    $query->on('f1.user_id', '=', 'f2.friend_id')->on('f1.friend_id', '=',
+                        'f2.user_id')->where('f1.user_id',
+                        '=', $user->id);
+                })->select('f1.friend_id')->lists('friend_id');
+
+                if (Auth::check() && in_array(Auth::user()->id, $friendIds)) {
+                    $canViewProfile = true;
+                    return $canViewProfile;
+                } else {
+                    $canViewProfile = false;
+                    return $canViewProfile;
+                }
+
+//            $friends = User::whereIn('id', $friendIds)->get();
+            }
+            return $canViewProfile;
+        }
     }
 }

@@ -6,7 +6,7 @@
     <div class="container">
         @include('includes.profile_submenu')
 
-        @if($user['profile_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user->username))
+        @if($canViewProfile)
             <h2>
                 Friends
                 @if (Auth::check() && Auth::getUser()->username === $user->username)
@@ -20,6 +20,8 @@
                     </small>
                 @endif
             </h2>
+
+            @include('errors.errors')
 
             @foreach($friends as $friend)
                 <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6 col-fixed-height align-center">
@@ -35,8 +37,18 @@
                     </div>
                 </div>
             @endforeach
+
+            <!-- TODO: Make this AJAX instead -->
+            @include('includes.modals.add_friends')
         @else
-            <div class="alert alert-danger">The user has chosen to make their profile private. Only they may view it.</div>
+            <div class="alert alert-danger">
+                @if($user->profile_visibility === 1)
+                    The user has chosen to make their profile private. Only they may view it.
+                @elseif($user->profile_visibility === 2)
+                    The user has chosen to make their profile visible to friends only.
+                    Send them a friend request for access.
+                @endif
+            </div>
         @endif
     </div>
 @stop

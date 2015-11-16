@@ -6,7 +6,7 @@
     <div class="container">
         @include('includes.profile_submenu')
 
-        @if($user['profile_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user['username']))
+        @if($canViewProfile)
             <div class="col-md-4 col-sm-6">
                 {!! Html::image($user->avatar->url('large'), 'Avatar', ['class' => 'img-responsive img-thumbnail center-block']) !!}
                 <h3 class="text-center">{{ $user->username }}</h3>
@@ -53,14 +53,20 @@
                 <div id="chart_div"></div>
             </div>
         @else
-            <div class="alert alert-danger">The user has chosen to make their profile private. Only they may view it.
+            <div class="alert alert-danger">
+                @if($user->profile_visibility === 1)
+                    The user has chosen to make their profile private. Only they may view it.
+                @elseif($user->profile_visibility === 2)
+                    The user has chosen to make their profile visible to friends only.
+                    Send them a friend request for access.
+                @endif
             </div>
         @endif
     </div>
 @stop
 
 @section('javascript')
-    @if($user['profile_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user['username']))
+    @if($canViewProfile)
         <script src="https://www.google.com/jsapi"></script>
         <script>
             google.load('visualization', '1.0', {'packages':['corechart']});
