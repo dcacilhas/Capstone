@@ -28,5 +28,13 @@ class FriendsTableSeeder extends Seeder
             ['user_id' => 2, 'friend_id' => 4, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
             ['user_id' => 4, 'friend_id' => 3, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
         ]);
+
+        // Add notifications for seeded unaccepted friend requests
+        DB::table('notifications')->insert([
+            ['user_id' => 3, 'notification_type' => 0, 'status' => 'unread', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+            ['user_id' => 1, 'notification_type' => 0, 'status' => 'unread', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+            ['user_id' => 4, 'notification_type' => 0, 'status' => 'unread', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+            ['user_id' => 3, 'notification_type' => 0, 'status' => 'unread', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]
+        ]);
     }
 }

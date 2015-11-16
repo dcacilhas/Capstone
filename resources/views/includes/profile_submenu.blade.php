@@ -31,6 +31,8 @@
         {!! link_to_route('profile.friends', 'Friends', ['username' => $user->username]) !!}
     </li>
     @if (Auth::check() && Auth::user()->username === $user->username)
-        <li role="presentation"><a href="#">Notifications</a></li>
+        <li role="presentation" class="{{ isActiveRoute('profile.notifications') ? 'active' : '' }}">
+            {!! link_to_route('profile.notifications', 'Notifications', ['username' => $user->username]) !!}
+        </li>
     @endif
 </ul>

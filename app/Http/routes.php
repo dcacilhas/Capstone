@@ -63,6 +63,9 @@ Route::post('list/{seriesId}/updateEpisodesWatched', ['as' => 'list.episodes.upd
 Route::get('profile/{username}/friends', ['as' => 'profile.friends', 'uses' => 'FriendsController@index']);
 Route::post('profile/{username}/friends/add', ['as' => 'profile.friends.add', 'uses' => 'FriendsController@add']);
 
+// Notifications
+Route::get('profile/{username}/notifications', ['as' => 'profile.notifications', 'uses' => 'NotificationsController@index']);
+
 // Search
 Route::get('search', ['as' => 'search', 'uses' => 'SearchController@index']);
 Route::post('search/users/{query?}', ['as' => 'search.user', 'uses' => 'SearchController@postUserSearch']);
