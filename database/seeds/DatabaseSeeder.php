@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ListEpisodesWatchedTableSeeder::class);
         $this->call(FavouritesTableSeeder::class);
         $this->call(FriendsTableSeeder::class);
+        $this->call(NotificationsTableSeeder::class);
 
         Model::reguard();
     }
