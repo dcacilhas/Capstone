@@ -62,6 +62,8 @@ Route::post('list/{seriesId}/updateEpisodesWatched', ['as' => 'list.episodes.upd
 // Friends
 Route::get('profile/{username}/friends', ['as' => 'profile.friends', 'uses' => 'FriendsController@index']);
 Route::post('profile/{username}/friends/add', ['as' => 'profile.friends.add', 'uses' => 'FriendsController@add']);
+Route::post('profile/{username}/friends/request/{fromId}/{notificationId}/accept', ['as' => 'profile.friends.request.accept', 'uses' => 'FriendsController@acceptFriendRequest']);
+Route::post('profile/{username}/friends/request/{fromId}/{notificationId}/decline', ['as' => 'profile.friends.request.decline', 'uses' => 'FriendsController@declineFriendRequest']);
 
 // Notifications
 Route::get('profile/{username}/notifications', ['as' => 'profile.notifications', 'uses' => 'NotificationsController@index']);

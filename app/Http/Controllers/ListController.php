@@ -24,12 +24,15 @@ class ListController extends Controller
     public function index($username)
     {
         $user = User::where('username', $username)->first();
-        $status = Input::get('status') !== null ? (int)Input::get('status') : null;
-        $listStatuses = DB::table('list_statuses')->get();
-        $shows = $this->getShows($status, $user);
-        $this->addExtras($shows);
+        $canViewList = $this->canViewList($user);
+        if ($canViewList) {
+            $status = Input::get('status') !== null ? (int)Input::get('status') : null;
+            $listStatuses = DB::table('list_statuses')->get();
+            $shows = $this->getShows($status, $user);
+            $this->addExtras($shows);
+        }
 
-        return view('profile.list', compact('user', 'shows', 'status', 'listStatuses'));
+        return view('profile.list', compact('user', 'shows', 'status', 'listStatuses', 'canViewList'));
     }
 
     /**
@@ -130,31 +133,38 @@ class ListController extends Controller
     public function showHistory($username)
     {
         $user = User::where('username', $username)->first();
-        $epsWatched = ListEpisodesWatched::getUserEpisodesWatched($user->id)
-            ->select('users.id', 'tvseries.SeriesName', 'tvepisodes.seriesid', 'tvepisodes.EpisodeName',
-                'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at')
-            ->getMostRecent();
-        $shows = $epsWatched->get()->unique('seriesid')->lists('SeriesName', 'seriesid')->sort();
-        $epsWatched = $epsWatched->paginate(25);
 
-        return view('profile.history', compact('user', 'epsWatched', 'shows'));
+        $canViewList = $this->canViewList($user);
+        if ($canViewList) {
+            $epsWatched = ListEpisodesWatched::getUserEpisodesWatched($user->id)
+                ->select('users.id', 'tvseries.SeriesName', 'tvepisodes.seriesid', 'tvepisodes.EpisodeName',
+                    'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at')
+                ->getMostRecent();
+            $shows = $epsWatched->get()->unique('seriesid')->lists('SeriesName', 'seriesid')->sort();
+            $epsWatched = $epsWatched->paginate(25);
+        }
+
+        return view('profile.history', compact('user', 'epsWatched', 'shows', 'canViewList'));
     }
 
     public function showHistoryFilter($username, $seriesId)
     {
         $user = User::where('username', $username)->first();
-        $epsWatched = ListEpisodesWatched::getUserEpisodesWatched($user->id)
-            ->select('users.id', 'tvseries.SeriesName', 'tvepisodes.seriesid', 'tvepisodes.EpisodeName',
-                'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at');
-        $shows = $epsWatched->get()->unique('seriesid')->lists('SeriesName', 'seriesid')->sort();
-        $epsWatched = $epsWatched->where('list.series_id', '=', $seriesId)
-            ->getMostRecent()
-            ->paginate(25);
-        if ($epsWatched->count() === 0) {
-            abort(404);
+        $canViewList = $this->canViewList($user);
+        if ($canViewList) {
+            $epsWatched = ListEpisodesWatched::getUserEpisodesWatched($user->id)
+                ->select('users.id', 'tvseries.SeriesName', 'tvepisodes.seriesid', 'tvepisodes.EpisodeName',
+                    'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at');
+            $shows = $epsWatched->get()->unique('seriesid')->lists('SeriesName', 'seriesid')->sort();
+            $epsWatched = $epsWatched->where('list.series_id', '=', $seriesId)
+                ->getMostRecent()
+                ->paginate(25);
+            if ($epsWatched->count() === 0) {
+                abort(404);
+            }
         }
 
-        return view('profile.history', compact('user', 'epsWatched', 'shows', 'seriesId'));
+        return view('profile.history', compact('user', 'epsWatched', 'shows', 'seriesId', 'canViewList'));
     }
 
     public function updateEpisodesWatched($seriesId)
@@ -189,6 +199,43 @@ class ListController extends Controller
         } else {
             $ep = ListEpisodesWatched::where('episode_id', $episodeIds)->where('list_id', $listId)->first();
             $ep ? $ep->delete() : ListEpisodesWatched::create(['episode_id' => $episodeIds, 'list_id' => $listId]);
+        }
+    }
+
+    /**
+     * @param $user
+     * @return bool
+     */
+    private function canViewList($user)
+    {
+        // If user is viewing their own profile
+        if (Auth::check() && Auth::user()->username === $user->username || $user->profile_visibility === 0) {
+            $canViewList = true;
+            return $canViewList;
+        } else {
+            // If user's profile is private
+            if ($user->list_visibility === 1) {
+                $canViewList = false;
+            }
+
+            // If user's list is set to friends only
+            if ($user->list_visibility === 2) {
+                // TODO: Extract this to model
+                $friendIds = DB::table('friends as f1')->join('friends as f2', function ($query) use ($user) {
+                    $query->on('f1.user_id', '=', 'f2.friend_id')->on('f1.friend_id', '=',
+                        'f2.user_id')->where('f1.user_id',
+                        '=', $user->id);
+                })->select('f1.friend_id')->lists('friend_id');
+
+                if (Auth::check() && in_array(Auth::user()->id, $friendIds)) {
+                    $canViewList = true;
+                    return $canViewList;
+                } else {
+                    $canViewList = false;
+                    return $canViewList;
+                }
+            }
+            return $canViewList;
         }
     }
 }

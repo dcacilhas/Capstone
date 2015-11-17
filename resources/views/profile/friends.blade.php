@@ -22,6 +22,12 @@
             </h2>
 
             @include('errors.errors')
+            @if (session('status'))
+                <div class="alert alert-success alert-dismissable" >
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <span>{{ session('status') }}</span>
+                </div>
+            @endif
 
             @foreach($friends as $friend)
                 <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6 col-fixed-height align-center">

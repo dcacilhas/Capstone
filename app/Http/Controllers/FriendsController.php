@@ -8,6 +8,7 @@ use App\Models\User;
 use Auth;
 use DB;
 use Fenos\Notifynder\Facades\Notifynder;
+use Fenos\Notifynder\Models\Notification;
 use Input;
 
 class FriendsController extends Controller
@@ -64,7 +65,25 @@ class FriendsController extends Controller
             return back()->withErrors('No user has been found with that username or email address.');
         }
 
-        return back();
+        return back()->with('status', 'Friend request successfully sent to ' . $requestedFriend->username . '.');
+    }
+
+    public function acceptFriendRequest($username, $fromId, $notificationId)
+    {
+        $user = Auth::user();
+        Friend::create(['user_id' => $user->id, 'friend_id' => $fromId]);
+        Notification::where('id', $notificationId)->delete();
+
+        echo true;
+    }
+
+    public function declineFriendRequest($username, $fromId, $notificationId)
+    {
+        $user = Auth::user();
+        Friend::where(['user_id' => $fromId, 'friend_id' => $user->id])->delete();
+        Notification::where('id', $notificationId)->delete();
+
+        echo true;
     }
 
     /**

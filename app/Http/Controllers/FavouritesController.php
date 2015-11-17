@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\Models\Favourite;
 use App\Models\User;
 use Auth;
+use DB;
 use Illuminate\Support\Facades\Input;
 
 class FavouritesController extends Controller
@@ -13,16 +14,19 @@ class FavouritesController extends Controller
     public function index($username)
     {
         $user = User::where('username', $username)->first();
-        $favourites = Favourite::join('tvseries', 'favourites.series_id', '=', 'tvseries.id')
-            ->where('user_id', $user->id)
-            ->orderBy('sort_order', 'asc')
-            ->get();
-        $favouritesIds = Favourite::where('user_id', $user->id)->lists('series_id');
-        $showsNotFavourited = $user->getListWithSeries()
-            ->whereNotIn('series_id', $favouritesIds)
-            ->get();
+        $canViewList = $this->canViewList($user);
+        if ($canViewList) {
+            $favourites = Favourite::join('tvseries', 'favourites.series_id', '=', 'tvseries.id')
+                ->where('user_id', $user->id)
+                ->orderBy('sort_order', 'asc')
+                ->get();
+            $favouritesIds = Favourite::where('user_id', $user->id)->lists('series_id');
+            $showsNotFavourited = $user->getListWithSeries()
+                ->whereNotIn('series_id', $favouritesIds)
+                ->get();
+        }
 
-        return view('profile.favourites', compact('user', 'favourites', 'showsNotFavourited'));
+        return view('profile.favourites', compact('user', 'favourites', 'showsNotFavourited', 'canViewList'));
     }
 
     public function add($username)
@@ -93,5 +97,42 @@ class FavouritesController extends Controller
         }
 
         echo true;
+    }
+
+    /**
+     * @param $user
+     * @return bool
+     */
+    private function canViewList($user)
+    {
+        // If user is viewing their own profile
+        if (Auth::check() && Auth::user()->username === $user->username || $user->profile_visibility === 0) {
+            $canViewList = true;
+            return $canViewList;
+        } else {
+            // If user's profile is private
+            if ($user->list_visibility === 1) {
+                $canViewList = false;
+            }
+
+            // If user's list is set to friends only
+            if ($user->list_visibility === 2) {
+                // TODO: Extract this to model
+                $friendIds = DB::table('friends as f1')->join('friends as f2', function ($query) use ($user) {
+                    $query->on('f1.user_id', '=', 'f2.friend_id')->on('f1.friend_id', '=',
+                        'f2.user_id')->where('f1.user_id',
+                        '=', $user->id);
+                })->select('f1.friend_id')->lists('friend_id');
+
+                if (Auth::check() && in_array(Auth::user()->id, $friendIds)) {
+                    $canViewList = true;
+                    return $canViewList;
+                } else {
+                    $canViewList = false;
+                    return $canViewList;
+                }
+            }
+            return $canViewList;
+        }
     }
 }

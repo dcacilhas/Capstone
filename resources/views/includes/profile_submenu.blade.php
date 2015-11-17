@@ -32,7 +32,9 @@
     </li>
     @if (Auth::check() && Auth::user()->username === $user->username)
         <li role="presentation" class="{{ isActiveRoute('profile.notifications') ? 'active' : '' }}">
-            {!! link_to_route('profile.notifications', 'Notifications', ['username' => $user->username]) !!}
+            <a href="{!! route('profile.notifications', ['username' => $user->username]) !!}">
+                Notifications <span class="badge">@if($user->countNotificationsNotRead() > 0){{ $user->countNotificationsNotRead() }}@endif</span>
+            </a>
         </li>
     @endif
 </ul>

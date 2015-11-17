@@ -131,7 +131,7 @@ class ProfileController extends Controller
                 if ($areFriends) {
                     $showIdsInCommon = DB::table('list as l1')->join('list as l2', function ($query) use ($loggedInUser, $user) {
                         $query->on('l2.series_id', '=', 'l1.series_id')
-                            ->where('l2.user_id', '=', 2)
+                            ->where('l2.user_id', '=', $user->id)
                             ->where('l1.user_id', '=', $loggedInUser->id);
                     })->select('l1.series_id')->lists('series_id');
 

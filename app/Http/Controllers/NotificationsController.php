@@ -12,9 +12,8 @@ class NotificationsController extends Controller
         $user = Auth::user();
         $notifications = $user->getNotifications();
         $unreadNotificationsCount = $user->countNotificationsNotRead();
-
-        // Mark notifications as read
-        // TODO: Add support for marking notifications as read/unread
+        $user->readAllNotifications();
+        // TODO: Add support for marking notifications as read/unread (all or individual)
 
         return view('profile.notifications', compact('user', 'notifications', 'unreadNotificationsCount'));
     }
