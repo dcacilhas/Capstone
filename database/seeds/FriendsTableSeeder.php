@@ -31,10 +31,10 @@ class FriendsTableSeeder extends Seeder
 
         // Add notifications for seeded unaccepted friend requests
         DB::table('notifications')->insert([
-            ['user_id' => 3, 'notification_type' => 0, 'status' => 'unread', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-            ['user_id' => 1, 'notification_type' => 0, 'status' => 'unread', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-            ['user_id' => 4, 'notification_type' => 0, 'status' => 'unread', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-            ['user_id' => 3, 'notification_type' => 0, 'status' => 'unread', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]
+            ['from_id' => 1, 'from_type' => null, 'to_id' => 3, 'to_type' => null, 'category_id' => 1, 'extra' => '{"username":"John Doe"}', 'read' => 0],
+            ['from_id' => 4, 'from_type' => null, 'to_id' => 1, 'to_type' => null, 'category_id' => 1, 'extra' => '{"username":"Jane Roe"}', 'read' => 0],
+            ['from_id' => 2, 'from_type' => null, 'to_id' => 4, 'to_type' => null, 'category_id' => 1, 'extra' => '{"username":"Jane Doe"}', 'read' => 0],
+            ['from_id' => 4, 'from_type' => null, 'to_id' => 3, 'to_type' => null, 'category_id' => 1, 'extra' => '{"username":"Jane Roe"}', 'read' => 0],
         ]);
     }
 }

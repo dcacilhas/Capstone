@@ -6,6 +6,7 @@ use Codesleeve\Stapler\ORM\EloquentTrait;
 use Codesleeve\Stapler\ORM\StaplerableInterface;
 use Elasticquent\ElasticquentTrait;
 use Eloquent;
+use Fenos\Notifynder\Notifable;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -15,7 +16,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 
 class User extends Eloquent implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, StaplerableInterface
 {
-    use Authenticatable, Authorizable, CanResetPassword, ElasticquentTrait, EloquentTrait;
+    use Authenticatable, Authorizable, CanResetPassword, ElasticquentTrait, EloquentTrait, Notifable;
 
     /**
      * The database table used by the model.
@@ -23,6 +24,7 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
      * @var string
      */
     protected $table = 'users';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -41,12 +43,7 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
         'profile_visibility',
         'list_visibility'
     ];
-    protected $mappingProperties = [
-        'username' => [
-            'type' => 'string',
-            'analyzer' => 'standard'
-        ]
-    ];
+
     /**
      * The attributes excluded from the model's JSON form.
      *
@@ -61,6 +58,13 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
         'profile_visibility',
         'list_visibility',
         'notifications_last_checked'
+    ];
+
+    protected $mappingProperties = [
+        'username' => [
+            'type' => 'string',
+            'analyzer' => 'standard'
+        ]
     ];
 
     public function __construct(array $attributes = [])

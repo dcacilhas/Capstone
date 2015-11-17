@@ -165,6 +165,11 @@ return [
          */
         Codesleeve\LaravelStapler\Providers\L5ServiceProvider::class,
 
+        /*
+         * Notifynder
+         */
+        Fenos\Notifynder\NotifynderServiceProvider::class,
+
     ],
 
     /*
@@ -216,6 +221,7 @@ return [
         'Html'      => Collective\Html\HtmlFacade::class,
         'Gate'      => Illuminate\Support\Facades\Gate::class,
         'Debugbar'  => Barryvdh\Debugbar\Facade::class,
+        'Notifynder'=> Fenos\Notifynder\Facades\Notifynder::class,
 
     ],
 
