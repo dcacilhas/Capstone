@@ -10,6 +10,11 @@
             <div class="col-md-4 col-sm-6">
                 {!! Html::image($user->avatar->url('large'), 'Avatar', ['class' => 'img-responsive img-thumbnail center-block']) !!}
                 <h3 class="text-center">{{ $user->username }}</h3>
+                @if(isset($alreadyFriendsOrRequested) && $alreadyFriendsOrRequested)
+                    Remove Friend Button
+                @elseif(isset($alreadyFriendsOrRequested) && !$alreadyFriendsOrRequested)
+                    Add Friend Button
+                @endif
                 <dl class="dl-horizontal">
                     <dt>Gender:</dt>
                     <dd>{{ $user->gender }}</dd>
@@ -38,6 +43,15 @@
                         <li>{!! link_to_route('shows.details', $favourite->SeriesName, ['seriesId' => $favourite->series_id]) !!}</li>
                     @endforeach
                 </ul>
+
+                @if(isset($showsInCommon))
+                    <h3>Shows In Common</h3>
+                    <ul class="list-unstyled">
+                        @foreach($showsInCommon as $showInCommon)
+                            <li>{!! link_to_route('shows.details', $showInCommon->SeriesName, ['seriesId' => $showInCommon->series_id]) !!}</li>
+                        @endforeach
+                    </ul>
+                @endif
             </div>
 
             <div class="col-md-4 col-sm-6">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Models\Favourite;
+use App\Models\Friend;
 use App\Models\ListEpisodesWatched;
 use App\Models\Lists;
 use App\Models\Show;
@@ -106,9 +107,42 @@ class ProfileController extends Controller
                 }
             }
             array_multisort($count, SORT_DESC, $genres);
+
+            // Check if already friends or request has already been sent
+            $loggedInUser = Auth::user();
+            if ($user->id !== $loggedInUser->id) {
+                // TODO: Extract this to model
+                $alreadyFriendsOrRequested = Friend::where(function ($query) use ($loggedInUser, $user) {
+                    $query->where('user_id', '=', $loggedInUser->id)
+                        ->where('friend_id', '=', $user->id);
+                })->orWhere(function ($query) use ($loggedInUser, $user) {
+                    $query->where('user_id', '=', $user->id)
+                        ->where('friend_id', '=', $loggedInUser->id);
+                })->exists();
+
+                // If you are friends then get shows in common
+                // TODO: Extract this to model
+                $friendIds = DB::table('friends as f1')->join('friends as f2', function ($query) use ($user) {
+                    $query->on('f1.user_id', '=', 'f2.friend_id')->on('f1.friend_id', '=', 'f2.user_id')->where('f1.user_id',
+                        '=', $user->id);
+                })->select('f1.friend_id')->lists('friend_id');
+
+                $areFriends = User::whereIn('id', $friendIds)->exists();
+                if ($areFriends) {
+                    $showIdsInCommon = DB::table('list as l1')->join('list as l2', function ($query) use ($loggedInUser, $user) {
+                        $query->on('l2.series_id', '=', 'l1.series_id')
+                            ->where('l2.user_id', '=', 2)
+                            ->where('l1.user_id', '=', $loggedInUser->id);
+                    })->select('l1.series_id')->lists('series_id');
+
+                    $showsInCommon = Show::whereIn('id', $showIdsInCommon)->select(['id', 'SeriesName'])->get();
+                }
+            }
         }
 
-        return view('profile.home', compact('user', 'recentEpsWatched', 'favourites', 'statistics', 'genres', 'canViewProfile'));
+        return view('profile.home',
+            compact('user', 'recentEpsWatched', 'favourites', 'statistics', 'genres', 'canViewProfile',
+                'alreadyFriendsOrRequested', 'showsInCommon'));
     }
 
     private function minutesToString($minutes)

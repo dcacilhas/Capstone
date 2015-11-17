@@ -7,6 +7,7 @@ use App\Models\Friend;
 use App\Models\User;
 use Auth;
 use DB;
+use Fenos\Notifynder\Facades\Notifynder;
 use Input;
 
 class FriendsController extends Controller
@@ -50,6 +51,14 @@ class FriendsController extends Controller
             } else {
                 // Create request
                 Friend::create(['user_id' => $user->id, 'friend_id' => $requestedFriend->id]);
+                // Create notification
+                $username = $user->username;
+                Notifynder::category('friend.request')
+                    ->from($user->id)
+                    ->to($requestedFriend->id)
+                    ->url('')
+                    ->extra(compact('username'))
+                    ->send();
             }
         } else {
             return back()->withErrors('No user has been found with that username or email address.');
