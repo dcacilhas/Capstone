@@ -68,6 +68,11 @@ class FriendsController extends Controller
         return back()->with('status', 'Friend request successfully sent to ' . $requestedFriend->username . '.');
     }
 
+    public function remove()
+    {
+        $user = Auth::user();
+    }
+
     public function acceptFriendRequest($username, $fromId, $notificationId)
     {
         $user = Auth::user();

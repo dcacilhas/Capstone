@@ -10,10 +10,14 @@
             <div class="col-md-4 col-sm-6">
                 {!! Html::image($user->avatar->url('large'), 'Avatar', ['class' => 'img-responsive img-thumbnail center-block']) !!}
                 <h3 class="text-center">{{ $user->username }}</h3>
-                @if(isset($alreadyFriendsOrRequested) && $alreadyFriendsOrRequested)
-                    Remove Friend Button
-                @elseif(isset($alreadyFriendsOrRequested) && !$alreadyFriendsOrRequested)
-                    Add Friend Button
+                @if(isset($alreadyFriendsOrRequested))
+                    <div class="text-center">
+                        @if($alreadyFriendsOrRequested)
+                            <button id="removeFriend" class="btn btn-danger btn-sm" type="submit">Remove Friend</button>
+                        @else
+                            <button id="sendFriendRequest" class="btn btn-primary btn-sm" type="submit">Send Friend Request</button>
+                        @endif
+                    </div>
                 @endif
                 <dl class="dl-horizontal">
                     <dt>Gender:</dt>
@@ -83,6 +87,16 @@
     @if($canViewProfile)
         <script src="https://www.google.com/jsapi"></script>
         <script>
+            $(document).ready(function () {
+                $('#removeFriend').click(function () {
+                    alert('remove friend clicked');
+                });
+
+                $('#sendFriendRequest').click(function () {
+                    alert('send friend request clicked');
+                });
+            });
+
             google.load('visualization', '1.0', {'packages':['corechart']});
             google.setOnLoadCallback(drawChart);
 
