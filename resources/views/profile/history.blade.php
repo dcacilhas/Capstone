@@ -6,7 +6,7 @@
     <div class="container">
         @include('includes.profile_submenu')
 
-        @if($user['list_visibility'] === 0 || (Auth::check() && Auth::user()->username === $user->username))
+        @if($canViewList)
             <ul class="nav nav-pills nav-justified">
                 <li class="{{ isActiveRoute('profile.list.history') }}">
                     {!! link_to_route('profile.list.history', 'All Shows', ['username' => $user->username]) !!}
@@ -62,7 +62,14 @@
 
             {!! $epsWatched->render() !!}
         @else
-            <div class="alert alert-danger">The user has chosen to make their list private. Only they may view it.</div>
+            <div class="alert alert-danger">
+                @if($user->list_visibility === 1)
+                    The user has chosen to make their list private. Only they may view it.
+                @elseif($user->list_visibility === 2)
+                    The user has chosen to make their list visible to friends only.
+                    Send them a friend request for access.
+                @endif
+            </div>
         @endif
     </div>
 @stop
