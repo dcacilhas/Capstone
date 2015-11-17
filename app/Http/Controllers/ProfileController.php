@@ -110,7 +110,7 @@ class ProfileController extends Controller
 
             // Check if already friends or request has already been sent
             $loggedInUser = Auth::user();
-            if ($user->id !== $loggedInUser->id) {
+            if (isset($loggedInUser) && $user->id !== $loggedInUser->id) {
                 // TODO: Extract this to model
                 $alreadyFriendsOrRequested = Friend::where(function ($query) use ($loggedInUser, $user) {
                     $query->where('user_id', '=', $loggedInUser->id)
