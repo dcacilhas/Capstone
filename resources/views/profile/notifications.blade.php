@@ -49,7 +49,7 @@
                     },
                     data: {fromId: that.data('fromId'), notificationId: that.data('notificationId')},
                     success: function () {
-                        alert('success');
+                        that.closest('li').hide('fast');
                     },
                     error: function () {
                         alert("error!!!!");
@@ -72,7 +72,7 @@
                     },
                     data: {fromId: that.data('fromId'), notificationId: that.data('notificationId')},
                     success: function () {
-                        alert('success');
+                        that.closest('li').hide('fast');
                     },
                     error: function () {
                         alert("error!!!!");

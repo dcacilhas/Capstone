@@ -90,6 +90,27 @@
             $(document).ready(function () {
                 $('#removeFriend').click(function () {
                     alert('remove friend clicked');
+
+                    var that = $(this),
+                            url = "{{ route('profile.friends.remove', ['username' => Auth::user()->username]) }}";
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        beforeSend: function (xhr) {
+                            var token = $("meta[name='csrf_token']").attr('content');
+                            if (token) {
+                                return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+                            }
+                        },
+                        data: {},
+                        success: function () {
+                            that.closest('li').hide('fast');
+                        },
+                        error: function () {
+                            alert("error!!!!");
+                        }
+                    });
                 });
 
                 $('#sendFriendRequest').click(function () {
