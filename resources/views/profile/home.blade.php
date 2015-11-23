@@ -10,11 +10,11 @@
             <div class="col-md-4 col-sm-6">
                 {!! Html::image($user->avatar->url('large'), 'Avatar', ['class' => 'img-responsive img-thumbnail center-block']) !!}
                 <h3 class="text-center">{{ $user->username }}</h3>
-                @if(isset($alreadyFriendsOrRequested))
+                @if(isset($alreadyRequested))
                     <div class="text-center">
-                        @if($alreadyFriendsOrRequested)
+                        @if($areFriends)
                             <button id="removeFriend" class="btn btn-danger btn-sm" type="submit">Remove Friend</button>
-                        @else
+                        @elseif(!$alreadyRequested)
                             <button id="sendFriendRequest" class="btn btn-primary btn-sm" type="submit">Send Friend Request</button>
                         @endif
                     </div>
@@ -88,11 +88,11 @@
         <script src="https://www.google.com/jsapi"></script>
         <script>
             $(document).ready(function () {
-                $('#removeFriend').click(function () {
-                    alert('remove friend clicked');
-
+                $(document).on('click', '#removeFriend', function () {
                     var that = $(this),
-                            url = "{{ route('profile.friends.remove', ['username' => Auth::user()->username]) }}";
+                            url = "{{ route('profile.friends.remove', ['username' => $user->username]) }}";
+
+                    that.attr('id', 'sendFriendRequest').removeClass('btn-danger').addClass('btn-primary').text('Send Friend Request');
 
                     $.ajax({
                         type: "POST",
@@ -105,16 +105,37 @@
                         },
                         data: {},
                         success: function () {
-                            that.closest('li').hide('fast');
                         },
                         error: function () {
+                            that.attr('id', 'removeFriend').removeClass('btn-primary').addClass('btn-danger').text('Remove Friend');
                             alert("error!!!!");
                         }
                     });
                 });
 
-                $('#sendFriendRequest').click(function () {
-                    alert('send friend request clicked');
+                $(document).on('click', '#sendFriendRequest', function () {
+                    var that = $(this),
+                            url = "{{ route('profile.friends.sendRequest', ['username' => $user->username]) }}";
+
+                    that.hide();
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        beforeSend: function (xhr) {
+                            var token = $("meta[name='csrf_token']").attr('content');
+                            if (token) {
+                                return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+                            }
+                        },
+                        data: {},
+                        success: function () {
+                        },
+                        error: function () {
+                            that.show();
+                            alert("error!!!!");
+                        }
+                    });
                 });
             });
 

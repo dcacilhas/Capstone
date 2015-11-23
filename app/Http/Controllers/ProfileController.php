@@ -112,7 +112,7 @@ class ProfileController extends Controller
             $loggedInUser = Auth::user();
             if (isset($loggedInUser) && $user->id !== $loggedInUser->id) {
                 // TODO: Extract this to model
-                $alreadyFriendsOrRequested = Friend::where(function ($query) use ($loggedInUser, $user) {
+                $alreadyRequested = Friend::where(function ($query) use ($loggedInUser, $user) {
                     $query->where('user_id', '=', $loggedInUser->id)
                         ->where('friend_id', '=', $user->id);
                 })->orWhere(function ($query) use ($loggedInUser, $user) {
@@ -127,8 +127,9 @@ class ProfileController extends Controller
                         '=', $user->id);
                 })->select('f1.friend_id')->lists('friend_id');
 
-                $areFriends = User::whereIn('id', $friendIds)->exists();
+                $areFriends = in_array($loggedInUser->id, $friendIds);
                 if ($areFriends) {
+                    // TODO: Extract this to model
                     $showIdsInCommon = DB::table('list as l1')->join('list as l2', function ($query) use ($loggedInUser, $user) {
                         $query->on('l2.series_id', '=', 'l1.series_id')
                             ->where('l2.user_id', '=', $user->id)
@@ -142,7 +143,7 @@ class ProfileController extends Controller
 
         return view('profile.home',
             compact('user', 'recentEpsWatched', 'favourites', 'statistics', 'genres', 'canViewProfile',
-                'alreadyFriendsOrRequested', 'showsInCommon'));
+                'alreadyRequested', 'areFriends', 'showsInCommon'));
     }
 
     private function minutesToString($minutes)
@@ -304,24 +305,21 @@ class ProfileController extends Controller
     }
 
     /**
+     *
+     *
      * @param $user
      * @return bool
      */
+    // TODO: Use authorization for this? http://laravel.com/docs/5.1/authorization
     private function canViewProfile($user)
     {
-// If user is viewing their own profile
+        // If user is viewing their own profile or profile visibility is public
         if (Auth::check() && Auth::user()->username === $user->username || $user->profile_visibility === 0) {
-            $canViewProfile = true;
-            return $canViewProfile;
+            return true;
         } else {
-            // If user's profile is public
-//            if ($user->profile_visibility === 0) {
-//                $canViewProfile = true;
-//            }
-
             // If user's profile is private
             if ($user->profile_visibility === 1) {
-                $canViewProfile = false;
+                return false;
             }
 
             // If user's profile is set to friends only
@@ -334,16 +332,11 @@ class ProfileController extends Controller
                 })->select('f1.friend_id')->lists('friend_id');
 
                 if (Auth::check() && in_array(Auth::user()->id, $friendIds)) {
-                    $canViewProfile = true;
-                    return $canViewProfile;
+                    return true;
                 } else {
-                    $canViewProfile = false;
-                    return $canViewProfile;
+                    return false;
                 }
-
-//            $friends = User::whereIn('id', $friendIds)->get();
             }
-            return $canViewProfile;
         }
     }
 }

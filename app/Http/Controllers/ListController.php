@@ -209,13 +209,12 @@ class ListController extends Controller
     private function canViewList($user)
     {
         // If user is viewing their own profile
-        if (Auth::check() && Auth::user()->username === $user->username || $user->profile_visibility === 0) {
-            $canViewList = true;
-            return $canViewList;
+        if (Auth::check() && Auth::user()->username === $user->username || $user->list_visibility === 0) {
+            return true;
         } else {
             // If user's profile is private
             if ($user->list_visibility === 1) {
-                $canViewList = false;
+                return false;
             }
 
             // If user's list is set to friends only
@@ -228,14 +227,11 @@ class ListController extends Controller
                 })->select('f1.friend_id')->lists('friend_id');
 
                 if (Auth::check() && in_array(Auth::user()->id, $friendIds)) {
-                    $canViewList = true;
-                    return $canViewList;
+                    return true;
                 } else {
-                    $canViewList = false;
-                    return $canViewList;
+                    return false;
                 }
             }
-            return $canViewList;
         }
     }
 }
