@@ -23,6 +23,7 @@ class ListController extends Controller
 
     public function index($username)
     {
+        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $username)->first();
         $canViewList = $this->canViewList($user);
         if ($canViewList) {
@@ -79,6 +80,7 @@ class ListController extends Controller
             }
             $show->last_episode_watched_formatted = $lastEpWatchedFormatted;
             if (Auth::check()) {
+                // TODO: Extract to model (Favourite::isFavourited($userId, $seriesId))
                 $show->favourited = Favourite::where('series_id', $show->series_id)
                     ->where('user_id', Auth::user()->id)
                     ->exists();
@@ -94,7 +96,9 @@ class ListController extends Controller
         ]);
 
         $input = $request->all();
+        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $request->username)->first();
+        // TODO: Extract to model (Lists::getSeries($userId, $seriesId))
         $list = Lists::where('user_id', $user->id)->where('series_id', $input['series_id'])->first();
         isset($input['rating']) ?
             $list->fill(['rating' => (int)$input['rating'], 'list_status' => (int)$input['status']]) :
@@ -107,7 +111,9 @@ class ListController extends Controller
     public function removeFromList(Request $request)
     {
         $input = $request->all();
+        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $request->username)->first();
+        // TODO: Extract to model (Lists::delete($userId, $seriesId))
         Lists::where('user_id', $user->id)->where('series_id', $input['series_id'])->delete();
 
         return back();
@@ -120,6 +126,7 @@ class ListController extends Controller
         ]);
 
         $input = $request->all();
+        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $request->username)->first();
         Lists::create([
             'series_id' => $input['series_id'],
@@ -149,6 +156,7 @@ class ListController extends Controller
 
     public function showHistoryFilter($username, $seriesId)
     {
+        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $username)->first();
         $canViewList = $this->canViewList($user);
         if ($canViewList) {
@@ -206,6 +214,7 @@ class ListController extends Controller
      * @param $user
      * @return bool
      */
+    // TODO: Use authorization for this? http://laravel.com/docs/5.1/authorization
     private function canViewList($user)
     {
         // If user is viewing their own profile

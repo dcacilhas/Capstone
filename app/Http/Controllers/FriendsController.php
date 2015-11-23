@@ -15,10 +15,11 @@ class FriendsController extends Controller
 {
     public function index($username)
     {
+        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $username)->first();
         $canViewProfile = $this->canViewProfile($user);
         if ($canViewProfile) {
-            // TODO: Extract this to model
+            // TODO: Extract this to model (Friends::getFriendIds($user))
             $friendIds = DB::table('friends as f1')->join('friends as f2', function ($query) use ($user) {
                 $query->on('f1.user_id', '=', 'f2.friend_id')->on('f1.friend_id', '=', 'f2.user_id')->where('f1.user_id',
                     '=', $user->id);
@@ -35,12 +36,13 @@ class FriendsController extends Controller
         // TODO: Make this AJAX instead
         $user = Auth::user();
         $friendUsernameOrEmail = Input::get('friendUsernameOrEmail');
-        // Check if requested user exists
+        // Get user if they exist
+        // TODO: Extract to model (User::getUser($usernameOrEmail))
         $requestedFriend = User::where('username', '=', $friendUsernameOrEmail)->orWhere('email', '=', $friendUsernameOrEmail)->first();
         if ($requestedFriend) {
             // Check if already friends or request has already been sent
-            // TODO: Extract to model
-            $alreadyFriendsOrRequested = Friend::where(function ($query) use ($user, $requestedFriend) {
+            // TODO: Extract to model (Friend::areFriendsOrRequested($user, $friend))
+            $areFriendsOrRequested = Friend::where(function ($query) use ($user, $requestedFriend) {
                 $query->where('user_id', '=', $user->id)
                     ->where('friend_id', '=', $requestedFriend->id);
             })->orWhere(function ($query) use ($user, $requestedFriend) {
@@ -48,7 +50,7 @@ class FriendsController extends Controller
                     ->where('friend_id', '=', $user->id);
             })->exists();
 
-            if ($alreadyFriendsOrRequested) {
+            if ($areFriendsOrRequested) {
                 return back()->withErrors('You are already friends with this user or there is a friend request pending.');
             } else {
                 $this->sendFriendRequest($user, $requestedFriend);
@@ -63,8 +65,10 @@ class FriendsController extends Controller
     public function remove($username)
     {
         $user = Auth::user();
+        // TODO: Extract to model (User::getUser($username))
         $friend = User::where('username', $username)->first();
 
+        // TODO: Extract to model (Friend::delete($user, $friend))
         $deletedRows = Friend::where(function ($query) use ($user, $friend) {
             $query->where('user_id', '=', $user->id)
                 ->where('friend_id', '=', $friend->id);
@@ -83,6 +87,7 @@ class FriendsController extends Controller
     public function sendRequest($username)
     {
         $user = Auth::user();
+        // TODO: Extract to model (User::getUser($username))
         $friend = User::where('username', $username)->first();
         $this->sendFriendRequest($user, $friend);
 
@@ -141,7 +146,7 @@ class FriendsController extends Controller
 
             // If user's profile is set to friends only
             if ($user->profile_visibility === 2) {
-                // TODO: Extract this to model
+                // TODO: Extract this to model (Friends::getFriendIds($user))
                 $friendIds = DB::table('friends as f1')->join('friends as f2', function ($query) use ($user) {
                     $query->on('f1.user_id', '=', 'f2.friend_id')->on('f1.friend_id', '=',
                         'f2.user_id')->where('f1.user_id',
