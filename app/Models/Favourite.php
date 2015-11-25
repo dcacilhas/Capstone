@@ -19,4 +19,14 @@ class Favourite extends Eloquent
      * @var array
      */
     protected $fillable = ['user_id', 'series_id', 'sort_order'];
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
+
+    public function show()
+    {
+        return $this->belongsTo('App\Models\Show', 'series_id');
+    }
 }

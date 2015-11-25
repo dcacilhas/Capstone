@@ -27,17 +27,19 @@
                     in your profile.</p>
             @endif
 
+            @include('errors.errors')
+
             <ol id="sortable">
                 <?php $i = 1; ?>
                 @foreach($favourites as $favourite)
-                    <li id="item-{{ $favourite->series_id }}">
-                        {!! link_to_route('shows.details', $favourite->SeriesName, ['seriesId' => $favourite->series_id]) !!}
+                    <li id="item-{{ $favourite->series->id }}">
+                        {!! link_to_route('shows.details', $favourite->series->SeriesName, ['seriesId' => $favourite->series->id]) !!}
                         @if (Auth::check() && Auth::getUser()->username === $user->username)
                             <a href="#" class="remove"
                                data-toggle="modal"
                                data-target="#removeModal"
-                               data-series-id="{{ $favourite->series_id }}"
-                               data-series-title="{{ $favourite->SeriesName }}"
+                               data-series-id="{{ $favourite->series->id }}"
+                               data-series-title="{{ $favourite->series->SeriesName }}"
                                title="Remove">
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </a>

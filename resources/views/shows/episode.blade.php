@@ -1,6 +1,6 @@
 @extends('master')
 
-@section('title', $episode->episodename)
+@section('title', $episode->EpisodeName)
 
 @section('content')
     <div class="container">
@@ -8,43 +8,43 @@
             <div class="col-md-6">
                 <h1>
                     {!! link_to_route('shows.details', $series->SeriesName, ['seriesId' => $series->id]) !!}:
-                    {{ $episode->episodename }}
-                    @if(Auth::check() && $episode->seriesIsOnList)
-                        <small>
-                            @if($episode->isOnList)
-                                <input type="checkbox" id="{{ $episode->id }}" checked/>
-                                <label for="{{ $episode->id }}">Watched</label>
-                            @else
-                                <input type="checkbox" id="{{ $episode->id }}"/>
-                                <label for="{{ $episode->id }}">Unwatched</label>
-                            @endif
-                        </small>
-                    @endif
+                    {{ $episode->EpisodeName }}
+                    <small>
+                        @if($episode->isOnList)
+                            <input type="checkbox" id="{{ $episode->id }}" checked/>
+                            <label for="{{ $episode->id }}">Watched</label>
+                        @elseif($episode->isOnList === false)
+                            <input type="checkbox" id="{{ $episode->id }}"/>
+                            <label for="{{ $episode->id }}">Unwatched</label>
+                        @endif
+                    </small>
                 </h1>
-                <h4>Season {{ $episode->season }} Episode {{ $episode->episodenumber }}</h4>
+                <h4>Season {{ $season->season }} Episode {{ $episode->EpisodeNumber }}</h4>
 
                 <ul>
                     <li>Links:
-                        <a href="http://www.imdb.com/title/{{ $episode->IMDB_ID }}" target="_blank">IMDB</a>,
+                        @if($episode->IMDB_ID)
+                            <a href="http://www.imdb.com/title/{{ $episode->IMDB_ID }}" target="_blank">IMDB</a>,
+                        @endif
                         <a href="http://thetvdb.com/?tab=episode&seriesid={{ $series->id }}&seasonid={{ $episode->season }}&id={{ $episode->id }}&lid=7"
                            target="_blank">TVDB</a>
                     </li>
-                    <li>Aired: {{ $episode->firstaired }}</li>
-                    <li>Director: {{ $episode->director }}</li>
-                    <li>Writer: {{ $episode->writer }}</li>
+                    <li>Aired: {{ $episode->FirstAired->format('F j, Y') }}</li>
+                    <li>Director: {{ $episode->Director }}</li>
+                    <li>Writer: {{ $episode->Writer }}</li>
                 </ul>
 
                 <h3>Overview</h3>
-                <p>{{ $episode->overview }}</p>
+                <p>{{ $episode->Overview }}</p>
             </div>
         </div>
     </div>
 @stop
 
 @section('javascript')
-    <script>
-        $(document).ready(function () {
-            @if(Auth::check() && $episode->seriesIsOnList)
+    @if($episode->isOnList)
+        <script>
+            $(document).ready(function () {
                 // TODO: Cleanup. Maybe add success/error messages for user.
                 $('#{{ $episode->id }}').click(function () {
                     var that = $(this);
@@ -72,7 +72,7 @@
                         label.text(checked ? 'Watched' : 'Unwatched');
                     }
                 });
-            @endif
-        });
-    </script>
+            });
+        </script>
+    @endif
 @stop

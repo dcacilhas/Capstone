@@ -14,7 +14,7 @@
                     {!! Form::label('favourites', 'Shows to Favourite: ', ['class' => 'col-sm-4 control-label']) !!}
 
                     <div class="col-sm-8">
-                        @foreach($showsNotFavourited as $show)
+                        @foreach($notFavourites as $show)
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="favouritesToAdd[]" value="{{ $show->series_id }}">

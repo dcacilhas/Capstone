@@ -31,4 +31,19 @@ class Lists extends Eloquent
      * @var array
      */
     protected $hidden = [];
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
+
+    public function show()
+    {
+        return $this->has('App\Models\Show');
+    }
+
+    public function episodesWatched()
+    {
+        return $this->belongsToMany('App\Models\ListEpisodesWatched');
+    }
 }

@@ -20,6 +20,16 @@ class ListEpisodesWatched extends Eloquent
      */
     protected $fillable = ['episode_id', 'list_id'];
 
+    public function episodes()
+    {
+        return $this->hasMany('App\Models\Episode');
+    }
+
+    public function getList()
+    {
+        return $this->belongsTo('App\Models\Lists');
+    }
+
     /**
      * Query of episodes watched based on list ID.
      *
@@ -62,8 +72,8 @@ class ListEpisodesWatched extends Eloquent
     public function scopeGetMostRecent($query) {
         return $query
             ->orderBy('list_episodes_watched.updated_at', 'desc')
-            ->orderBy('list_episodes_watched.created_at', 'desc')
-            ->orderBy('tvseasons.season', 'desc')
-            ->orderBy('tvepisodes.EpisodeNumber', 'desc');
+            ->orderBy('list_episodes_watched.created_at', 'desc');
+//            ->orderBy('tvseasons.season', 'desc')
+//            ->orderBy('tvepisodes.EpisodeNumber', 'desc');
     }
 }

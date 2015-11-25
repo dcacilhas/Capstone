@@ -59,7 +59,7 @@ class ShowsDetailsController extends Controller
                 }
             }
 
-            $favourited = Favourite::where('series_id', '=', $seriesId)->exists();
+            $favourited = $user->isShowFavourited($seriesId);
         } else {
             $list = false;
         }

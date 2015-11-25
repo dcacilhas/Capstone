@@ -60,6 +60,11 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
         'notifications_last_checked'
     ];
 
+    /**
+     * Specify ElasticSearch mapping properties.
+     *
+     * @var array
+     */
     protected $mappingProperties = [
         'username' => [
             'type' => 'string',
@@ -69,6 +74,7 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
 
     public function __construct(array $attributes = [])
     {
+        // Define avatar attachment for Laravel Stapler
         $this->hasAttachedFile('avatar', [
             'styles' => [
                 'large' => '256x256',
@@ -82,16 +88,53 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
         parent::__construct($attributes);
     }
 
+    /**
+     * Get all episodes the user has watched.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function episodesWatched()
+    {
+        return $this->hasManyThrough('App\Models\ListEpisodesWatched', 'App\Models\Lists', 'user_id', 'list_id');
+    }
+
+    /**
+     * Get the user's lists.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function getList()
     {
         return $this->hasMany('App\Models\Lists');
     }
 
+    /**
+     * @return mixed
+     */
+    // TODO: Remove??
     public function getListWithSeries()
     {
         return $this->hasMany('App\Models\Lists')
             ->select('list.*', 'tvseries.SeriesName')
             ->join('tvseries', 'list.series_id', '=', 'tvseries.id')
             ->where('user_id', $this->id);
+    }
+
+    public function favourites()
+    {
+        return $this->hasMany('App\Models\Favourite');
+    }
+
+    public function isShowFavourited($seriesId)
+    {
+        return $this->favourites()->where('series_id', $seriesId)->exists();
+    }
+
+    public function favouritesWithSeries()
+    {
+        return $this->hasMany('App\Models\Favourite')
+            ->join('tvseries', 'favourites.series_id', '=', 'tvseries.id')
+            ->orderBy('sort_order', 'asc')
+            ->get();
     }
 }

@@ -6,107 +6,30 @@ use App\Http\Requests;
 use App\Models\Favourite;
 use App\Models\User;
 use Auth;
+use Carbon\Carbon;
 use DB;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 
 class FavouritesController extends Controller
 {
     public function index($username)
     {
-        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $username)->first();
         $canViewList = $this->canViewList($user);
         if ($canViewList) {
-            // TODO: Extract to model (Favourite::getUserFavouritesWithSeries($userId))
-            $favourites = Favourite::join('tvseries', 'favourites.series_id', '=', 'tvseries.id')
-                ->where('user_id', $user->id)
-                ->orderBy('sort_order', 'asc')
-                ->get();
-            // TODO: Extract to model (Favourite::getUserFavouritesIds($userId))
-            $favouritesIds = Favourite::where('user_id', $user->id)->lists('series_id');
-            $showsNotFavourited = $user->getListWithSeries()
-                ->whereNotIn('series_id', $favouritesIds)
-                ->get();
-        }
-
-        return view('profile.favourites', compact('user', 'favourites', 'showsNotFavourited', 'canViewList'));
-    }
-
-    public function add($username)
-    {
-        // TODO: Extract to model (User::getUser($username))
-        $user = User::where('username', $username)->first();
-        $seriesIds = Input::get('favouritesToAdd');
-        $this->addFavourite($user->id, $seriesIds);
-
-        return back();
-    }
-
-    private function addFavourite($userId, $seriesIds)
-    {
-        $sortOrder = Favourite::where('user_id', $userId)->max('sort_order');
-        if (is_array($seriesIds)) {
-            foreach ($seriesIds as $seriesId) {
-                $sortOrder = $sortOrder ? ++$sortOrder : 1;
-                Favourite::create(['user_id' => $userId, 'series_id' => $seriesId, 'sort_order' => $sortOrder]);
+            $favourites = $user->favourites()->orderBy('sort_order', 'asc')->with('show')->get();
+            // Add series information for each favourite
+            foreach ($favourites as $favourite) {
+                $favourite->series = $favourite->show;
             }
-        } else {
-            $sortOrder = $sortOrder ? ++$sortOrder : 1;
-            Favourite::create(['user_id' => $userId, 'series_id' => $seriesIds, 'sort_order' => $sortOrder]);
-        }
-    }
-
-    public function remove($username)
-    {
-        // TODO: Extract to model (User::getUser($username))
-        $user = User::where('username', $username)->first();
-        $seriesId = Input::get('series_id');
-        $this->removeFavourite($user->id, $seriesId);
-
-        return back();
-    }
-
-    private function removeFavourite($userId, $seriesId)
-    {
-        // TODO: Extract to model (Favourite::delete($userId, $seriesId))
-        Favourite::where('user_id', $userId)->where('series_id', $seriesId)->delete();
-
-        // Update sort_order for all favourites
-        // TODO: Extract to model (Favourite::getUserFavouritesIds($userId))
-        $favourites = Favourite::where('user_id', $userId)->orderBy('sort_order', 'asc')->get();
-        $sortOrder = 1;
-        foreach ($favourites as $favourite) {
-            $favourite->sort_order = $sortOrder++;
-            $favourite->save();
-        }
-    }
-
-    public function update($username, $seriesId)
-    {
-        // TODO: Extract to model (User::getUser($username))
-        $user = User::where('username', $username)->first();
-        // TODO: Extract to model (Favourite::isFavourited($userId, $seriesId))
-        $isFavourited = Favourite::where('user_id', $user->id)->where('series_id', $seriesId)->exists();
-        $isFavourited ? $this->removeFavourite($user->id, $seriesId) : $this->addFavourite($user->id, $seriesId);
-
-        echo true;
-    }
-
-    public function reorder()
-    {
-        $userId = Auth::id();
-        $seriesIds = Input::get('item');
-
-        // Update sort_order for all favourites
-        $sortOrder = 1;
-        foreach ($seriesIds as $seriesId) {
-            // TODO: Extract to model (Favourite::getFavourite($userId, $seriesId))
-            $favourite = Favourite::where('user_id', $userId)->where('series_id', $seriesId)->first();
-            $favourite->sort_order = $sortOrder++;
-            $favourite->save();
+            $favouriteSeriesIds = $favourites->lists('series_id');
+            $notFavourites = $user->getListWithSeries()
+                ->whereNotIn('series_id', $favouriteSeriesIds)
+                ->get();
         }
 
-        echo true;
+        return view('profile.favourites', compact('user', 'favourites', 'notFavourites', 'canViewList'));
     }
 
     /**
@@ -141,5 +64,119 @@ class FavouritesController extends Controller
                 }
             }
         }
+    }
+
+    /**
+     * Route that handles adding favourites from the Favourites page.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function add(Request $request)
+    {
+        // TODO: Abstract this out: http://laravel.com/docs/5.1/validation#form-request-validation
+        $this->validate($request, [
+            'favouritesToAdd' => 'required',
+        ], ['favouritesToAdd.required' => 'A show must be selected to be added to favourites.']);
+
+        $seriesIds = Input::get('favouritesToAdd');
+        $this->addFavourite($seriesIds);
+
+        return back();
+    }
+
+    /**
+     * Add favourites.
+     *
+     * @param $seriesIds
+     */
+    private function addFavourite($seriesIds)
+    {
+        $user = Auth::user();
+        $sortOrder = $user->favourites()->max('sort_order');
+        if (is_array($seriesIds)) {
+            $now = Carbon::now('utc')->toDateTimeString();
+            foreach ($seriesIds as $seriesId) {
+                $sortOrder = $sortOrder ? ++$sortOrder : 1;
+                $data[] = [
+                    'user_id' => $user->id,
+                    'series_id' => $seriesId,
+                    'sort_order' => $sortOrder,
+                    'created_at' => $now,
+                    'updated_at' => $now
+                ];
+            }
+            Favourite::insert($data);
+        } else {
+            $sortOrder = $sortOrder ? ++$sortOrder : 1;
+            Favourite::create(['user_id' => $user->id, 'series_id' => $seriesIds, 'sort_order' => $sortOrder]);
+        }
+    }
+
+    /**
+     * Route that handles adding favourites from the Favourites page.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function remove()
+    {
+        $seriesId = Input::get('series_id');
+        $this->removeFavourite($seriesId);
+
+        return back();
+    }
+
+    /**
+     * Remove favourites
+     *
+     * @param $seriesId
+     */
+    private function removeFavourite($seriesId)
+    {
+        $user = Auth::user();
+        $user->favourites()->where('series_id', $seriesId)->delete();
+        $favouritesSeriesIds = $user->favourites()->orderBy('sort_order', 'asc')->lists('series_id');
+        $this->updateSortOrder($favouritesSeriesIds);
+    }
+
+    /**
+     * Update the sort order of a user's favourites.
+     *
+     * @param $seriesIds
+     */
+    private function updateSortOrder($seriesIds)
+    {
+        $user = Auth::user();
+        $sortOrder = 1;
+        foreach ($seriesIds as $seriesId) {
+            $favourite = $user->favourites()->where('series_id', $seriesId)->first();
+            $favourite->sort_order = $sortOrder++;
+            $favourite->save();
+        }
+    }
+
+    /**
+     * Route that handles AJAX request for adding or removing a favourite when clicking on star button.
+     *
+     * @param $username
+     * @param $seriesId
+     */
+    public function update($username, $seriesId)
+    {
+        $user = User::where('username', $username)->first();
+        $isFavourited = $user->isShowFavourited($seriesId);
+        $isFavourited ? $this->removeFavourite($seriesId) : $this->addFavourite($seriesId);
+
+        echo true;
+    }
+
+    /**
+     * Route that handles AJAX request for reordering favourites using jQuery UI Sortable.
+     */
+    public function reorder()
+    {
+        $seriesIds = Input::get('item');
+        $this->updateSortOrder($seriesIds);
+
+        echo true;
     }
 }
