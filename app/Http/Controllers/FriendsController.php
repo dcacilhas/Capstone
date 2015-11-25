@@ -15,41 +15,36 @@ class FriendsController extends Controller
 {
     public function index($username)
     {
-        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $username)->first();
         $canViewProfile = $this->canViewProfile($user);
         if ($canViewProfile) {
-            // TODO: Extract this to model (Friends::getFriendIds($user))
-            $friendIds = DB::table('friends as f1')->join('friends as f2', function ($query) use ($user) {
-                $query->on('f1.user_id', '=', 'f2.friend_id')->on('f1.friend_id', '=', 'f2.user_id')->where('f1.user_id',
-                    '=', $user->id);
-            })->select('f1.friend_id')->lists('friend_id');
-
+            $friendIds = Friend::getFriendIds($user);
             $friends = User::whereIn('id', $friendIds)->get();
         }
 
         return view('profile.friends', compact('user', 'friends', 'canViewProfile'));
     }
 
+    /**
+     * Route that handles adding friends from the Friends page.
+     *
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
     public function add()
     {
         // TODO: Make this AJAX instead
         $user = Auth::user();
         $friendUsernameOrEmail = Input::get('friendUsernameOrEmail');
         // Get user if they exist
-        // TODO: Extract to model (User::getUser($usernameOrEmail))
-        $requestedFriend = User::where('username', '=', $friendUsernameOrEmail)->orWhere('email', '=', $friendUsernameOrEmail)->first();
+        $requestedFriend = User::where('username', '=', $friendUsernameOrEmail)
+            ->orWhere('email', '=', $friendUsernameOrEmail)
+            ->first();
+        if ($requestedFriend->id === $user->id) {
+            return back()->withErrors('You cannot send a friend request to yourself.');
+        }
         if ($requestedFriend) {
             // Check if already friends or request has already been sent
-            // TODO: Extract to model (Friend::areFriendsOrRequested($user, $friend))
-            $areFriendsOrRequested = Friend::where(function ($query) use ($user, $requestedFriend) {
-                $query->where('user_id', '=', $user->id)
-                    ->where('friend_id', '=', $requestedFriend->id);
-            })->orWhere(function ($query) use ($user, $requestedFriend) {
-                $query->where('user_id', '=', $requestedFriend->id)
-                    ->where('friend_id', '=', $user->id);
-            })->exists();
-
+            $areFriendsOrRequested = Friend::getFriendsOrRequested($user, $requestedFriend)->exists();
             if ($areFriendsOrRequested) {
                 return back()->withErrors('You are already friends with this user or there is a friend request pending.');
             } else {
@@ -62,21 +57,17 @@ class FriendsController extends Controller
         return back()->with('status', 'Friend request successfully sent to ' . $requestedFriend->username . '.');
     }
 
+    /**
+     * Route that handles removing friends.
+     *
+     * @param $username
+     * @return bool
+     */
     public function remove($username)
     {
         $user = Auth::user();
-        // TODO: Extract to model (User::getUser($username))
         $friend = User::where('username', $username)->first();
-
-        // TODO: Extract to model (Friend::delete($user, $friend))
-        $deletedRows = Friend::where(function ($query) use ($user, $friend) {
-            $query->where('user_id', '=', $user->id)
-                ->where('friend_id', '=', $friend->id);
-        })->orWhere(function ($query) use ($user, $friend) {
-            $query->where('user_id', '=', $friend->id)
-                ->where('friend_id', '=', $user->id);
-        })->delete();
-
+        $deletedRows = Friend::getFriendsOrRequested($user, $friend)->delete();
         if ($deletedRows > 0) {
             echo true;
         } else {
@@ -84,16 +75,27 @@ class FriendsController extends Controller
         }
     }
 
+    /**
+     * Route that handles AJAX request for sending a friend request from a user's profile.
+     *
+     * @param $username
+     */
     public function sendRequest($username)
     {
         $user = Auth::user();
-        // TODO: Extract to model (User::getUser($username))
         $friend = User::where('username', $username)->first();
         $this->sendFriendRequest($user, $friend);
 
         echo true;
     }
 
+    /**
+     * Route that handles AJAX request for accepting a friend request from user's Notifications page.
+     *
+     * @param $username
+     * @param $fromId
+     * @param $notificationId
+     */
     public function acceptFriendRequest($username, $fromId, $notificationId)
     {
         $user = Auth::user();
@@ -110,6 +112,14 @@ class FriendsController extends Controller
         echo true;
     }
 
+    /**
+     * Route that handles AJAX request for declining a friend request from user's Notifications page.
+     *
+     * @param $username
+     * @param $fromId
+     * @param $notificationId
+     * @throws \Exception
+     */
     public function declineFriendRequest($username, $fromId, $notificationId)
     {
         $user = Auth::user();
