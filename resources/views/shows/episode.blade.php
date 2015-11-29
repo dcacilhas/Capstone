@@ -9,15 +9,17 @@
                 <h1>
                     {!! link_to_route('shows.details', $series->SeriesName, ['seriesId' => $series->id]) !!}:
                     {{ $episode->EpisodeName }}
-                    <small>
-                        @if($episode->isOnList)
-                            <input type="checkbox" id="{{ $episode->id }}" checked/>
-                            <label for="{{ $episode->id }}">Watched</label>
-                        @elseif($episode->isOnList === false)
-                            <input type="checkbox" id="{{ $episode->id }}"/>
-                            <label for="{{ $episode->id }}">Unwatched</label>
-                        @endif
-                    </small>
+                    @if($series->isOnList)
+                        <small>
+                            @if($episode->isWatched)
+                                <input type="checkbox" id="{{ $episode->id }}" checked/>
+                                <label for="{{ $episode->id }}">Watched</label>
+                            @else
+                                <input type="checkbox" id="{{ $episode->id }}"/>
+                                <label for="{{ $episode->id }}">Unwatched</label>
+                            @endif
+                        </small>
+                    @endif
                 </h1>
                 <h4>Season {{ $season->season }} Episode {{ $episode->EpisodeNumber }}</h4>
 
@@ -42,7 +44,7 @@
 @stop
 
 @section('javascript')
-    @if($episode->isOnList)
+    @if($series->isOnList)
         <script>
             $(document).ready(function () {
                 // TODO: Cleanup. Maybe add success/error messages for user.

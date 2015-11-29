@@ -16,7 +16,8 @@ class EpisodesController extends Controller
         $season = Season::findOrFail($episode->seasonid);
         if (Auth::check()) {
             $user = Auth::user();
-            $episode->isOnList = $user->episodesWatched()->where('episode_id', $episode->id)->exists();
+            $series->isOnList = $user->getList()->where('series_id', $series->id)->exists();
+            $episode->isWatched = $user->episodesWatched()->where('episode_id', $episode->id)->exists();
         }
 
         return view('shows.episode', compact('episode', 'series', 'season'));
