@@ -39,7 +39,7 @@
                                     <tr>
                                         <th scope="row" class="text-center">{{ $i++ }}</th>
                                         <td>
-                                            {!! link_to_route('shows.details', $show->SeriesName, ['seriesId' => $show->series_id]) !!}
+                                            {!! link_to_route('shows.details', $show->show->SeriesName, ['seriesId' => $show->series_id]) !!}
 
                                             @if (Auth::check() && Auth::user()->username === $user->username)
                                                 <div class="pull-right">
@@ -62,7 +62,7 @@
                                                        data-toggle="modal"
                                                        data-target="#updateModal"
                                                        data-series-id="{{ $show->series_id }}"
-                                                       data-series-title="{{ $show->SeriesName }}"
+                                                       data-series-title="{{ $show->show->SeriesName }}"
                                                        data-series-rating="{{ $show->rating }}"
                                                        data-series-status="{{ $show->list_status }}"
                                                        title="Edit">
@@ -72,7 +72,7 @@
                                                        data-toggle="modal"
                                                        data-target="#removeModal"
                                                        data-series-id="{{ $show->series_id }}"
-                                                       data-series-title="{{ $show->SeriesName }}"
+                                                       data-series-title="{{ $show->show->SeriesName }}"
                                                        title="Remove">
                                                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                                     </a>

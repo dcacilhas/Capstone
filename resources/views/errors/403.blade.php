@@ -1,4 +1,4 @@
-<!-- TODO: Better 404 page -->
+<!-- TODO: Better 403 page -->
 <!DOCTYPE html>
 <html>
 <head>

@@ -29,7 +29,14 @@ class ListController extends Controller
         if ($canViewList) {
             $status = Input::get('status') !== null ? (int)Input::get('status') : null;
             $listStatuses = DB::table('list_statuses')->get();
-            $shows = $this->getLists($status, $user);
+
+            $listsQuery = $user->getList()->with('show', 'episodesWatched.episode.season');
+            if (is_null($status)) {
+                $shows = $listsQuery->get();
+            } else {
+                $shows = $listsQuery->where('list_status', $status)->get();
+            }
+
             $this->addExtras($shows, $user);
         }
 
@@ -67,21 +74,6 @@ class ListController extends Controller
     }
 
     /**
-     * Get shows, either filtered by status or all.
-     *
-     * @param $status
-     * @param $user
-     * @return mixed
-     */
-    private function getLists($status, $user)
-    {
-        $listsQuery = $user->getList()->withSeries()->orderBy('SeriesName', 'asc');
-        is_null($status) ? $lists = $listsQuery->get() : $lists = $listsQuery->where('list_status', $status)->get();
-
-        return $lists;
-    }
-
-    /**
      * Adds calculated progress (total episodes/episodes watched) to each show.
      * Adds last episode watched to each show.
      * Adds if show is favourited or not.
@@ -90,19 +82,19 @@ class ListController extends Controller
      */
     private function addExtras($lists, $user)
     {
-        // TODO: Optimize this
+        // TODO: Optimize this further if possible
         foreach ($lists as $list) {
-            $epsTotal = Show::find($list->series_id)->getEpisodes()->count();
-            $epsWatched = $list->episodesWatched();
+            $epsTotal = $list->show->episodes()->noSpecials()->count();
+            $epsWatched = $list->episodesWatched;
             $epsWatchedCount = $epsWatched->count();
             ($list->list_status === 2) ?
                 $list->progress = 100 :
                 $list->progress = number_format($epsWatchedCount / $epsTotal * 100, 0);
             if ($epsWatchedCount) {
-                $lastEpWatched = $epsWatched->withSeries()->mostRecent()->first();
-                $list->last_episode_watched_formatted = sprintf('S%02dE%02d', $lastEpWatched->season,
+                $lastEpWatched = $epsWatched->last()->episode;
+                $list->last_episode_watched_formatted = sprintf('S%02dE%02d', $lastEpWatched->season->season,
                     $lastEpWatched->EpisodeNumber);
-                $list->season_number = $lastEpWatched->season;
+                $list->season_number = $lastEpWatched->season->season;
                 $list->episode_number = $lastEpWatched->EpisodeNumber;
             }
             if (Auth::check()) {
