@@ -8,6 +8,9 @@ use Fenos\Notifynder\Models\Notification;
 
 class NotificationsController extends Controller
 {
+    // TODO: Send notification email if notification email setting is set
+    // TODO: Add support for marking notifications as read/unread (all or individual)
+
     public function __construct()
     {
         $this->middleware('auth.profile');
@@ -18,7 +21,6 @@ class NotificationsController extends Controller
         $user = Auth::user();
         $notifications = $user->getNotifications();
         $user->readAllNotifications();
-        // TODO: Add support for marking notifications as read/unread (all or individual)
 
         return view('profile.notifications', compact('user', 'notifications'));
     }

@@ -9,6 +9,7 @@ use Auth;
 use DB;
 use Fenos\Notifynder\Facades\Notifynder;
 use Fenos\Notifynder\Models\Notification;
+use Illuminate\Http\Request;
 use Input;
 
 class FriendsController extends Controller
@@ -60,8 +61,12 @@ class FriendsController extends Controller
      *
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function add()
+    public function add(Request $request)
     {
+        $this->validate($request, [
+            'friendUsernameOrEmail' => 'required|string'
+        ]);
+
         // TODO: Make this AJAX instead
         $user = Auth::user();
         $friendUsernameOrEmail = Input::get('friendUsernameOrEmail');
@@ -69,10 +74,11 @@ class FriendsController extends Controller
         $requestedFriend = User::where('username', '=', $friendUsernameOrEmail)
             ->orWhere('email', '=', $friendUsernameOrEmail)
             ->first();
-        if ($requestedFriend->id === $user->id) {
-            return back()->withErrors('You cannot send a friend request to yourself.');
-        }
         if ($requestedFriend) {
+            if ($requestedFriend->id === $user->id) {
+                return back()->withErrors('You cannot send a friend request to yourself.');
+            }
+
             // Check if already friends or request has already been sent
             $areFriendsOrRequested = Friend::getFriendsOrRequested($user, $requestedFriend)->exists();
             if ($areFriendsOrRequested) {

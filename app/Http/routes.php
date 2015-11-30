@@ -14,7 +14,7 @@
 // Static Pages
 Route::get('/', ['as' => 'home', 'uses' => 'PagesController@home']);
 Route::get('home', function () {
-    return redirect('/');
+    return Redirect::route('home');
 });
 Route::get('about', ['as' => 'about', 'uses' => 'PagesController@about']);
 
