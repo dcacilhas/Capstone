@@ -27,12 +27,13 @@ class ProfileMiddleware
         // User is a guest or is logged in but requesting the profile of a different user
         // Protects against users trying to access another user's edit profile/edit account pages
         if (Auth::guest() || strcasecmp($request->username, Auth::user()->username) !== 0) {
-            $routeName = $request->route()->getName();
+            return abort(403);
+//            $routeName = $request->route()->getName();
 
-            if ($routeName === 'profile.edit.profile' || $routeName === 'profile.edit.account') {
-                // TODO: Maybe use a not authorized error page instead?
-                return abort(403);
-            }
+//            if ($routeName === 'profile.edit.profile' || $routeName === 'profile.edit.account') {
+//                // TODO: Maybe use a not authorized error page instead?
+//                return abort(403);
+//            }
         }
 
         return $next($request);

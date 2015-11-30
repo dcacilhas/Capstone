@@ -17,6 +17,12 @@ class Friend extends Eloquent
 
     protected $fillable = ['user_id', 'friend_id'];
 
+    /**
+     * Get a user's friends' ids.
+     *
+     * @param $user
+     * @return array
+     */
     public static function getFriendIds($user)
     {
         return DB::table('friends as f1')->join('friends as f2', function ($query) use ($user) {
@@ -26,6 +32,13 @@ class Friend extends Eloquent
         })->select('f1.friend_id')->lists('friend_id');
     }
 
+    /**
+     * Get friends or user's with a friend request pending.
+     *
+     * @param $user
+     * @param $requestedFriend
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     */
     public static function getFriendsOrRequested($user, $requestedFriend)
     {
         return Friend::where(function ($query) use ($user, $requestedFriend) {

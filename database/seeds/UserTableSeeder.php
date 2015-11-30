@@ -38,8 +38,8 @@ class UserTableSeeder extends Seeder
             ]);
         }
 
-        // Generate 500 random users
-        for ($i = 0; $i < 500; $i++) {
+        // Generate 100 random users
+        for ($i = 0; $i < 100; $i++) {
             $username = $faker->firstName . ' ' . $faker->lastName;
             $data[] = [
                 'username' => $username,

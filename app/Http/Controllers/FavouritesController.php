@@ -13,18 +13,25 @@ use Illuminate\Support\Facades\Input;
 
 class FavouritesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth.profile', ['except' => ['index']]);
+    }
+
     public function index($username)
     {
         $user = User::where('username', $username)->first();
         $canViewList = $this->canViewList($user);
         if ($canViewList) {
-            $favourites = $user->favourites()->orderBy('sort_order', 'asc')->with('show')->get();
-            // Add series information for each favourite
-            foreach ($favourites as $favourite) {
-                $favourite->series = $favourite->show;
-            }
+            $favourites = $user->favourites()
+                ->with(['show' => function ($query) {
+                    $query->select('id', 'SeriesName');
+                }])
+                ->orderBy('sort_order', 'asc')
+                ->get();
             $favouriteSeriesIds = $favourites->lists('series_id');
-            $notFavourites = $user->getListWithSeries()
+            $notFavourites = $user->getList()
+                ->withSeries()
                 ->whereNotIn('series_id', $favouriteSeriesIds)
                 ->get();
         }
@@ -69,6 +76,7 @@ class FavouritesController extends Controller
     /**
      * Route that handles adding favourites from the Favourites page.
      *
+     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function add(Request $request)
@@ -85,7 +93,7 @@ class FavouritesController extends Controller
     }
 
     /**
-     * Add favourites.
+     * Add shows to favourites.
      *
      * @param $seriesIds
      */
@@ -113,7 +121,7 @@ class FavouritesController extends Controller
     }
 
     /**
-     * Route that handles adding favourites from the Favourites page.
+     * Route that handles removing favourites from the Favourites page.
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -126,7 +134,7 @@ class FavouritesController extends Controller
     }
 
     /**
-     * Remove favourites
+     * Remove shows from favourites.
      *
      * @param $seriesId
      */

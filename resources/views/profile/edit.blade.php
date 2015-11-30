@@ -6,8 +6,6 @@
     <div class="container">
         @include('includes.profile_submenu')
 
-
-        <!-- TODO: Separate errors for each form: http://laravel.com/docs/5.1/validation#other-validation-approaches -->
         @include('errors.errors')
 
         @if (session('status'))

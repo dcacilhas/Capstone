@@ -99,7 +99,7 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Get the user's lists.
+     * A user has many lists.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -109,32 +109,23 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
+     * Check if a show is a user's favourite.
+     *
+     * @param $seriesId
      * @return mixed
      */
-    // TODO: Remove??
-    public function getListWithSeries()
-    {
-        return $this->hasMany('App\Models\Lists')
-            ->select('list.*', 'tvseries.SeriesName')
-            ->join('tvseries', 'list.series_id', '=', 'tvseries.id')
-            ->where('user_id', $this->id);
-    }
-
-    public function favourites()
-    {
-        return $this->hasMany('App\Models\Favourite');
-    }
-
     public function isShowFavourited($seriesId)
     {
         return $this->favourites()->where('series_id', $seriesId)->exists();
     }
 
-    public function favouritesWithSeries()
+    /**
+     * A user has many favourites.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function favourites()
     {
-        return $this->hasMany('App\Models\Favourite')
-            ->join('tvseries', 'favourites.series_id', '=', 'tvseries.id')
-            ->orderBy('sort_order', 'asc')
-            ->get();
+        return $this->hasMany('App\Models\Favourite');
     }
 }

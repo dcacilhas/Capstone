@@ -55,8 +55,6 @@
         {!! Form::close() !!}
 
         {!! Form::model($user, ['route' => ['profile.postPassword', $user->username], 'class' => 'form-horizontal']) !!}
-        @include('errors.errors')
-
         <h3>Change Password</h3>
 
         <div class="form-group">

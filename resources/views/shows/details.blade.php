@@ -20,7 +20,7 @@
                                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 </a>
                             @else
-                                @if ($favourited)
+                                @if ($show->isFavourited)
                                     <a href="#" onClick="return false;" class="favourite"
                                        data-series-id="{{ $show->id }}"
                                        title="Remove from Favourites">
@@ -91,24 +91,25 @@
                         All</a>
                 @endif
                 @foreach($seasons as $season)
-                    <h4 class="seasons"><a href="#" onClick="return false;" onClick="return false;" class="seasons">Season {{ $season->season }}</a>
+                    <h4 class="seasons">
+                        <a href="#" onClick="return false;" onClick="return false;" class="seasons">Season {{ $season }}</a>
                     </h4>
                     <div class="episodes">
                         @if ($list)
                             <a href="#" onClick="return false;" class="checkSeason">Check
-                                Season {{ $season->season }}</a> | <a href="#" onClick="return false;"
+                                Season {{ $season }}</a> | <a href="#" onClick="return false;"
                                                                       class="uncheckSeason">Uncheck
-                                Season {{ $season->season }}</a>
+                                Season {{ $season }}</a>
                         @endif
                         <ol>
                             @foreach($episodes as $episode)
-                                @if($episode->season === $season->season)
+                                @if($episode->season === $season)
                                     <li>
                                         @if($list)
                                             <input type="checkbox" id="{{ $episode->id }}"
                                                    class="episode" {{ $episode->checked or '' }} />
                                         @endif
-                                        {!! link_to_route('shows.episode', $episode->episodename, ['seriesId' => $episode->seriesid, 'seasonNum' => $season->season, 'episodeNum' => $episode->episodenumber]) !!}
+                                        {!! link_to_route('shows.episode', $episode->episodename, ['seriesId' => $episode->seriesid, 'seasonNum' => $season, 'episodeNum' => $episode->episodenumber]) !!}
                                     </li>
                                 @endif
                             @endforeach
@@ -183,9 +184,11 @@
                 $('#checkAllEpisodes, .checkSeason').click(function () {
                     var that = $(this),
                             unwatchedEps = that.siblings().find('.episode:not(:checked)');
-                    var episodeIds = unwatchedEps.map(function () {
-                        return $(this).attr('id');
-                    }).get();
+
+                    var episodeIds = [];
+                    unwatchedEps.each(function () {
+                        episodeIds.push(this.id);
+                    });
                     unwatchedEps.prop('checked', !unwatchedEps.prop('checked'));
                     if (episodeIds.length) {
                         updateEpisodes(episodeIds, unwatchedEps, 'add');

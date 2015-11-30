@@ -41,7 +41,7 @@
                                         <td>
                                             {!! link_to_route('shows.details', $show->SeriesName, ['seriesId' => $show->series_id]) !!}
 
-                                            @if ((Auth::check() && Auth::user()->username === $user->username))
+                                            @if (Auth::check() && Auth::user()->username === $user->username)
                                                 <div class="pull-right">
                                                     @if ($show->favourited)
                                                         <a href="#" onClick="return false;" class="favourite"

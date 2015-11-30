@@ -7,9 +7,9 @@
         <div class="row">
             <div class="col-md-6">
                 <h1>
-                    {!! link_to_route('shows.details', $series->SeriesName, ['seriesId' => $series->id]) !!}:
+                    {!! link_to_route('shows.details', $show->SeriesName, ['seriesId' => $show->id]) !!}:
                     {{ $episode->EpisodeName }}
-                    @if($series->isOnList)
+                    @if($show->isOnList)
                         <small>
                             @if($episode->isWatched)
                                 <input type="checkbox" id="{{ $episode->id }}" checked/>
@@ -28,7 +28,7 @@
                         @if($episode->IMDB_ID)
                             <a href="http://www.imdb.com/title/{{ $episode->IMDB_ID }}" target="_blank">IMDB</a>,
                         @endif
-                        <a href="http://thetvdb.com/?tab=episode&seriesid={{ $series->id }}&seasonid={{ $episode->season }}&id={{ $episode->id }}&lid=7"
+                        <a href="http://thetvdb.com/?tab=episode&seriesid={{ $show->id }}&seasonid={{ $episode->season }}&id={{ $episode->id }}&lid=7"
                            target="_blank">TVDB</a>
                     </li>
                     <li>Aired: {{ $episode->FirstAired->format('F j, Y') }}</li>
@@ -44,7 +44,7 @@
 @stop
 
 @section('javascript')
-    @if($series->isOnList)
+    @if($show->isOnList)
         <script>
             $(document).ready(function () {
                 // TODO: Cleanup. Maybe add success/error messages for user.

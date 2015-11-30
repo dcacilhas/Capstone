@@ -32,14 +32,14 @@
             <ol id="sortable">
                 <?php $i = 1; ?>
                 @foreach($favourites as $favourite)
-                    <li id="item-{{ $favourite->series->id }}">
-                        {!! link_to_route('shows.details', $favourite->series->SeriesName, ['seriesId' => $favourite->series->id]) !!}
+                    <li id="item-{{ $favourite->show->id }}">
+                        {!! link_to_route('shows.details', $favourite->show->SeriesName, ['seriesId' => $favourite->show->id]) !!}
                         @if (Auth::check() && Auth::getUser()->username === $user->username)
                             <a href="#" class="remove"
                                data-toggle="modal"
                                data-target="#removeModal"
-                               data-series-id="{{ $favourite->series->id }}"
-                               data-series-title="{{ $favourite->series->SeriesName }}"
+                               data-series-id="{{ $favourite->show->id }}"
+                               data-series-title="{{ $favourite->show->SeriesName }}"
                                title="Remove">
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </a>

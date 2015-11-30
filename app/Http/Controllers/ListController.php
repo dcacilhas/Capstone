@@ -18,19 +18,18 @@ class ListController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth.profile', ['except' => ['updateEpisodesWatched']]);
+        $this->middleware('auth.profile', ['only' => ['addToList', 'removeFromList', 'updateList']]);
     }
 
     public function index($username)
     {
-        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $username)->first();
         $canViewList = $this->canViewList($user);
         if ($canViewList) {
             $status = Input::get('status') !== null ? (int)Input::get('status') : null;
             $listStatuses = DB::table('list_statuses')->get();
-            $shows = $this->getShows($status, $user);
-            $this->addExtras($shows);
+            $shows = $this->getLists($status, $user);
+            $this->addExtras($shows, $user);
         }
 
         return view('profile.list', compact('user', 'shows', 'status', 'listStatuses', 'canViewList'));
@@ -43,12 +42,12 @@ class ListController extends Controller
      * @param $user
      * @return mixed
      */
-    private function getShows($status, $user)
+    private function getLists($status, $user)
     {
-        $shows = User::findOrFail($user->id)->getListWithSeries()->orderBy('SeriesName', 'asc');
-        is_null($status) ? $shows = $shows->get() : $shows = $shows->where('list_status', $status)->get();
+        $listsQuery = $user->getList()->withSeries()->orderBy('SeriesName', 'asc');
+        is_null($status) ? $lists = $listsQuery->get() : $lists = $listsQuery->where('list_status', $status)->get();
 
-        return $shows;
+        return $lists;
     }
 
     /**
@@ -56,38 +55,35 @@ class ListController extends Controller
      * Adds last episode watched to each show.
      * Adds if show is favourited or not.
      *
-     * @param $shows
+     * @param $lists
      */
-    private function addExtras($shows)
+    private function addExtras($lists, $user)
     {
-        foreach ($shows as $show) {
-            $epsTotal = Show::find($show->series_id)->getEpisodes()->count();
-            $epsWatched = ListEpisodesWatched::getListEpisodesWatched($show->id)->count();
-            ($show->list_status === 2) ?
-                $show->progress = 100 :
-                $show->progress = number_format($epsWatched / $epsTotal * 100, 0);
-
-            $lastEpWatched = ListEpisodesWatched::getListEpisodesWatched($show->id)
-                ->select('tvepisodes.EpisodeNumber', 'tvseasons.season')
-                ->getMostRecent()
-                ->first();
-
-            $lastEpWatchedFormatted = null;
-            if (!empty($lastEpWatched)) {
-                $lastEpWatchedFormatted = sprintf('S%02dE%02d', $lastEpWatched->season, $lastEpWatched->EpisodeNumber);
-                $show->season_number = $lastEpWatched->season;
-                $show->episode_number = $lastEpWatched->EpisodeNumber;
+        foreach ($lists as $list) {
+            $epsTotal = Show::find($list->series_id)->getEpisodes()->count();
+            $epsWatched = $list->episodesWatched();
+            $epsWatchedCount = $epsWatched->count();
+            ($list->list_status === 2) ?
+                $list->progress = 100 :
+                $list->progress = number_format($epsWatchedCount / $epsTotal * 100, 0);
+            if ($epsWatchedCount) {
+                $lastEpWatched = $epsWatched->withSeries()->mostRecent()->first();
+                $list->last_episode_watched_formatted = sprintf('S%02dE%02d', $lastEpWatched->season, $lastEpWatched->EpisodeNumber);
+                $list->season_number = $lastEpWatched->season;
+                $list->episode_number = $lastEpWatched->EpisodeNumber;
             }
-            $show->last_episode_watched_formatted = $lastEpWatchedFormatted;
             if (Auth::check()) {
-                // TODO: Extract to model (Favourite::isFavourited($userId, $seriesId))
-                $show->favourited = Favourite::where('series_id', $show->series_id)
-                    ->where('user_id', Auth::user()->id)
-                    ->exists();
+                $list->favourited = $user->isShowFavourited($list->series_id);
             }
         }
     }
 
+    /**
+     * Route that handles updating a show in a user's list (status or rating).
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function updateList(Request $request)
     {
         $this->validate($request, [
@@ -96,10 +92,8 @@ class ListController extends Controller
         ]);
 
         $input = $request->all();
-        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $request->username)->first();
-        // TODO: Extract to model (Lists::getSeries($userId, $seriesId))
-        $list = Lists::where('user_id', $user->id)->where('series_id', $input['series_id'])->first();
+        $list = $user->getList()->where('series_id', $input['series_id'])->first();
         isset($input['rating']) ?
             $list->fill(['rating' => (int)$input['rating'], 'list_status' => (int)$input['status']]) :
             $list->fill(['list_status' => (int)$input['status']]);
@@ -108,17 +102,27 @@ class ListController extends Controller
         return back();
     }
 
+    /**
+     * Route that handles removing a show from a user's list.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function removeFromList(Request $request)
     {
         $input = $request->all();
-        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $request->username)->first();
-        // TODO: Extract to model (Lists::delete($userId, $seriesId))
-        Lists::where('user_id', $user->id)->where('series_id', $input['series_id'])->delete();
+        $user->getList()->where('series_id', $input['series_id'])->delete();
 
         return back();
     }
 
+    /**
+     * Route that handles adding a show to a user's list.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function addToList(Request $request)
     {
         $this->validate($request, [
@@ -126,7 +130,6 @@ class ListController extends Controller
         ]);
 
         $input = $request->all();
-        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $request->username)->first();
         Lists::create([
             'series_id' => $input['series_id'],
@@ -137,36 +140,46 @@ class ListController extends Controller
         return back()->with('status', $input['series_name'] . ' was successfully added to your list!');
     }
 
+    /**
+     * Route that handles showing a user's watch history.
+     *
+     * @param $username
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showHistory($username)
     {
         $user = User::where('username', $username)->first();
 
         $canViewList = $this->canViewList($user);
         if ($canViewList) {
-            $epsWatched = ListEpisodesWatched::getUserEpisodesWatched($user->id)
-                ->select('users.id', 'tvseries.SeriesName', 'tvepisodes.seriesid', 'tvepisodes.EpisodeName',
-                    'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at')
-                ->getMostRecent();
-            $shows = $epsWatched->get()->unique('seriesid')->lists('SeriesName', 'seriesid')->sort();
-            $epsWatched = $epsWatched->paginate(25);
+            $query = $user->episodesWatched()->withSeries()->mostRecent();
+            $epsWatched = $query->paginate(25);
+            $shows = $query->get()->unique(function ($item) {
+                return $item['SeriesName'];
+            })->lists('SeriesName', 'seriesid');
         }
 
         return view('profile.history', compact('user', 'epsWatched', 'shows', 'canViewList'));
     }
 
+    /**
+     * Route that handles showing a user's watch history filtered by a show.
+     *
+     * @param $username
+     * @param $seriesId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showHistoryFilter($username, $seriesId)
     {
-        // TODO: Extract to model (User::getUser($username))
         $user = User::where('username', $username)->first();
+
         $canViewList = $this->canViewList($user);
         if ($canViewList) {
-            $epsWatched = ListEpisodesWatched::getUserEpisodesWatched($user->id)
-                ->select('users.id', 'tvseries.SeriesName', 'tvepisodes.seriesid', 'tvepisodes.EpisodeName',
-                    'tvepisodes.EpisodeNumber', 'tvseasons.season', 'list_episodes_watched.updated_at');
-            $shows = $epsWatched->get()->unique('seriesid')->lists('SeriesName', 'seriesid')->sort();
-            $epsWatched = $epsWatched->where('list.series_id', '=', $seriesId)
-                ->getMostRecent()
-                ->paginate(25);
+            $query = $user->episodesWatched()->withSeries()->mostRecent();
+            $shows = $query->get()->unique(function ($item) {
+                return $item['SeriesName'];
+            })->lists('SeriesName', 'seriesid');
+            $epsWatched = $query->where('list.series_id', $seriesId)->paginate(25);
             if ($epsWatched->count() === 0) {
                 abort(404);
             }
@@ -175,6 +188,12 @@ class ListController extends Controller
         return view('profile.history', compact('user', 'epsWatched', 'shows', 'seriesId', 'canViewList'));
     }
 
+    /**
+     * Route that handles AJAX request for updating whether an episode is watched or not.
+     *
+     * @param $seriesId
+     * @throws \Exception
+     */
     public function updateEpisodesWatched($seriesId)
     {
         if (!$episodeIds = Input::get('episodeIds')) {
@@ -185,11 +204,11 @@ class ListController extends Controller
             ->where('user_id', Auth::user()->id)
             ->value('id');
 
-        // If checking more than one episode at once
+        // If checking/unchecking more than one episode at once
         if (is_array($episodeIds)) {
             $action = Input::get('action');
             if ($action === 'add') {
-                $now = Carbon::now('utc')->toDateTimeString();
+                $now = Carbon::now();
                 foreach ($episodeIds as $episodeId) {
                     $data[] = [
                         'episode_id' => $episodeId,

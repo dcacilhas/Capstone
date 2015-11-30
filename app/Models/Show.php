@@ -30,35 +30,46 @@ class Show extends Eloquent
         ]
     ];
 
+    /**
+     * A show has many seasons.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function seasons()
     {
         return $this->hasMany('App\Models\Season', 'seriesid');
     }
 
     /**
-     * Get all of the episodes for the show.
+     * Get an episode by a show's season number and episode number.
+     *
+     * @param $seasonNum
+     * @param $episodeNum
+     * @return mixed
      */
-    public function episodes()
-    {
-        return $this->hasManyThrough('App\Models\Episode', 'App\Models\Season', 'seriesid', 'seasonid');
-    }
-
-    public function getLists()
-    {
-        return $this->belongsToMany('App\Models\Lists', 'series_id');
-    }
-
     public function episode($seasonNum, $episodeNum)
     {
         return $this->episodes()->where('season', $seasonNum)->where('episodenumber', $episodeNum)->first();
     }
 
     /**
+     * A show has many episodes.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function episodes()
+    {
+        return $this->hasManyThrough('App\Models\Episode', 'App\Models\Season', 'seriesid', 'seasonid');
+    }
+
+    // TODO: Remove?
+
+    /**
      * Query of episodes for a TV show.
+     * Ignores special episodes.
      *
      * @return mixed
      */
-    // TODO: Remove?
     public function getEpisodes()
     {
         return $this->hasMany('App\Models\Episode', 'seriesid')
@@ -70,8 +81,24 @@ class Show extends Eloquent
             ->whereNull('airsafter_season');
     }
 
+    /**
+     * Get a show's writers in a comma separated string.
+     *
+     * @param $writers
+     * @return string
+     */
+    public function getGenreAttribute($genres)
+    {
+        return implode(", ", array_filter(explode("|", $genres)));
+    }
+
+    /**
+     * A show belongs to a favourite.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function favourites()
     {
-        return $this->hasMany('App\Models\Favourite', 'series_id');
+        return $this->belongsTo('App\Models\Favourite', 'series_id');
     }
 }

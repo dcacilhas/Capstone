@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Eloquent;
 
 class Episode extends Eloquent
@@ -21,14 +20,24 @@ class Episode extends Eloquent
      */
     protected $dates = ['FirstAired'];
 
+    /**
+     * An episode belongs to a show.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function show()
     {
-        return $this->belongsTo('App\Models\Show');
+        return $this->belongsTo('App\Models\Show', 'seriesid');
     }
 
+    /**
+     * An episode belongs to a season.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function season()
     {
-        return $this->belongsTo('App\Models\season');
+        return $this->belongsTo('App\Models\Season', 'seasonid');
     }
 
     /**
@@ -51,5 +60,27 @@ class Episode extends Eloquent
     public function getDirectorAttribute($directors)
     {
         return implode(", ", array_filter(explode("|", $directors)));
+    }
+
+    /**
+     * Query of episodes that are not specials.
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function scopeNoSpecials($query)
+    {
+        return $query->where('season', '<>', 0)->where('episodenumber', '<>', 0);
+    }
+
+    /**
+     * Query of episodes in order.
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function scopeInOrder($query)
+    {
+        return $query->orderBy('season')->orderBy('episodenumber');
     }
 }

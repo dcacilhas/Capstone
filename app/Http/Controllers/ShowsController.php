@@ -69,7 +69,7 @@ class ShowsController extends Controller
     {
         if ($user) {
             foreach ($shows as $show) {
-                $listQuery = Lists::where('user_id', $user->id)->where('series_id', $show->id);
+                $listQuery = $user->getList()->where('series_id', $show->id);
                 $show->is_in_list = $listQuery->exists();
                 $show->rating = $listQuery->value('rating');
                 $show->list_status = $listQuery->value('list_status');

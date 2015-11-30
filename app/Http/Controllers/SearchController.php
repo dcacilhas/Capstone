@@ -20,6 +20,14 @@ class SearchController extends Controller
         return view('search.search');
     }
 
+    /**
+     * Route that handles a search request for a user.
+     * Uses ElasticSearch as a search engine.
+     * If no match found, tries less specific queries.
+     *
+     * @param null $query
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
     public function postUserSearch($query = null)
     {
         if (is_null($query)) {
@@ -70,6 +78,14 @@ class SearchController extends Controller
         return view('search.users', compact('query', 'users'));
     }
 
+    /**
+     * Route that handles a search request for a show.
+     * Uses ElasticSearch as a search engine.
+     * If no match found, tries less specific queries.
+     *
+     * @param null $query
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
     public function postShowSearch($query = null)
     {
         if (is_null($query)) {
@@ -117,7 +133,7 @@ class SearchController extends Controller
     {
         if ($user) {
             foreach ($shows as $show) {
-                $listQuery = Lists::where('user_id', $user->id)->where('series_id', $show->id);
+                $listQuery = $user->getList()->where('series_id', $show->id);
                 $show->is_in_list = $listQuery->exists();
                 $show->rating = $listQuery->value('rating');
                 $show->list_status = $listQuery->value('list_status');

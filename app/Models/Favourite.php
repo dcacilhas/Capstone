@@ -20,11 +20,21 @@ class Favourite extends Eloquent
      */
     protected $fillable = ['user_id', 'series_id', 'sort_order'];
 
+    /**
+     * A favourite belongs to a user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user()
     {
         return $this->belongsTo('App\Models\User');
     }
 
+    /**
+     * A favourite belongs to a show.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function show()
     {
         return $this->belongsTo('App\Models\Show', 'series_id');

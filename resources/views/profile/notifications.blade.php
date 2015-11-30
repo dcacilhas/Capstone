@@ -9,10 +9,10 @@
         @if (Auth::check() && Auth::user()->username === $user->username)
             <h2>Notifications</h2>
             <p>
-                @if($unreadNotificationsCount === 1)
-                    You have {{ $unreadNotificationsCount }} unread notification.
+                @if($user->countNotificationsNotRead() === 1)
+                    You have {{ $user->countNotificationsNotRead() }} unread notification.
                 @else
-                    You have {{ $unreadNotificationsCount }} unread notifications.
+                    You have {{ $user->countNotificationsNotRead() }} unread notifications.
                 @endif
             </p>
 

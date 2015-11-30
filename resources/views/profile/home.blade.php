@@ -37,14 +37,14 @@
                 <ul class="list-unstyled">
                     <!-- TODO: Format this better. Separate series/episode links. -->
                     @foreach($recentEpsWatched as $ep)
-                        <li>{!! link_to_route('shows.episode', $ep->SeriesName . ' ' . $ep->formatted, ['seriesId' => $ep->series_id, 'seasonNum' => $ep->season, 'episodeNum' => $ep->EpisodeNumber]) !!}</li>
+                        <li>{!! link_to_route('shows.episode', $ep->SeriesName . ' ' . $ep->formatted, ['seriesId' => $ep->seriesid, 'seasonNum' => $ep->season, 'episodeNum' => $ep->EpisodeNumber]) !!}</li>
                     @endforeach
                 </ul>
 
                 <h3>Favourite Shows</h3>
                 <ul class="list-unstyled">
                     @foreach($favourites as $favourite)
-                        <li>{!! link_to_route('shows.details', $favourite->SeriesName, ['seriesId' => $favourite->series_id]) !!}</li>
+                        <li>{!! link_to_route('shows.details', $favourite->show->SeriesName, ['seriesId' => $favourite->show->id]) !!}</li>
                     @endforeach
                 </ul>
 
@@ -52,7 +52,7 @@
                     <h3>Shows In Common</h3>
                     <ul class="list-unstyled">
                         @foreach($showsInCommon as $showInCommon)
-                            <li>{!! link_to_route('shows.details', $showInCommon->SeriesName, ['seriesId' => $showInCommon->series_id]) !!}</li>
+                            <li>{!! link_to_route('shows.details', $showInCommon->SeriesName, ['seriesId' => $showInCommon->id]) !!}</li>
                         @endforeach
                     </ul>
                 @endif

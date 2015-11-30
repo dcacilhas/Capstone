@@ -11,15 +11,15 @@ class EpisodesController extends Controller
 {
     public function index($seriesId, $seasonNum, $episodeNum)
     {
-        $series = Show::findOrFail($seriesId);
-        $episode = $series->episode($seasonNum, $episodeNum);
-        $season = Season::findOrFail($episode->seasonid);
+        $show = Show::findOrFail($seriesId);
+        $episode = $show->episode($seasonNum, $episodeNum);
+        $season = $episode->season;
         if (Auth::check()) {
             $user = Auth::user();
-            $series->isOnList = $user->getList()->where('series_id', $series->id)->exists();
+            $show->isOnList = $user->getList()->where('series_id', $show->id)->exists();
             $episode->isWatched = $user->episodesWatched()->where('episode_id', $episode->id)->exists();
         }
 
-        return view('shows.episode', compact('episode', 'series', 'season'));
+        return view('shows.episode', compact('episode', 'show', 'season'));
     }
 }
