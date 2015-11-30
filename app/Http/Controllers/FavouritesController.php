@@ -24,9 +24,11 @@ class FavouritesController extends Controller
         $canViewList = $this->canViewList($user);
         if ($canViewList) {
             $favourites = $user->favourites()
-                ->with(['show' => function ($query) {
-                    $query->select('id', 'SeriesName');
-                }])
+                ->with([
+                    'show' => function ($query) {
+                        $query->select('id', 'SeriesName');
+                    }
+                ])
                 ->orderBy('sort_order', 'asc')
                 ->get();
             $favouriteSeriesIds = $favourites->lists('series_id');

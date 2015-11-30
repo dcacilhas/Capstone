@@ -63,9 +63,8 @@ class Show extends Eloquent
     }
 
     // TODO: Remove?
-
     /**
-     * Query of episodes for a TV show.
+     * Get episodes for a TV show.
      * Ignores special episodes.
      *
      * @return mixed

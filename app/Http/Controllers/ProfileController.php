@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Models\Favourite;
 use App\Models\Friend;
 use App\Models\Genre;
-use App\Models\ListEpisodesWatched;
-use App\Models\Lists;
 use App\Models\Show;
 use App\Models\User;
 use Auth;
@@ -306,12 +303,6 @@ class ProfileController extends Controller
         return back()->with('status', 'Password successfully updated!');
     }
 
-    /**
-     *
-     *
-     * @param $user
-     * @return bool
-     */
     // TODO: Use authorization for this? http://laravel.com/docs/5.1/authorization
     private function canViewProfile($user)
     {

@@ -25,6 +25,36 @@ class FriendsController extends Controller
         return view('profile.friends', compact('user', 'friends', 'canViewProfile'));
     }
 
+    // TODO: Use authorization for this? http://laravel.com/docs/5.1/authorization
+    private function canViewProfile($user)
+    {
+        // If user is viewing their own profile or profile visibility is public
+        if (Auth::check() && Auth::user()->username === $user->username || $user->profile_visibility === 0) {
+            return true;
+        } else {
+            // If user's profile is private
+            if ($user->profile_visibility === 1) {
+                return false;
+            }
+
+            // If user's profile is set to friends only
+            if ($user->profile_visibility === 2) {
+                // TODO: Extract this to model (Friends::getFriendIds($user))
+                $friendIds = DB::table('friends as f1')->join('friends as f2', function ($query) use ($user) {
+                    $query->on('f1.user_id', '=', 'f2.friend_id')->on('f1.friend_id', '=',
+                        'f2.user_id')->where('f1.user_id',
+                        '=', $user->id);
+                })->select('f1.friend_id')->lists('friend_id');
+
+                if (Auth::check() && in_array(Auth::user()->id, $friendIds)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
     /**
      * Route that handles adding friends from the Friends page.
      *
@@ -55,6 +85,24 @@ class FriendsController extends Controller
         }
 
         return back()->with('status', 'Friend request successfully sent to ' . $requestedFriend->username . '.');
+    }
+
+    /**
+     * Send friend request from one user to another.
+     *
+     * @param $fromUser
+     * @param $toUser
+     */
+    private function sendFriendRequest($fromUser, $toUser)
+    {
+        Friend::create(['user_id' => $fromUser->id, 'friend_id' => $toUser->id]);
+        $username = $fromUser->username;
+        Notifynder::category('friend.request')
+            ->from($fromUser->id)
+            ->to($toUser->id)
+            ->url('')
+            ->extra(compact('username'))
+            ->send();
     }
 
     /**
@@ -134,59 +182,5 @@ class FriendsController extends Controller
             ->send();
 
         echo true;
-    }
-
-    /**
-     *
-     *
-     * @param $user
-     * @return bool
-     */
-    // TODO: Use authorization for this? http://laravel.com/docs/5.1/authorization
-    private function canViewProfile($user)
-    {
-        // If user is viewing their own profile or profile visibility is public
-        if (Auth::check() && Auth::user()->username === $user->username || $user->profile_visibility === 0) {
-            return true;
-        } else {
-            // If user's profile is private
-            if ($user->profile_visibility === 1) {
-                return false;
-            }
-
-            // If user's profile is set to friends only
-            if ($user->profile_visibility === 2) {
-                // TODO: Extract this to model (Friends::getFriendIds($user))
-                $friendIds = DB::table('friends as f1')->join('friends as f2', function ($query) use ($user) {
-                    $query->on('f1.user_id', '=', 'f2.friend_id')->on('f1.friend_id', '=',
-                        'f2.user_id')->where('f1.user_id',
-                        '=', $user->id);
-                })->select('f1.friend_id')->lists('friend_id');
-
-                if (Auth::check() && in_array(Auth::user()->id, $friendIds)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-    }
-
-    /**
-     * Send friend request from one user to another.
-     *
-     * @param $fromUser
-     * @param $toUser
-     */
-    private function sendFriendRequest($fromUser, $toUser)
-    {
-        Friend::create(['user_id' => $fromUser->id, 'friend_id' => $toUser->id]);
-        $username = $fromUser->username;
-        Notifynder::category('friend.request')
-            ->from($fromUser->id)
-            ->to($toUser->id)
-            ->url('')
-            ->extra(compact('username'))
-            ->send();
     }
 }

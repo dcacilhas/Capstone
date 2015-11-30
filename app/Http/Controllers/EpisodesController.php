@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Models\Season;
 use App\Models\Show;
 use Auth;
 
