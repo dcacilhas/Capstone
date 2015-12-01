@@ -17,7 +17,7 @@ class ShowsController extends Controller
         $filters = range('A', 'Z');
         array_unshift($filters, '#');
         $listStatuses = DB::table('list_statuses')->get();
-        $genres = DB::table('genres')->get();
+        $genres = DB::table('genres')->lists('genre');
 
         // TODO: Do filtering better. Maybe use separate routes (/filter/letter/A, /filter/genre/Action)?
 

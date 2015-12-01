@@ -43,8 +43,8 @@
             <li class="col-sm-4">
                 <ul class="multi-column-dropdown">
                     @foreach(array_slice($genres, 0, 9) as $genre)
-                        <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">
-                            {!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}
+                        <li class="@if (isset($selectedGenre) && $selectedGenre == $genre) {{ 'active' }} @endif">
+                            {!! link_to_route('shows', $genre, ['genre' => $genre]) !!}
                         </li>
                     @endforeach
                 </ul>
@@ -52,17 +52,17 @@
             <li class="col-sm-4">
                 <ul class="multi-column-dropdown">
                     @foreach(array_slice($genres, 9, 9) as $genre)
-                        <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">
-                            {!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}
+                        <li class="@if (isset($selectedGenre) && $selectedGenre == $genre) {{ 'active' }} @endif">
+                            {!! link_to_route('shows', $genre, ['genre' => $genre]) !!}
                         </li>
                     @endforeach
                 </ul>
             </li>
             <li class="col-sm-4">
                 <ul class="multi-column-dropdown">
-                    @foreach(array_slice($genres, 18, 9) as $genre)
-                        <li class="@if (isset($selectedGenre) && $selectedGenre == $genre->genre) {{ 'active' }} @endif">
-                            {!! link_to_route('shows', $genre->genre, ['genre' => $genre->genre]) !!}
+                    @foreach(array_slice($genres, 18, 10) as $genre)
+                        <li class="@if (isset($selectedGenre) && $selectedGenre == $genre) {{ 'active' }} @endif">
+                            {!! link_to_route('shows', $genre, ['genre' => $genre]) !!}
                         </li>
                     @endforeach
                 </ul>
