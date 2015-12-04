@@ -48,9 +48,9 @@
             @include('includes.modals.add_friends')
         @else
             <div class="alert alert-danger">
-                @if($user->profile_visibility === 1)
+                @if($user->profile_visibility == 1)
                     The user has chosen to make their profile private. Only they may view it.
-                @elseif($user->profile_visibility === 2)
+                @elseif($user->profile_visibility == 2)
                     The user has chosen to make their profile visible to friends only.
                     Send them a friend request for access.
                 @endif

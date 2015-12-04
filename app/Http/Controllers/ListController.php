@@ -47,16 +47,16 @@ class ListController extends Controller
     private function canViewList($user)
     {
         // If user is viewing their own profile
-        if (Auth::check() && Auth::user()->username === $user->username || $user->list_visibility === 0) {
+        if (Auth::check() && Auth::user()->username === $user->username || $user->list_visibility == 0) {
             return true;
         } else {
             // If user's profile is private
-            if ($user->list_visibility === 1) {
+            if ($user->list_visibility == 1) {
                 return false;
             }
 
             // If user's list is set to friends only
-            if ($user->list_visibility === 2) {
+            if ($user->list_visibility == 2) {
                 // TODO: Extract this to model
                 $friendIds = DB::table('friends as f1')->join('friends as f2', function ($query) use ($user) {
                     $query->on('f1.user_id', '=', 'f2.friend_id')->on('f1.friend_id', '=',

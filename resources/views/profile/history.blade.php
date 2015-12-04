@@ -63,9 +63,9 @@
             {!! $epsWatched->render() !!}
         @else
             <div class="alert alert-danger">
-                @if($user->list_visibility === 1)
+                @if($user->list_visibility == 1)
                     The user has chosen to make their list private. Only they may view it.
-                @elseif($user->list_visibility === 2)
+                @elseif($user->list_visibility == 2)
                     The user has chosen to make their list visible to friends only.
                     Send them a friend request for access.
                 @endif
