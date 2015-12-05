@@ -142,6 +142,7 @@ class SearchController extends Controller
                     $show->SiteRating = number_format($show->SiteRating, 1);
                 }
                 $show->FirstAired = Carbon::createFromTimeStamp(strtotime($show->FirstAired))->toFormattedDateString();
+                $show->favourited = $user->isShowFavourited($show->id);
             }
         } else {
             foreach ($shows as $show) {
