@@ -48,6 +48,9 @@ class FavouritesController extends Controller
     // TODO: Use authorization for this? http://laravel.com/docs/5.1/authorization
     private function canViewList($user)
     {
+        if (!$user) {
+            abort(404);
+        }
         // If user is viewing their own profile
         if (Auth::check() && Auth::user()->username === $user->username || $user->list_visibility == 0) {
             return true;

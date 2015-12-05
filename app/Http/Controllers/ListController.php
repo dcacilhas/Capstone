@@ -46,6 +46,9 @@ class ListController extends Controller
     // TODO: Use authorization for this? http://laravel.com/docs/5.1/authorization
     private function canViewList($user)
     {
+        if (!$user) {
+            abort(404);
+        }
         // If user is viewing their own profile
         if (Auth::check() && Auth::user()->username === $user->username || $user->list_visibility == 0) {
             return true;
@@ -178,10 +181,10 @@ class ListController extends Controller
         $canViewList = $this->canViewList($user);
         if ($canViewList) {
             $query = $user->episodesWatched()->withSeries()->mostRecent();
-            $epsWatched = $query->paginate(25);
             $shows = $query->get()->unique(function ($item) {
                 return $item['SeriesName'];
             })->lists('SeriesName', 'seriesid');
+            $epsWatched = $query->paginate(25);
         }
 
         return view('profile.history', compact('user', 'epsWatched', 'shows', 'canViewList'));

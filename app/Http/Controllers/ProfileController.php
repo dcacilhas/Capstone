@@ -306,6 +306,9 @@ class ProfileController extends Controller
     // TODO: Use authorization for this? http://laravel.com/docs/5.1/authorization
     private function canViewProfile($user)
     {
+        if (!$user) {
+            abort(404);
+        }
         // If user is viewing their own profile or profile visibility is public
         if (Auth::check() && Auth::user()->username === $user->username || $user->profile_visibility == 0) {
             return true;
