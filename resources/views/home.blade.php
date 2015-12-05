@@ -7,7 +7,7 @@
         <div class="site-wrapper-inner">
             <div class="cover-container">
                 <div class="inner cover">
-                    <h1 class="cover-heading">MyMediaList</h1>
+                    <h1 class="cover-heading">{{ Config::get('app.app_name') }}</h1>
                     <br>
                     <p class="lead">Track the TV shows you're watching. Invite your friends and share your progress.</p>
 

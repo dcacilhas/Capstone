@@ -7,12 +7,12 @@
         <div class="site-wrapper-inner">
             <div class="cover-container">
                 <div class="inner cover">
-                    <h1 class="cover-heading">What is MyMediaList?</h1>
+                    <h1 class="cover-heading">What is {{ Config::get('app.app_name') }}?</h1>
 
-                    <p class="lead">MyMediaList is a website that helps users track the TV shows they are watching.
+                    <p class="lead">{{ Config::get('app.app_name') }} is a website that helps users track the TV shows they are watching.
                         Users create a profile and can invite their friends to share their progress.</p>
 
-                    <h1 class="cover-heading">Who made MyMediaList?</h1>
+                    <h1 class="cover-heading">Who made {{ Config::get('app.app_name') }}?</h1>
 
                     <p class="lead">
                         Created by David Cacilhas. Connect with me on {!! link_to('https://github.com/dcacilhas', 'GitHub', ['target' => '_blank']) !!},

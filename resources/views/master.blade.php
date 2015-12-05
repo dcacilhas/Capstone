@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="csrf_token" content="{{ csrf_token() }}" />
-    <title>@yield('title') - Capstone</title>
+    <title>@yield('title') - {{ Config::get('app.app_name') }}</title>
 
     <!-- Bootstrap core CSS -->
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
@@ -33,7 +33,7 @@
             width: 100%;
             /* Set the fixed height of the footer here */
             height: 60px;
-            padding-top: 15px;
+            padding-top: 20px;
             background-color: #f5f5f5;
         }
         @media (min-width: 768px) {
@@ -59,7 +59,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Capstone</a>
+            <a class="navbar-brand" href="/">{{ Config::get('app.app_name') }} <sup>alpha</sup></a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
