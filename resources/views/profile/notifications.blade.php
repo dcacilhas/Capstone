@@ -8,13 +8,6 @@
 
         @if (Auth::check() && Auth::user()->username === $user->username)
             <h2>Notifications</h2>
-            <p>
-                @if($user->countNotificationsNotRead() === 1)
-                    You have {{ $user->countNotificationsNotRead() }} unread notification.
-                @else
-                    You have {{ $user->countNotificationsNotRead() }} unread notifications.
-                @endif
-            </p>
 
             <ul class="list-unstyled">
                 @foreach($notifications as $notification)

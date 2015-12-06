@@ -28,10 +28,12 @@
                         @if($episode->IMDB_ID)
                             <a href="http://www.imdb.com/title/{{ $episode->IMDB_ID }}" target="_blank">IMDB</a>,
                         @endif
-                        <a href="http://thetvdb.com/?tab=episode&seriesid={{ $show->id }}&seasonid={{ $episode->season }}&id={{ $episode->id }}&lid=7"
+                        <a href="http://thetvdb.com/?tab=episode&seriesid={{ $show->id }}&seasonid={{ $season->season }}&id={{ $episode->id }}&lid=7"
                            target="_blank">TVDB</a>
                     </li>
-                    <li>Aired: {{ $episode->FirstAired->format('F j, Y') }}</li>
+                    @if($episode->FirstAired)
+                        <li>Aired: {{ $episode->FirstAired->format('F j, Y') }}</li>
+                    @endif
                     <li>Director: {{ $episode->Director }}</li>
                     <li>Writer: {{ $episode->Writer }}</li>
                 </ul>
