@@ -14,7 +14,7 @@
             @include('errors.errors')
 
             <div class="panel-body">
-                {!! Form::open(['url' => 'password.reset']) !!}
+                {!! Form::open(['route' => 'password.reset']) !!}
                 {!! Form::hidden('token', $token) !!}
                 <div class="form-group">
                     <div style="margin-bottom: 25px" class="input-group">

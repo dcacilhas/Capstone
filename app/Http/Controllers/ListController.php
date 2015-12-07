@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ListEpisodesWatched;
 use App\Models\Lists;
-use App\Models\Show;
+use App\Models\ListStatuses;
 use App\Models\User;
 use Auth;
 use Carbon\Carbon;
@@ -28,7 +28,7 @@ class ListController extends Controller
         $canViewList = $this->canViewList($user);
         if ($canViewList) {
             $status = Input::get('status') !== null ? (int)Input::get('status') : null;
-            $listStatuses = DB::table('list_statuses')->get();
+            $listStatuses = ListStatuses::all();
 
             $listsQuery = $user->getList()->with('show', 'episodesWatched.episode.season');
             if (is_null($status)) {
@@ -90,7 +90,7 @@ class ListController extends Controller
             $epsTotal = $list->show->episodes()->noSpecials()->count();
             $epsWatched = $list->episodesWatched;
             $epsWatchedCount = $epsWatched->count();
-            ($list->list_status === 2) ?
+            ($list->list_status == 2) ?
                 $list->progress = 100 :
                 $list->progress = number_format($epsWatchedCount / $epsTotal * 100, 0);
             if ($epsWatchedCount) {

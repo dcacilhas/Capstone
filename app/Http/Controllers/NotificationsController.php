@@ -20,7 +20,7 @@ class NotificationsController extends Controller
     {
         $user = Auth::user();
         $notifications = $user->getNotifications();
-        $user->readAllNotifications();
+//        $user->readAllNotifications();
 
         return view('profile.notifications', compact('user', 'notifications'));
     }

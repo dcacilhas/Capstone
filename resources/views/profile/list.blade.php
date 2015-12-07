@@ -12,7 +12,7 @@
                     {!! link_to_route('profile.list', 'All', ['username' => $user->username]) !!}
                 </li>
                 @foreach($listStatuses as $listStatus)
-                    <li role="presentation" @if($status === $listStatus->list_status) class="active" @endif>
+                    <li role="presentation" @if($status === (int)$listStatus->list_status) class="active" @endif>
                         {!! link_to_route('profile.list', $listStatus->description, ['username' => $user->username, 'status' => $listStatus->list_status]) !!}
                     </li>
                 @endforeach
@@ -35,7 +35,7 @@
                             <tbody>
                             <?php $i = 1; ?>
                             @foreach($shows as $show)
-                                @if($show->list_status === $listStatus->list_status)
+                                @if($show->list_status == $listStatus->list_status)
                                     <tr>
                                         <th scope="row" class="text-center">{{ $i++ }}</th>
                                         <td>
@@ -87,7 +87,7 @@
                                         </td>
                                         <td>
                                             <div class="progress">
-                                                <div class="progress-bar" style="width: {{ $show->progress }}%;"></div>
+                                                <div class="progress-bar" style="width:{{ $show->progress }}%;"></div>
                                                 <span>@if ($show->progress > 0) {{ $show->progress }}% @endif</span>
                                             </div>
                                         </td>
