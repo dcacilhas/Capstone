@@ -1,18 +1,40 @@
 <?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-
 class EpisodesControllerTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function testExample()
+    private $seriesId;
+    private $seriesName;
+    private $episodeName;
+    private $seasonNum;
+    private $episodeNum;
+
+    public function setUp()
     {
-        $this->assertTrue(true);
+        parent::setUp();
+
+        $this->seriesId = 70327;
+        $this->seriesName = 'Buffy the Vampire Slayer';
+        $this->episodeName = 'Welcome to the Hellmouth (1)';
+        $this->seasonNum = 1;
+        $this->episodeNum = 1;
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+    }
+
+    public function testEpisodeDetails()
+    {
+        $this->visit(route('shows.episode',
+            [
+                'seriesId' => $this->seriesId,
+                'seasonNum' => $this->seasonNum,
+                'episodeNum' => $this->episodeNum
+            ]))
+            ->see($this->episodeName)
+            ->see("Season $this->seasonNum Episode $this->episodeNum");
+
+        $this->assertViewHas(['episode', 'show', 'season']);
     }
 }

@@ -60,7 +60,7 @@ class FriendsController extends Controller
     }
 
     /**
-     * Route that handles adding friends from the Friends page.
+     * Route that handles sending friend request from the Friends page.
      *
      * @return $this|\Illuminate\Http\RedirectResponse
      */

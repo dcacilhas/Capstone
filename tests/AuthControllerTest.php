@@ -14,9 +14,6 @@ class AuthControllerTest extends TestCase
         parent::setUp();
 
         $this->rawPassword = 'password';
-        $this->user = factory(\App\Models\User::class)->create([
-            'password' => bcrypt($this->rawPassword)
-        ]);
     }
 
     public function tearDown()
@@ -38,7 +35,7 @@ class AuthControllerTest extends TestCase
         $this->seePageIs(route('register'));
     }
 
-    public function testRegisterValidation()
+    public function testRegisterValidationRequired()
     {
         $this->visit(route('register'))
             ->press('Register');
@@ -47,6 +44,18 @@ class AuthControllerTest extends TestCase
         $this->see('The username field is required');
         $this->see('The email field is required');
         $this->see('The password field is required');
+    }
+
+    public function testRegisterValidationEmailAndPassword()
+    {
+        $this->visit(route('register'))
+            ->type('bademail', 'email')
+            ->type('1234567', 'password')
+            ->press('Register');
+
+        $this->see('The email must be a valid email address');
+        $this->see('The password confirmation does not match');
+        $this->see('The password must be at least 8 characters');
     }
 
     public function testRegisterSuccess()
@@ -66,7 +75,7 @@ class AuthControllerTest extends TestCase
         $this->seePageIs(route('profile', ['username' => $username]));
     }
 
-    public function testLoginValidation()
+    public function testLoginValidationRequired()
     {
         $this->visit(route('login'))
             ->press('Login');
@@ -78,6 +87,9 @@ class AuthControllerTest extends TestCase
 
     public function testLoginSuccess()
     {
+        $this->user = factory(\App\Models\User::class)->create([
+            'password' => bcrypt($this->rawPassword)
+        ]);
         $this->visit(route('login'))
             ->type($this->user->email, 'email')
             ->type($this->rawPassword, 'password')
@@ -88,6 +100,9 @@ class AuthControllerTest extends TestCase
 
     public function testLoginCredentialsFail()
     {
+        $this->user = factory(\App\Models\User::class)->create([
+            'password' => bcrypt($this->rawPassword)
+        ]);
         $wrongPassword = 'wrong password';
         $this->visit(route('login'))
             ->type($this->user->email, 'email')
@@ -100,6 +115,9 @@ class AuthControllerTest extends TestCase
 
     public function testLogout()
     {
+        $this->user = factory(\App\Models\User::class)->create([
+            'password' => bcrypt($this->rawPassword)
+        ]);
         $this->be($this->user);
         $this->call('GET', route('logout'));
 

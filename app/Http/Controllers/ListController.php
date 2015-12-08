@@ -217,11 +217,6 @@ class ListController extends Controller
     }
 
     /**
-     * @param $user
-     * @return bool
-     */
-    // TODO: Use authorization for this? http://laravel.com/docs/5.1/authorization
-    /**
      * Route that handles AJAX request for updating whether an episode is watched or not.
      *
      * @param $seriesId
