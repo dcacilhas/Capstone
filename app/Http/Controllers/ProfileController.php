@@ -278,7 +278,7 @@ class ProfileController extends Controller
     {
         $this->validate($request, [
             'current_password' => 'required',
-            'password' => 'required|confirmed|min:8',
+            'new_password' => 'required|confirmed|min:8',
         ]);
 
         $user = Auth::user();
@@ -286,13 +286,13 @@ class ProfileController extends Controller
 
         // http://stackoverflow.com/questions/21802638/laravel-use-hash-as-validator
         if (Hash::check($input['current_password'], $user->password)) {
-            if (Hash::check($input['password'], $user->password)) {
+            if (Hash::check($input['new_password'], $user->password)) {
                 return redirect()->route('profile/account', [$user->username])
                     ->withErrors('The new password must be different than current password.')
                     ->withInput();
             }
 
-            $user->fill(['password' => bcrypt($input['password'])]);
+            $user->fill(['password' => bcrypt($input['new_password'])]);
             $user->save();
         } else {
             return redirect()->route('profile/account', [$user->username])

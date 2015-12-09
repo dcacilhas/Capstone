@@ -65,16 +65,16 @@
         </div>
 
         <div class="form-group">
-            {!! Form::label('password', 'New: ', ['class' => 'col-sm-2 control-label']) !!}
+            {!! Form::label('new_password', 'New: ', ['class' => 'col-sm-2 control-label']) !!}
             <div class="col-md-10">
-                {!! Form::password('password', ['class' => 'form-control', 'placeholder' => 'New Password']) !!}
+                {!! Form::password('new_password', ['class' => 'form-control', 'placeholder' => 'New Password']) !!}
             </div>
         </div>
 
         <div class="form-group">
-            {!! Form::label('password_confirmation', 'Confirm: ', ['class' => 'col-sm-2 control-label']) !!}
+            {!! Form::label('new_password_confirmation', 'Confirm: ', ['class' => 'col-sm-2 control-label']) !!}
             <div class="col-md-10">
-                {!! Form::password('password_confirmation', ['class' => 'form-control', 'placeholder' => 'Confirm New Password']) !!}
+                {!! Form::password('new_password_confirmation', ['class' => 'form-control', 'placeholder' => 'Confirm New Password']) !!}
             </div>
         </div>
 
