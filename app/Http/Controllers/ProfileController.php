@@ -19,7 +19,7 @@ class ProfileController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth.profile', ['except' => ['index']]);
+        $this->middleware('auth.profile', ['except' => ['index', 'removeAvatar']]);
     }
 
     public function index($username)

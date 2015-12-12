@@ -13,14 +13,17 @@
                     Enter your friend's username or email address.
                     Use the {!! link_to_route('search', 'search') !!} feature to find new friends.
                 </p>
-                {!! Form::input('text', 'friendUsernameOrEmail', null, ['class' => 'form-control']) !!}
+                <div class="form-group">
+                    <div class="col-sm-8">
+                        {!! Form::input('text', 'friendUsernameOrEmail', null, ['class' => 'form-control', 'placeholder' => 'Username or Email']) !!}
+                    </div>
+                    <div class="col-sm-4">{!! Form::submit('Send Friend Request', ['class' => 'btn btn-primary']) !!}</div>
+                </div>
+                {!! Form::close() !!}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                {!! Form::submit('Send Friend Request', ['class' => 'btn btn-primary']) !!}
             </div>
-
-            {!! Form::close() !!}
         </div>
     </div>
 </div>

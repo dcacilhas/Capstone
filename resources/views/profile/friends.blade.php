@@ -11,7 +11,9 @@
                 Friends
                 @if (Auth::check() && Auth::getUser()->username === $user->username)
                     <small>
-                        <a href="#" class="add"
+                        <a href="#"
+                           id="addFriend"
+                           class="add"
                            data-toggle="modal"
                            data-target="#addModal"
                            title="Add Friend">
