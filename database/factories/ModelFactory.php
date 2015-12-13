@@ -11,6 +11,8 @@
 |
 */
 
+use Carbon\Carbon;
+
 $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
     return [
         'username' => $faker->name,
@@ -24,5 +26,35 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
         'notification_email' => rand(0, 1),
         'profile_visibility' => rand(0, 2),
         'list_visibility' => rand(0, 2)
+    ];
+});
+
+$factory->define(App\Models\Lists::class, function (Faker\Generator $faker) {
+    return [
+        'series_id' => 70327,
+        'user_id' => 1,
+        'list_status' => rand(0, 3),
+        'rating' => $faker->optional()->numberBetween(1, 10),
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now()
+    ];
+});
+
+$factory->define(App\Models\ListEpisodesWatched::class, function (Faker\Generator $faker) {
+    return [
+        'episode_id' => 2,
+        'list_id' => 1,
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now(),
+    ];
+});
+
+$factory->define(App\Models\Favourite::class, function (Faker\Generator $faker) {
+    return [
+        'user_id' => 1,
+        'series_id' => 70327,
+        'sort_order' => 1,
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now(),
     ];
 });

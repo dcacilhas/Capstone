@@ -2,8 +2,6 @@
 
 use Carbon\Carbon;
 use Faker\Factory;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ProfileControllerTest extends TestCase

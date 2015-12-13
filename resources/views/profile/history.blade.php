@@ -27,9 +27,7 @@
             </ul>
 
             <h3>Watch History
-                <small>{{ $epsWatched->total() }} episodes @if(isset($seriesId)) of {{ $shows[$seriesId] }} @endif
-                    watched
-                </small>
+                <small>{{ $epsWatched->total() }} episodes @if(isset($seriesId))of {{ $shows[$seriesId] }}@endif watched</small>
             </h3>
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
