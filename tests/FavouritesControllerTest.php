@@ -12,12 +12,14 @@ class FavouritesControllerTest extends TestCase
     {
         parent::setUp();
 
+        DB::beginTransaction();
         $this->user = factory(\App\Models\User::class)->create();
         $this->be($this->user);
     }
 
     public function tearDown()
     {
+        DB::rollBack();
         parent::tearDown();
     }
 
