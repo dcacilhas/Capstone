@@ -94,7 +94,8 @@ class ListController extends Controller
                 $list->progress = 100 :
                 $list->progress = number_format($epsWatchedCount / $epsTotal * 100, 0);
             if ($epsWatchedCount) {
-                $lastEpWatched = $epsWatched->last()->episode;
+                // TODO: Only need sortBy for deployed version. Need to fix
+                $lastEpWatched = $epsWatched->sortBy('id')->last()->episode;
                 $list->last_episode_watched_formatted = sprintf('S%02dE%02d', $lastEpWatched->season->season,
                     $lastEpWatched->EpisodeNumber);
                 $list->season_number = $lastEpWatched->season->season;

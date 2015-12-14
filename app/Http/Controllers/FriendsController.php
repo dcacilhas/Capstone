@@ -78,7 +78,7 @@ class FriendsController extends Controller
             ->orWhere('email', '=', $friendUsernameOrEmail)
             ->first();
         if ($requestedFriend) {
-            if ($requestedFriend->id === $user->id) {
+            if ($requestedFriend->id == $user->id) {
                 return back()->withErrors('You cannot send a friend request to yourself.');
             }
 

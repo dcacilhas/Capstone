@@ -1,6 +1,6 @@
 @extends('master')
 
-@section('title', 'Edit Profile')
+@section('title', 'Edit Account')
 
 @section('content')
     <div class="container">
